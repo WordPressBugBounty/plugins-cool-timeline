@@ -4,7 +4,7 @@ Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.0
 Tested up to: 6.6
-Stable tag:2.9.4
+Stable tag:2.9.8
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -70,27 +70,25 @@ With the simple shortcode [cool-timeline], you can easily display a timeline on 
 * TinyMCE button to generate the timeline shortcode or easily add the shortcode on any page using **Gutenberg ready blocks**.
 * Responsive and mobile-ready timeline.
 
+## Where can you use the Cool Timeline?
 
-= Where can you use the Cool Timeline plugin? =
+- **Company History Showcase:** Display your company’s growth and key milestones in a timeline format.
+- **Event Highlights:** Present a timeline of events for conferences, seminars, or special occasions.
+- **Product Launch Timeline:** Highlight the different stages and key dates leading up to a product or service launch.
+- **Personal Journey:** Share your personal story, career progression, or life journey using a timeline.
+- **Project Roadmap:** Create a visual timeline of project phases, deadlines, and achievements.
+- **Achievements and Awards:** Showcase significant accomplishments, recognitions, and awards over time.
+- **Nonprofit or Charity Timeline:** Present the key initiatives and impact of your nonprofit organization through a timeline.
+- **Portfolio Showcase:** Display your work history or project portfolio in chronological order.
+- **Historical Events Documentation:** Document important historical events or milestones in a timeline.
+- **School or Educational Timeline:** Highlight significant academic events, school history, or student progress.
+- **Wedding or Family Timeline:** Capture important family milestones like weddings, anniversaries, or life events.
+- **Event Planning:** Outline and share a detailed timeline for upcoming events or project plans.
+- **Real Estate Development:** Display the various stages of a property’s development from start to completion.
+- **Startup Journey:** Share your startup’s timeline, from idea conception to growth and scaling phases.
+- **Sports Achievements:** Highlight key moments and accomplishments in an athlete’s or team’s career.
 
-You can show history/future stories, events, appointments, and many other cool things using our **Cool Timeline** plugin. Here are all areas where you can use this plugin:-
-
-* Highlight your company's achievements and significant milestones.
-* Creating a **historical timeline** to showcase a **company's history**.
-* Presenting tutorial or **process steps** in a timeline format.
-* Illustrating a program's timeline.
-* Using a timeline as a visually effective way to depict **historical events**.
-* Building a timeline to highlight job stories or accomplishments.
-* Representing a **personal story** through a timeline.
-* Detailing **work experience** through a timeline format.
-* Providing a step-by-step guide using a timeline.
-* Creating an **events timeline**.
-* Developing a product **roadmap**.
-* Telling a **brand's story** through a timeline format.
-* Showcasing a project or **company's roadmap**."
-
-
-We have tried our best to create an awesome **timeline plugin** but still, if you face any installation, coding, or design error, you can [contact us](https://coolplugins.net/support/) anytime. Also, remember to try our Cool Timeline Pro version for extra cool features and design options.
+The **Timeline** module provides a versatile and visually appealing way to represent various types of stories and events.
 
 > [Buy Cool Timeline Pro](https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=get_pro&utm_content=buy_pro) | [Check Timeline Pro Documentation](https://cooltimeline.com/docs/cool-timeline-pro/)
 
@@ -298,6 +296,9 @@ The developers regularly update Cool Timeline to add new features, improve perfo
  = Where can I find the Cool Timeline plugin on GitHub? =
 You can find the Cool Timeline plugin on its official GitHub repository at <a href="https://github.com/narinder9/cool-timeline">Github</a>
 
+= How can I report security bugs? =
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/cool-timeline).
+
 == Screenshots ==
 
 1. WordPress Timeline plugin frontend view.
@@ -310,6 +311,24 @@ You can find the Cool Timeline plugin on its official GitHub repository at <a hr
 7. Create any type of timeline using Cool Timeline PRO.
 
 == Changelog ==
+
+= Version 2.9.8 | 26 Sep 2024 =
+**Improved:**
+- Fixed PHP errors.
+
+= Version 2.9.7 | 25 Sep 2024 =
+**Fixed:**
+- Required file not found issue.
+
+= Version 2.9.6 | 25 Sep 2024 =
+**Fixed:**
+- Fatal Error created in V2.9.5.
+
+= Version 2.9.5 | 25 Sep 2024 =
+**Improved:**
+- Security improvements.
+**Removed:**
+- Deprecated Gutenberg Instant Timeline Builder.
 
 = Version 2.9.4 | 26 Aug 2024 =
 **Added:**

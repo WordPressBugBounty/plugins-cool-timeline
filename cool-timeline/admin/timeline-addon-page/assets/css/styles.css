@@ -161,7 +161,8 @@ span.plugin-update-available {
 .wp-submenu a[href*="edit.php?post_type=cool_timeline"],
 .wp-submenu a[href*="post-new.php?post_type=cool_timeline"],
 .wp-submenu a[href*="edit-tags.php?taxonomy=ctl-stories&post_type=cool_timeline"],
-.wp-submenu a[href*="admin.php?page=cool_timeline_settings"] {
+.wp-submenu a[href*="admin.php?page=cool_timeline_settings"],
+.toplevel_page_cool-plugins-timeline-addon .wp-submenu a[href*="admin.php?page=twae-welcome-page"] {
     color: #f98f9e !IMPORTANT;
     background: #0c1111 !IMPORTANT;
 }

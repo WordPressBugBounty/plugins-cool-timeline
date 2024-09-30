@@ -165,7 +165,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 				$re_more     = ( ( isset( $this->settings['display_readmore'] ) && 'yes' === $this->settings['display_readmore'] ) || 'horizontal' === $layout );
 				$output     .= '<!-- ' . $this->tm_type . ' Title --><div class="ctl-title ' . esc_attr( $title_class ) . '" aria-label="2">';
 				$output     .= $re_more ? $this->get_story_link( $post_id ) : '';
-				$output     .= get_the_title();
+				$output     .= wp_kses_post( get_the_title( $post_id ) );
 				$output     .= $re_more ? '</a>' : '';
 
 				if ( ( isset( $this->settings['display_readmore'] ) && 'yes' === $this->settings['display_readmore'] ) && 'horizontal' === $layout ) {
@@ -228,7 +228,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 					$output .= '<!-- ' . $this->tm_type . ' Date --><div class="ctl-labels">';
 					$output .= '<div class="ctl-label-big story-date">';
 					$output .= $re_more ? $this->get_story_link( $post_id ) : '';
-					$output .= esc_html( $posted_date );
+					$output .= wp_kses_post( $posted_date ); // Escape date output
 					$output .= $re_more ? '</a>' : '';
 					$output .= '</div>';
 					$output .= '</div>';

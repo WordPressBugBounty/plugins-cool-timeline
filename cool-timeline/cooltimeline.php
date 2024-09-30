@@ -3,7 +3,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Cool Timeline is a responsive WordPress timeline plugin that allows you to create beautiful vertical storyline. You simply create posts, set images and date then Cool Timeline will automatically populate these posts in chronological order, based on the year and date
-  Version:2.9.4
+  Version:2.9.8
   Author:Cool Plugins
   Author URI:https://coolplugins.net
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Configuration */
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '2.9.4' );
+	define( 'CTL_V', '2.9.8' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -140,16 +140,14 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 			}
 			// Files specific for the front-end
-			// new gutenberg instant timeline builder
-			require CTL_PLUGIN_DIR . 'includes/gutenberg-instant-builder/cooltimeline-instant-builder.php';
+			// new gutenberg timeline block
 			require CTL_PLUGIN_DIR . 'includes/cool-timeline-block/src/init.php';
-			CoolTimelineInstantBuilder::get_instance();
 			require_once CTL_PLUGIN_DIR . 'admin/ctl-shortcode-generator.php';
 
 		}
 		public function onInit() {
 
-			if(self::is_theme_activate('Divi')){
+			if ( self::is_theme_activate( 'Divi' ) ) {
 				ctl_free_create_admin_notice(
 					array(
 						'id'              => 'ctl-divi-module-notice',
@@ -162,7 +160,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 						),
 						'review_interval' => 3,
 						'logo'            => CTL_PLUGIN_URL . 'assets/images/divi-timeline-logo.png',
-						'plugin_name' => 'Timeline Module For Divi',
+						'plugin_name'     => 'Timeline Module For Divi',
 					)
 				);
 			}
@@ -184,7 +182,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 							),
 							'review_interval' => 3,
 							'logo'            => CTL_PLUGIN_URL . 'assets/images/elementor-addon.png',
-							'plugin_name' => 'Timeline Widget Pro for Elementor'
+							'plugin_name'     => 'Timeline Widget Pro for Elementor',
 						)
 					);
 
@@ -240,6 +238,11 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		 * @param bool $update Whether this is an existing post being updated or not.
 		 */
 		public function ctl_save_story_meta( $post_id, $post, $update ) {
+			// Check if our nonce is set and valid
+			if ( ! isset( $_POST['ctl_nonce'] ) || ! wp_verify_nonce( $_POST['ctl_nonce'], 'ctl_save_story_meta' ) ) {
+				return; // Nonce is invalid, exit
+			}
+
 			$post_type = get_post_type( $post_id );
 			// If this isn't a 'cool_timeline' post, don't update it.
 
@@ -283,9 +286,9 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 
 
-		public static function is_theme_activate($target){
+		public static function is_theme_activate( $target ) {
 			$theme = wp_get_theme();
-			if ($theme->name == $target || stripos($theme->parent_theme, $target) !== false) {
+			if ( $theme->name == $target || stripos( $theme->parent_theme, $target ) !== false ) {
 				return true;
 			}
 			return false;

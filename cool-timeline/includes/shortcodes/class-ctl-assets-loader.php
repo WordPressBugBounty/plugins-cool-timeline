@@ -88,7 +88,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 		 * Timeline Vertical Assets Loaded
 		 */
 		public function ctl_vr_assets() {
-			if(is_rtl()){
+			if ( is_rtl() ) {
 				wp_enqueue_style( 'rtl_styles' );
 			}
 			wp_enqueue_style( 'ctl_vertical_style' );
@@ -98,7 +98,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 		 * Timeline HOrizontal Assets Loaded
 		 */
 		public function ctl_hr_assets() {
-			if(is_rtl()){
+			if ( is_rtl() ) {
 				wp_enqueue_style( 'rtl_styles' );
 			}
 			wp_enqueue_style( 'ctl_swiper_style' );
@@ -112,7 +112,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 		 * Timeline Compact Assets Loaded
 		 */
 		public function ctl_cpt_assets() {
-			if(is_rtl()){
+			if ( is_rtl() ) {
 				wp_enqueue_style( 'rtl_styles' );
 			}
 			wp_enqueue_style( 'ctl_vertical_style' );
@@ -227,7 +227,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 		 */
 		public function ctl_conditional_assets( $attributes ) {
 			$this->ctl_attr = $attributes;
-			$design         = $this->ctl_attr['layout'];
+			$design         = sanitize_text_field( $this->ctl_attr['layout'] );
 
 			if ( 'horizontal' === $design ) {
 				$this->ctl_hr_assets();

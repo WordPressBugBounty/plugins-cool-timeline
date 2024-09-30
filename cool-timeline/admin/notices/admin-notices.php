@@ -347,7 +347,7 @@ if (!class_exists('ctl_admin_notices')):
                 $us=update_option( $id . '_remove_notice','yes' );
                 die( 'Admin message removed!' );
             }else{
-                die( 'nounce verification failed!' );
+                die( 'nonce verification failed!' );
             }
 
         }
