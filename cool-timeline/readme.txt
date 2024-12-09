@@ -3,8 +3,8 @@ Contributors: narinder-singh,satindersingh,coolplugins
 Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.0
-Tested up to: 6.6
-Stable tag:2.9.8
+Tested up to: 6.7.1
+Stable tag:2.9.9
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -312,201 +312,179 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= Version 2.9.9 | 09 Dec 2024 =
+* **Tested Up To:** WordPress 6.7.1
+* **Fixed:** Load text domain issue fixed.
+
 = Version 2.9.8 | 26 Sep 2024 =
-**Improved:**
-- Fixed PHP errors.
+* **Improved:** Fixed PHP errors.
 
 = Version 2.9.7 | 25 Sep 2024 =
-**Fixed:**
-- Required file not found issue.
+* **Fixed:** Required file not found issue.
 
 = Version 2.9.6 | 25 Sep 2024 =
-**Fixed:**
-- Fatal Error created in V2.9.5.
+* **Fixed:** Fatal Error created in V2.9.5.
 
 = Version 2.9.5 | 25 Sep 2024 =
-**Improved:**
-- Security improvements.
-**Removed:**
-- Deprecated Gutenberg Instant Timeline Builder.
+* **Improved:** Security improvements.
+* **Removed:** Deprecated Gutenberg Instant Timeline Builder.
 
 = Version 2.9.4 | 26 Aug 2024 =
-**Added:**
-- Divi timeline module admin notice and tab on get started page.
-**Fixed:**
-- Vertical one-side pagination alignment issue.
+* **Added:** Divi timeline module admin notice and tab on get started page.
+* **Fixed:** Vertical one-side pagination alignment issue.
 
 = Version 2.9.3 | 11 June 2024 =
-**Added:**
--Added popup open link on date label in horizontal layout
-
-**Fixed:**
--Fixed php fatal error issue with empty shortcode.
--Fixed pagination arrow styling issue.
-
-**Improved:**
--Improved Horizontal timeline next/previous buttons.
+* **Added:** popup open link on date label in horizontal layout
+* **Fixed:** php fatal error issue with empty shortcode.
+* **Fixed:**  pagination arrow styling issue.
+* **Improved:** Horizontal timeline next/previous buttons.
 
 = Version 2.9.2 | 04 April 2024 =
--Fixed RTL css issue.
+* **Fixed:** RTL css issue.
 
 = Version 2.9.1 | 08 March 2024 =
-**Improved:**
--Video content updated on the get started page for better documentation
--Added HTML accessibility attributes
+* **Added:** HTML accessibility attributes
+* **Improved:** Video content updated on the get started page for better documentation
 
 = Version 2.9.0 | 05 March 2024 =
-**Added:**
--Added Shortcode Live Preview button in Classic Editor
--Added Get Started page in timeline admin setting for plugin information
-
-**Fixed:**
--Fixed Image Position issue.
--Fixed Setting translation issue.
--Fixed Horizontal Read More Display issue.
--Fixed Year lable font family issue.
--Fixed Vertical Icon, Icondot and Arrow styling issue in responsive device.
--Fixed Year label styling issue in responsive device.
+* **Added:** Shortcode Live Preview button in Classic Editor
+* **Added:** Get Started page in timeline admin setting for plugin information
+* **Fixed:** Image Position issue.
+* **Fixed:** Setting translation issue.
+* **Fixed:** Horizontal Read More Display issue.
+* **Fixed:** Year lable font family issue.
+* **Fixed:** Vertical Icon, Icondot and Arrow styling issue in responsive device.
+* **Fixed:** Year label styling issue in responsive device.
 
 = Version 2.8.3 | 19 December 2023 =
-**Fixed:**
--Fixed Animation issue.
--Fixed Compact CSS issue.
--Fixed Wrong Comment CSS issue.
--Added Post Per Page Option in Horizontal Layout.
+* **Added:** Post Per Page Option in Horizontal Layout.
+* **Fixed:** Animation issue.
+* **Fixed:** Compact CSS issue.
+* **Fixed:** Wrong Comment CSS issue.
 
 = Version 2.8.2 | 11 December 2023 =
-**Fixed:**
--Fixed PHP fatal error issue with 7.0 PHP version.
+* **Fixed:** PHP fatal error issue with 7.0 PHP version.
 
 = Version 2.8.1 | 08 December 2023 =
-**Removed:**
-- Remove unused files.
+* **Removed:** Remove unused files.
 
 = Version 2.8 | 08 December 2023 =
-**Added:**
-Added WordPress default Image, Heading and Paragraph core blocks for more features.
-Added migration option in instant timeline builder to migrate into Cool Timeline Block.
-Editor side PHP errors.
-
-**Improved:**
-Cool Timeline Block static CSS replaced with variable based CSS.
-Shortcode Block Design Improvement and Removed Extra code.
-
-**Removed:**
-Remove Heading, Image and Paragraph setttings from Cool Timeline Block.
+* **Added:** WordPress default Image, Heading and Paragraph core blocks for more features.
+* **Added:** migration option in instant timeline builder to migrate into Cool Timeline Block.
+* **Fixed:** Editor side PHP errors.
+* **Improved:** Cool Timeline Block static CSS replaced with variable based CSS.
+* **Improved:** Shortcode Block Design Improvement and Removed Extra code.
+* **Removed:** Remove Heading, Image and Paragraph setttings from Cool Timeline Block.
 
 = Version 2.7.1 | 17/10/2023 =
-**Fixed:**
-- Minor Security fix
+**Fixed:** Minor Security fix
 
 = Version 2.7 | 07/09/2023 =
-**Fixes:**
-- Fixed an issue with the conditional loading of styles and assets.
-
-**New Features:**
-- Added an "Add New Story" button to the story toolbar.
-- Introduced a "Go To Settings" button in the story settings panel.
-- Included new settings for Heading Tags.
-- Integrated a new Font Icon library.
-
-**Improvements:**
-- Fixed an issue with icons and center line positioning.
-- Removed the old Font Icon library for better performance.
-- Addressed the ALT Tag issue in images.
-
-**Compatibility:**
-- Tested and verified compatibility with WordPress 6.3.
+* **Fixes:** Fixed an issue with the conditional loading of styles and assets.
+* **New Features:** Added an "Add New Story" button to the story toolbar.
+* **New Features:** Introduced a "Go To Settings" button in the story settings panel.
+* **New Features:** Included new settings for Heading Tags.
+* **New Features:** Integrated a new Font Icon library.
+* **Improvements:** Fixed an issue with icons and center line positioning.
+* **Improvements:** Removed the old Font Icon library for better performance.
+* **Improvements:** Fixed an issue with icons and center line positioning.
+* **Improvements:** Addressed the ALT Tag issue in images.
+* **Compatibility:** Tested and verified compatibility with WordPress 6.3.
 
 = Version 2.6.1 | 20/03/2023 =
-* Fixed:-Minor design issues with compact layout
-* Fixed:-Minor textual changes
-* Updated:- changed constants
-* Tested up to:- Tested upto WordPress 6.2
-* Updated:- updated links and assets
+* **Fixed:** Minor design issues with compact layout
+* **Fixed:** Minor textual changes
+* **Updated:** changed constants
+* **Tested up to:** Tested upto WordPress 6.2
+* **Updated:** updated links and assets
 
 = Version 2.6 | 15/03/2023 =
-* Added:- Integrated New Cool Timeline Shortcode Block 
-* Added:- Integrated New Glightbox
-* Improved:- Updated Year section position in one-sided layout.
-* Improved:- Horizontal layout settings and design.
-* Removed:- PrettyPhoto Popup.
-* Improved: Responsive design and timeline elements.
-* Improved:- Improved settings Tabs
-* Remove:- Cool Timeline Shortcode Generator removed from Gutenberg
-* Fixed:- Fixed styling issue
+* **Added:** Integrated New Cool Timeline Shortcode Block 
+* **Added:** Integrated New Glightbox
+* **Improved:** Updated Year section position in one-sided layout.
+* **Improved:** Horizontal layout settings and design.
+* **Removed:** PrettyPhoto Popup.
+* **Improved:**Responsive design and timeline elements.
+* **Improved:** Improved settings Tabs
+* **Remove:** Cool Timeline Shortcode Generator removed from Gutenberg
+* **Fixed:** Fixed styling issue
 
 = Version 2.5 | 11/01/2023 =
-* Integration:- Alternating setting option
-* Integration:- Content alignment Setting
-* Integration:- Title bottom spacing setting
-* Integration:- Description Bottom spacing setting
-* Integration:- Item spacing setting
-* Integration:- Icon box size setting
-* Integration:- Icon size setting
-* Integration:- Line size setting
-* Integration:- Container padding setting
-* Improved:- Content update / CoolTimeline Timeline Builder Block
-* Updated:- Dashboard API.
+* **Integration:** Alternating setting option
+* **Integration:** Content alignment Setting
+* **Integration:** Title bottom spacing setting
+* **Integration:** Description Bottom spacing setting
+* **Integration:** Item spacing setting
+* **Integration:** Icon box size setting
+* **Integration:** Icon size setting
+* **Integration:** Line size setting
+* **Integration:** Container padding setting
+* **Improved:** Content update / CoolTimeline Timeline Builder Block
+* **Updated:** Dashboard API.
 
 = Version 2.4.5 | 28/09/2022 =
-* Improved:-Minor textual changes
+* **Improved:** Minor textual changes
 
 = Version 2.4.4 | 15/04/2022 =
-* Improved:-Used sanitize_text_field  and removed PHP filter vars
+* **Improved:** Used sanitize_text_field  and removed PHP filter vars
+
 = Version 2.4.3 | 14/04/2022 =
-* Improved:-Updated settings framework latest version
+* **Improved:** Updated settings framework latest version
 
 = Version 2.4.2 | 08/04/2022 =
-* Improved:- Updated settings framework latest version
-* Improved:- replace date function with gmdate() for better date function support.
-* Improved: escaped attribute and HTML output in overall code.
+* **Improved:** Updated settings framework latest version
+* **Improved:** replace date function with gmdate() for better date function support.
+* **Improved:** attribute and HTML output in overall code.
 = Version 2.4.1 | 06/04/2022 =
-* Improvements:- Removed all CDN and external images and JS file links.
-* Improvements:- loaded all images from the plugin folder.
+
+* **Improvements:** Removed all CDN and external images and JS file links.
+* **Improvements:** loaded all images from the plugin folder.
 
 = Version 2.4 | 05/04/2022 =
-* Fixed: Major security issue.
-* Improved: overall code improvements.
+* **Fixed:** Major security issue.
+* **Improved:** overall code improvements.
 
 = Version 2.3.3 | 02/02/2022 =
-* New:  Quick Date Select Button in  Timeline Story Setting meta box
-* Fixed:  Pagination issue on the home page.
-* Fixed: Minor CSS issue in horizontal Layouts.
+* **New:**  Quick Date Select Button in  Timeline Story Setting meta box
+* **Fixed:**  Pagination issue on the home page.
+* **Fixed:** Minor CSS issue in horizontal Layouts.
 
 = Version 2.3.2 | 17 Nov 2021 =
-* Improved: Added check for WordPress 4.9 versions.
+* **Improved:** Added check for WordPress 4.9 versions.
+
 = Version 2.3 | 09 Nov 2021 =
-* New: Added image size option, Font Awesome icons, color and typography settings for each element of Cool Timeline Gutenberg Timeline Block
-* New: Added right-aligned one-sided timeline layout in Cool Timeline Gutenberg Timeline Block
-* New: Story position(left/right) option or both-sided layout of Cool Timeline Gutenberg Timeline Block
+* **New:** Added image size option, Font Awesome icons, color and typography settings for each element of Cool Timeline Gutenberg Timeline Block
+* **New:** Added right-aligned one-sided timeline layout in Cool Timeline Gutenberg Timeline Block
+* **New:** Story position(left/right) option or both-sided layout of Cool Timeline Gutenberg Timeline Block
+
 = Version 2.2.3 | 22 Oct 2021 =
-* Fixed: Fixed missing icon issue
-* Fixed: Loaded settings framework only on cool_timeline post type and settings panel
-* Fixed: Conflict with WP Quiz PRO and CMB2
-* Improved: Minor code improvements
+* **Fixed:** Fixed missing icon issue
+* **Fixed:** Loaded settings framework only on cool_timeline post type and settings panel
+* **Fixed:** Conflict with WP Quiz PRO and CMB2
+* **Improved:** Minor code improvements
 
 = Version 2.2.2 | 07 Oct 2021 =
-* Fixed: Shortcode generator generating the wrong shortcode
-* Fixed: review notice bug
+* **Fixed:** Shortcode generator generating the wrong shortcode
+* **Fixed:** review notice bug
 
 = Version 2.2 | 05 Oct 2021 =
-* Added: integrated New settings panel
-* Added: integrated New meta boxes and shortcode generator
-* Added: Vertical story position settings
-* Improved: improved overall code managed codes in functionality base class
-* Improved: managed assets management in a standalone class
-* Improved: folder structure
+* **Added:** integrated New settings panel
+* **Added:** integrated New meta boxes and shortcode generator
+* **Added:** Vertical story position settings
+* **Improved:** improved overall code managed codes in functionality base class
+* **Improved:** managed assets management in a standalone class
+* **Improved:** folder structure
+
 = Version 2.1 | 13 July 2021 =
-* Added: Story Ordering/sorting feature in Instant timeline builder block
-* Added: Extended support for older Years from 1800 to 1970 years and dates 
-* Added:- Alt tag in Instant Timeline Builder images
-* Fixed: VC addon integration not working
-* Fixed: story wrong order bug
-* Fixed:- Timeline Year issue in the Spanish language
-* Updated: Gutenberg Timeline block code and libraries
-* Updated: Deprecated libraries from the timeline block
-* Updated: tested up to 5.8
+* **Added:** Story Ordering/sorting feature in Instant timeline builder block
+* **Added:** Extended support for older Years from 1800 to 1970 years and dates 
+* **Added:** Alt tag in Instant Timeline Builder images
+* **Fixed:** VC addon integration not working
+* **Fixed:** story wrong order bug
+* **Fixed:** Timeline Year issue in the Spanish language
+* **Updated:** Gutenberg Timeline block code and libraries
+* **Updated:** Deprecated libraries from the timeline block
+* **Updated:** tested up to 5.8
 <strong>More:- check <a target="_blank" href="https://bitbucket.org/!api/2.0/snippets/CoolHappy/7XXdBp/91a4ecee991e51318af6635e383e96f7b125dbc5/files/changelog">changelog.txt</a> file here.</strong>
 == Upgrade Notice ==
 
