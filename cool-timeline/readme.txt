@@ -4,7 +4,7 @@ Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.0
 Tested up to: 6.7.1
-Stable tag:2.9.9
+Stable tag:3.0.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -32,6 +32,9 @@ It is really important to let your audience know about the **history** of your *
 <li><strong>Timeline Block For Gutenberg [Free]</strong>- <a href="https://cooltimeline.com/demo/gutenberg-timeline-block/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=tbg_demo" target="_blank">View Demo</a>
 </li>
 <li><strong>Timeline Block For Gutenberg PRO [PRO]</strong>- <a href="https://cooltimeline.com/demo/timeline-block-pro/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=tbg_demo" target="_blank">View Demo</a>
+</li>
+<li><strong>Timeline Module For Divi</strong>- <a href="https://wordpress.org/plugins/timeline-module-for-divi/" target="_blank">View Plugin</a>
+</li>
 </li>
 <li><strong>Timeline Module Pro For Divi [Pro]</strong>- <a href="https://cooltimeline.com/divi/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=tmdivi_free_demo" target="_blank">View Demo</a>
 </li>
@@ -311,6 +314,12 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 7. Create any type of timeline using Cool Timeline PRO.
 
 == Changelog ==
+
+= Version 3.0.0 | 19 Dec 2024 =
+* **Added:** Support for List & Button blocks in descriptions of Cool Timeline Block.
+* **Added:** Option to change or remove element positions (e.g., media after description or title) in Cool Timeline Block.
+* **Fixed:** Deprecated JavaScript error in the block editor in Cool Timeline Block.
+* **Improved:** Updated Icon Library to prevent JavaScript errors in Cool Timeline Block.
 
 = Version 2.9.9 | 09 Dec 2024 =
 * **Tested Up To:** WordPress 6.7.1
