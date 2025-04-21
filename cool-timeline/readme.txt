@@ -3,8 +3,8 @@ Contributors: narinder-singh,satindersingh,coolplugins
 Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.0
-Tested up to: 6.7.1
-Stable tag:3.0.0
+Tested up to: 6.8
+Stable tag:3.0.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -314,6 +314,10 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 7. Create any type of timeline using Cool Timeline PRO.
 
 == Changelog ==
+
+= Version 3.0.1| 21 Apr 2025 =
+* **Fixed :** Text Domain issue.
+* **Tested Up To:** WordPress 6.8
 
 = Version 3.0.0 | 19 Dec 2024 =
 * **Added:** Support for List & Button blocks in descriptions of Cool Timeline Block.

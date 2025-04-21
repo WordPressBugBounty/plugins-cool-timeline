@@ -3,7 +3,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Cool Timeline is a responsive WordPress timeline plugin that allows you to create beautiful vertical storyline. You simply create posts, set images and date then Cool Timeline will automatically populate these posts in chronological order, based on the year and date
-  Version:3.0.0
+  Version:3.0.1
   Author:Cool Plugins
   Author URI:https://coolplugins.net
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Configuration */
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.0.0' );
+	define( 'CTL_V', '3.0.1' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -123,15 +123,15 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 			/* Loaded Backend files only */
 			if ( is_admin() ) {
-				// Codestar
-				/* Plugin Settings panel */
-
-				require_once CTL_PLUGIN_DIR . 'admin/codestar-framework/codestar-framework.php';
-				require_once CTL_PLUGIN_DIR . 'admin/ctl-admin-settings.php';
+				
 				require_once CTL_PLUGIN_DIR . 'admin/feedback/users-feedback.php';
 				// including timeline stories meta boxes class
-				require CTL_PLUGIN_DIR . 'admin/ctl-meta-fields.php';
+				
+				require_once CTL_PLUGIN_DIR . 'admin/codestar-framework/codestar-framework.php';
 
+
+				require_once CTL_PLUGIN_DIR . 'admin/feedback/users-feedback.php';
+				
 				/*** Plugin review notice file */
 				require_once CTL_PLUGIN_DIR . '/admin/notices/admin-notices.php';
 
@@ -214,7 +214,14 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 		// loading language files
 		public function ctl_load_plugin_textdomain() {
+
 			load_plugin_textdomain( 'cool-timeline', false, basename( dirname( __FILE__ ) ) . '/languages/' );
+
+			if ( is_admin() ) {
+				
+				require_once CTL_PLUGIN_DIR . 'admin/ctl-admin-settings.php';
+				require CTL_PLUGIN_DIR . 'admin/ctl-meta-fields.php';
+			}
 		}
 
 		public function ctl_plugin_redirection( $plugin ) {
