@@ -3,14 +3,42 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+// Add admin notice for timeline express migration
+function ctl_admin_notice_for_migration() {
+
+	 // Check if we're on the Cool Timeline settings page and Get Started tab
+	if (!isset($_GET['page']) || $_GET['page'] !== 'cool_timeline_settings') {
+        return;
+    }
+    // Check if timeline express is installed and migration is not completed
+    if (file_exists(WP_PLUGIN_DIR . '/timeline-express/timeline-express.php')) {
+        $migration_completed = get_option('timeline_express_migrated');
+        
+        // Only show notice if migration is not completed
+        if (!$migration_completed) {
+            ?>
+            <div class="notice ctl_migration notice-info is-dismissible">
+                <div class="migration_message_container">
+                    <p>
+                        <?php echo esc_html__('Timeline Express plugin is installed on your site. To move your announcements into Cool Timeline, you can now start the migration process.', 'cool-timeline'); ?> 
+                        <a href="admin.php?page=cool_timeline_settings#tab=migration-settings" class="button button-small ctl_migration_btn"><?php echo esc_html__('Start Migration', 'cool-timeline'); ?></a>
+                    </p>
+                </div>
+            </div>
+            <?php
+        }
+    }
+}
+add_action('admin_notices', 'ctl_admin_notice_for_migration');
+
 // Control core classes for avoid errors
 if ( class_exists( 'CSF' ) ) {
 
-	//
-	// Set a unique slug-like ID
+	
 	$prefix = 'cool_timeline_settings';
+	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-	//
 	// Create options
 	CSF::createOptions(
 		$prefix,
@@ -32,7 +60,7 @@ if ( class_exists( 'CSF' ) ) {
 		)
 	);
 
-	//
+	
 	// Create a section
 	CSF::createSection(
 		$prefix,
@@ -119,7 +147,6 @@ if ( class_exists( 'CSF' ) ) {
 					),
 				), // End Fieldset
 
-
 				array(
 					'id'      => 'first_story_position',
 					'type'    => 'button_set',
@@ -131,11 +158,50 @@ if ( class_exists( 'CSF' ) ) {
 					),
 					'default' => 'right',
 				),
-
-			),
+			)
 		)
 	);
 
+
+	$timeline_express_installed = file_exists(WP_PLUGIN_DIR . '/timeline-express/timeline-express.php');
+	
+	
+	
+	if ($timeline_express_installed  && ! get_option( 'timeline_express_migrated')) {
+		CSF::createSection(
+			$prefix,
+			array(
+				'title'  => 'Migration Settings',
+				'fields' => array(
+					array(
+						'id'     => 'migration_fieldset',
+						'type'   => 'fieldset',
+						'title'  => 'Timeline Express Migration',
+						'fields' => array(
+							array(
+								'id'      => 'migrate_stories',
+								'type'    => 'content',								
+									'content' => '
+										<div class="ctl-buttons-migrate">
+										<button class="button button-primary ctl-migrate">Migrate Content</button>
+										<div class="ctl-progress-bar">
+											<div class="ctl-progress-bar-inner">
+											</div>
+										</div>
+									</div>',
+
+								'desc'    => is_plugin_active('timeline-express/timeline-express.php') 
+									? 'Timeline Express is active. You can migrate stories now.' 
+									: 'Timeline Express is installed but not active. Please activate it to migrate stories.',
+								
+								
+							)
+						)
+					)
+				)
+			)
+		);
+	}
 
 	// Create a section
 	CSF::createSection(
@@ -274,7 +340,7 @@ if ( class_exists( 'CSF' ) ) {
 
 
 	function ctl_demo_page_content() {
-
+          
 		ob_start();
 		?>
 		<div class="ctl_started-section">
@@ -489,7 +555,7 @@ if ( class_exists( 'CSF' ) ) {
 				BlockTimelineButton.addClass('ctl_tab_active');
 			});
 			ElementAddonsButton.on("click",(event)=>{
-				window.open("https://coolplugins.net/product/elementor-timeline-widget-pro-addon/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=get-started-tabs", "_blank");
+				window.open("https://cooltimeline.com/plugin/elementor-timeline-widget-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=twae_get_started", "_blank");
 				event.preventDefault();
 			})
 			DiviModuleButton.on("click",(event)=>{
@@ -516,6 +582,5 @@ if ( class_exists( 'CSF' ) ) {
 			),
 		)
 	);
-
 
 }
