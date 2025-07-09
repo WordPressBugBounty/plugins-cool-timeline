@@ -35,6 +35,11 @@ add_action('admin_notices', 'ctl_admin_notice_for_migration');
 // Control core classes for avoid errors
 if ( class_exists( 'CSF' ) ) {
 
+
+
+
+
+
 	
 	$prefix = 'cool_timeline_settings';
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
@@ -60,13 +65,7 @@ if ( class_exists( 'CSF' ) ) {
 		)
 	);
 
-	
-	// Create a section
-	CSF::createSection(
-		$prefix,
-		array(
-			'title'  => 'General Settings',
-			'fields' => array(
+	$fields=array(
 
 
 
@@ -157,10 +156,42 @@ if ( class_exists( 'CSF' ) ) {
 						'right' => 'Right',
 					),
 					'default' => 'right',
-				),
-			)
-		)
-	);
+				)
+                
+			);
+
+					$review_option = get_option( 'cpfm_opt_in_choice_cool-timeline' );
+					
+					if($review_option){
+
+		$fields[]= array(
+			'id'      => 'ctl_cpfm_feedback_data',
+			'type'    => 'checkbox',
+			'title'   => __('Usage Data Sharing', 'ccpw1'),
+			'default' => $review_option === 'yes' ? true : false,
+			'desc'    => 'Help us make this plugin more compatible with your site by sharing non-sensitive site data. 
+				<a href="#" class="cpfm-see-terms">[See terms]</a>
+				<div id="termsBox" style="display: none; margin-top: 10px; ">
+					' . esc_html__('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect:', 'ccpw') . '
+					<ul class="ctl_data_share" >
+						<li>' . esc_html__('1. Your website home URL and WordPress admin email.', 'ccpw') . '</li>
+						<li>' . esc_html__('2. To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'ccpw') . '</li>
+					</ul>
+				</div>',
+		);
+	}
+
+
+	// Create a section
+	CSF::createSection(
+		$prefix,
+		array(
+			'title'  => 'General Settings',
+		'fields'=>$fields
+		));
+
+
+	
 
 
 	$timeline_express_installed = file_exists(WP_PLUGIN_DIR . '/timeline-express/timeline-express.php');
@@ -562,6 +593,24 @@ if ( class_exists( 'CSF' ) ) {
 				window.open("https://wordpress.org/plugins/timeline-module-for-divi");
 				event.preventDefault();
 			})
+
+			jQuery(function($) {
+
+         const $termsLink         = $('.cpfm-see-terms');
+       const $termsBox          = $('#termsBox');
+
+       $termsLink.on('click', function(e) {
+
+	    e.preventDefault();
+	
+	   const isVisible = $termsBox.toggle().is(':visible');
+	    jQuery(this).html(isVisible ? 'Hide Terms' : 'See terms');
+});
+
+
+});
+
+
 		</script>
 			
 		<!-- return $data; -->

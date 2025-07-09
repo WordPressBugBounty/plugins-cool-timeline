@@ -407,3 +407,6 @@ vertical-align: middle;
     border-color: #135e96;
     color: #fff;
 }
+#termsBox .ctl_data_share{
+  margin-top:10px;
+}
