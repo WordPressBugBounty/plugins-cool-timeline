@@ -141,12 +141,12 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 			?>
 			<!-- Cool Timeline Free V<?php echo esc_html( CTL_V ); ?> -->
 			<div class="<?php echo esc_attr( $attributes['config']['main_wrp_cls'] ); ?>" role="region" aria-label="Timeline">
-				<div id="<?php echo esc_attr( $attributes['config']['wrapper_id'] ); ?>" class="<?php echo esc_attr( $wrapper_cls ); ?>" <?php echo implode( ' ', $attributes['config']['data_attribute'] ); ?>>
+				<div id="<?php echo esc_attr( $attributes['config']['wrapper_id'] ); ?>" class="<?php echo esc_attr( $wrapper_cls ); ?>" <?php echo implode( ' ', array_map( 'wp_kses_data', $attributes['config']['data_attribute'] ) ); ?>>
 					<div class="ctl-wrapper-inside">
 						<div id="ctl-slider-container" class="ctl-slider-container swiper-container swiper-container-horizontal">
 							<!-- Timeline Container -->
 							<div class="ctl-slider-wrapper ctl-timeline-container swiper-wrapper">
-								<?php echo $response['HTML']; ?>
+							<?php echo $response['HTML']; ?>
 							</div>
 							<span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
 						</div>
@@ -187,7 +187,7 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 					echo wp_kses_post( $timeline_content ); // Escape output to allow safe HTML
 				}
 				?>
-				<div id="<?php echo esc_attr( $attributes['config']['wrapper_id'] ); ?>" class="<?php echo esc_attr( $wrapper_cls ); ?>" <?php echo implode( ' ', $attributes['config']['data_attribute'] ); ?>>
+				<div id="<?php echo esc_attr( $attributes['config']['wrapper_id'] ); ?>" class="<?php echo esc_attr( $wrapper_cls ); ?>" <?php echo implode( ' ', array_map( 'wp_kses_data', $attributes['config']['data_attribute'] ) ); ?>>
 					<div class="ctl-start"></div>
 					<!-- Timeline Container -->
 					<div class="ctl-timeline ctl-timeline-container" data-animation="<?php echo esc_attr( $attributes['config']['animation'] ); ?>">

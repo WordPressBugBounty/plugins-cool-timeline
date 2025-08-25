@@ -3,9 +3,9 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.0.5
+  Version:3.0.6
   Author:Cool Plugins
-  Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=dashboard
+  Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
   License URI: https://www.gnu.org/licenses/gpl-2.0.html
   Domain Path: /languages
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Configuration */
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.0.5' );
+	define( 'CTL_V', '3.0.6' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -325,7 +325,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		// Add the settings link to the plugins page
 		public function ctl_settings_link( $links ) {
 			array_unshift( $links, '<a href="admin.php?page=cool_timeline_settings">Settings</a>' );
-			$links[] = '<a style="font-weight:bold; color:#852636;" href="https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=plugin_list" target="_blank">Get Pro</a>';
+			$links[] = '<a style="font-weight:bold; color:#852636;" href="https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=plugins_list" target="_blank">Get Pro</a>';
 
 			return $links;
 		}

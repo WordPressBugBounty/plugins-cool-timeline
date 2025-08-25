@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function ctl_admin_notice_for_migration() {
 
 	 // Check if we're on the Cool Timeline settings page and Get Started tab
-	if (!isset($_GET['page']) || $_GET['page'] !== 'cool_timeline_settings') {
+	if (!isset($_GET['page']) || sanitize_text_field($_GET['page']) !== 'cool_timeline_settings') {
         return;
     }
     // Check if timeline express is installed and migration is not completed
@@ -172,7 +172,10 @@ if ( class_exists( 'CSF' ) ) {
 			'desc'    => 'Help us make this plugin more compatible with your site by sharing non-sensitive site data. 
 				<a href="#" class="cpfm-see-terms">[See terms]</a>
 				<div id="termsBox" style="display: none; margin-top: 10px; ">
-					' . esc_html__('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect:', 'ccpw') . '
+					' . sprintf(
+        __('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect: <a href="%s" target="_blank" rel="noopener noreferrer">click here</a>', 'ccpw'),
+        esc_url('https://my.coolplugins.net/terms/usage-tracking/')
+    ) . '
 					<ul class="ctl_data_share" >
 						<li>' . esc_html__('1. Your website home URL and WordPress admin email.', 'ccpw') . '</li>
 						<li>' . esc_html__('2. To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'ccpw') . '</li>

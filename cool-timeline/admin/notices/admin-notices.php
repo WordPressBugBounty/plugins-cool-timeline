@@ -320,11 +320,17 @@ if (!class_exists('ctl_admin_notices')):
         * This is called by a wordpress ajax hook
         */
         public function ctl_admin_review_notice_dismiss(){
-            $slug = sanitize_text_field($_REQUEST['slug']);
-            $id = sanitize_text_field($_REQUEST['id']); 
+            // Check user capabilities
+            if ( ! current_user_can( 'manage_options' ) ) {
+                wp_send_json_error( array( 'message' => __( 'Unauthorized access.', 'cool-timeline' ) ) );
+                wp_die();
+            }
+
+            $slug = sanitize_text_field(wp_unslash($_REQUEST['slug']));
+            $id = sanitize_text_field(wp_unslash($_REQUEST['id'])); 
             $nonce_key = $id . '_review_nonce' ;
 
-            if( isset( $_REQUEST['_nonce'] ) && !empty( $_REQUEST['_nonce'] ) && wp_verify_nonce( $_REQUEST['_nonce'], $nonce_key ) ){
+            if( isset( $_REQUEST['_nonce'] ) && !empty( $_REQUEST['_nonce'] ) && wp_verify_nonce( wp_unslash($_REQUEST['_nonce']), $nonce_key ) ){
                 update_option( 'cool-timeline-already-rated','yes' );
                 echo json_encode( array("success"=>"true") );
             }else{
@@ -339,11 +345,16 @@ if (!class_exists('ctl_admin_notices')):
          ************************************************************/
         public function ctl_admin_notice_dismiss()
         {
+            // Check user capabilities
+            if ( ! current_user_can( 'manage_options' ) ) {
+                wp_send_json_error( array( 'message' => __( 'Unauthorized access.', 'cool-timeline' ) ) );
+                wp_die();
+            }
            
-            $id = sanitize_text_field($_REQUEST['id']); 
+            $id = sanitize_text_field(wp_unslash($_REQUEST['id'])); 
             $wp_nonce = $id . '_notice_nonce';
 
-            if( isset( $_REQUEST[ '_nonce' ] ) && wp_verify_nonce( $_REQUEST[ '_nonce' ] , $wp_nonce ) ){
+            if( isset( $_REQUEST[ '_nonce' ] ) && wp_verify_nonce( wp_unslash($_REQUEST[ '_nonce' ]) , $wp_nonce ) ){
                 $us=update_option( $id . '_remove_notice','yes' );
                 die( 'Admin message removed!' );
             }else{

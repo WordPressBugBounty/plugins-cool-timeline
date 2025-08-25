@@ -206,6 +206,12 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
 
     public function get_shortcode() {
 
+      // Check user capabilities
+      if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
+        wp_die();
+      }
+
       ob_start();
 
       $nonce         = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';

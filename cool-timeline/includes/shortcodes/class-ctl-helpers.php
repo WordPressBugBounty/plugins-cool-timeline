@@ -25,6 +25,8 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 		 * @param string $layout shortcode layout.
 		 */
 		public static function has_shortcode_added( $current_page_id, $layout ) {
+			// Ensure we store a positive integer for the page ID in options.
+			$current_page_id = absint( $current_page_id );
 			// Get the list of saved page IDs.
 			$ctl_shortcode_page_ids = get_option( 'ctl_shortcode_page_ids', array() );
 
@@ -64,8 +66,8 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 				return $typenow;
 			} elseif ( $current_screen && $current_screen->post_type ) {
 				return $current_screen->post_type;
-			} elseif ( isset( $_REQUEST['post_type'] ) ) {
-				return sanitize_key( $_REQUEST['post_type'] );
+					} elseif ( isset( $_REQUEST['post_type'] ) ) {
+			return sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) );
 			}
 			return null;
 		}
@@ -117,15 +119,19 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 				$target          = ! empty( $settings['story_link_target'] ) ? $settings['story_link_target'] : '_self';
 				$read_more_link .= '&hellip;<a class="read_more ctl_read_more" target="' . esc_attr( $target ) . '" href="' . esc_url( $url ) . '" role="link">' . esc_html__( $read_more_lbl, 'cool-timeline' ) . '</a>';
 			}
+			  // Trim content
+               $excerpt = wp_trim_words(
+                   $post_content,
+                   $length,
+                   $read_more_link
+               );
+ 
+          // ✅ Run embed + shortcode filters
+              $excerpt = apply_filters( 'the_content', $excerpt );
 
-			$excerpt = wpautop(
-				// wp_trim_words() gets the first X words from a text string.
-				wp_trim_words(
-					$post_content, // We'll use the post's content as our text string.
-					$length, // We want the first 55 words.
-					$read_more_link // This is what comes after the first 55 words.
-				)
-			);
+              // Auto <p> tags
+             $excerpt = wpautop( $excerpt );
+
 
 			return $excerpt;
 

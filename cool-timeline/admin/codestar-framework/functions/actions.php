@@ -10,6 +10,12 @@
 if ( ! function_exists( 'csf_get_icons' ) ) {
   function csf_get_icons() {
 
+    // Check user capabilities
+    if ( ! current_user_can( 'manage_options' ) ) {
+      wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
+      wp_die();
+    }
+
     $nonce = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
 
     if ( ! wp_verify_nonce( $nonce, 'csf_icon_nonce' ) ) {

@@ -101,9 +101,9 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
 		}
 
 		public function CSF_free_shortcode_generator() {
-			// Sanitize input data
-			$id        = isset( $GLOBALS['_GET']['post'] ) ? intval( $GLOBALS['_GET']['post'] ) : '';
-			$post_type = isset( $GLOBALS['_GET']['post_type'] ) ? sanitize_text_field( $GLOBALS['_GET']['post_type'] ) : get_post_type( $id );
+					// Sanitize input data
+		$id        = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : '';
+		$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : get_post_type( $id );
 
 			// change block name if older block exists in current page condition start
 			$block_name = 'ctl-gutenberg-block';

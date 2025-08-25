@@ -58,12 +58,19 @@ if ( ! class_exists( 'CTL_Ajax_Handler' ) ) {
 		 */
 		public function ctp_shortocde_preview() {
 			if ( ! check_ajax_referer( 'ctl_preview', 'nonce', false ) ) {
-				wp_send_json_error( __( 'Invalid security token sent.', 'cool-timeline' ) );
-				wp_die( '0', 400 );
+				wp_send_json_error( __( 'Invalid security token sent.', 'cool-timeline' ), 403 );
 			}
 
-			$ctl_shortcode = isset( $_POST['shortcode'] ) ? $_POST['shortcode'] : wp_send_json_error( __( 'Try Again.', 'cool-timeline' ) );
-			require_once CTL_PLUGIN_DIR . 'includes/shortcodes/class-ctl-shortcode-preview.php';
+			if ( ! isset( $_POST['shortcode'] ) ) {
+			wp_send_json_error( __( 'Try Again.', 'cool-timeline' ) );
+			wp_die();
+		}
+		
+		// Properly sanitize the shortcode array
+		$_POST['shortcode'] = wp_unslash( $_POST['shortcode'] );
+		$ctl_shortcode = array_map( 'sanitize_text_field', $_POST['shortcode'] );
+
+		require_once CTL_PLUGIN_DIR . 'includes/shortcodes/class-ctl-shortcode-preview.php';
 
 			$assets_data = new CTL_Shortcode_Preivew( $ctl_shortcode );
 			$shortcode   = $assets_data->ctl_preview_shortcode();

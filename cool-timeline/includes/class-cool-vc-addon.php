@@ -60,7 +60,6 @@ class CoolTmVCAddon {
 								__( 'Compact Layout', 'cool-timeline' ) => 'compact',
 								__( 'Horizontal Timeline', 'cool-timeline' ) => 'horizontal',
 							),
-							'description' => __( '', 'cool-timeline' ),
 							'save_always' => true,
 						),
 						array(
@@ -117,7 +116,7 @@ class CoolTmVCAddon {
 								__( 'Summary', 'cool-timeline' ) => 'short',
 								__( 'Full Text', 'cool-timeline' ) => 'full',
 							),
-							'description' => __( '', 'cool-timeline' ),
+							'description' => __( 'Display summary or full content for each story.', 'cool-timeline' ),
 							'save_always' => true,
 							'dependency'  => array(
 								'element' => 'layout',

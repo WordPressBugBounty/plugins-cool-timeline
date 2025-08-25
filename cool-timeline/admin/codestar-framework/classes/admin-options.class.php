@@ -224,6 +224,12 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
     public function ajax_save() {
 
+      // Check user capabilities
+      if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
+        wp_die();
+      }
+
       $result = $this->set_options( true );
 
       if ( ! $result ) {

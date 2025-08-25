@@ -138,6 +138,12 @@ class UsersFeedback {
 
 
 	function submit_deactivation_response() {
+		// Check user capabilities
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Unauthorized access.', 'cool-timeline' ) ) );
+			wp_die();
+		}
+
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_cool-plugins_deactivate_feedback_nonce' ) ) {
 			wp_send_json_error();
 		} else {

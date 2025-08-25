@@ -111,20 +111,20 @@ class CoolTimelinePosttypeFree {
 				}
 				break;
 			default:
-				echo '<p>' . esc_html_e( 'Not Matched', 'cool-timeline' ) . '</p>'; // Escape output
+				echo '<p>' . esc_html__( 'Not Matched', 'cool-timeline' ) . '</p>'; // Escape output and allow translation
 		}
 	}
 
 	public function ctl_generted_page_label( $states ) {
-		if ( isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] == 'cool_timeline' ) {
+		if ( isset( $_REQUEST['post_type'] ) && sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) == 'cool_timeline' ) {
 			unset( $states['scheduled'] );
 		}
 		return $states;
 	}
 
 	public function ctl_submitbox_metabox() {
-		if ( isset( $_REQUEST['post'] ) && get_post_type( $_REQUEST['post'] ) == 'cool_timeline' ||
-		isset( $_REQUEST['post_type'] ) && $_REQUEST['post_type'] == 'cool_timeline' ) {
+		if ( isset( $_REQUEST['post'] ) && get_post_type( intval( $_REQUEST['post'] ) ) == 'cool_timeline' ||
+		isset( $_REQUEST['post_type'] ) && sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) == 'cool_timeline' ) {
 			$html  = '<div class="misc-pub-section ctl-notice">';
 			$html .= '<span style="font-weight:bold;">*Please select story Date / Year from settings below the story content.';
 			$html .= ' <a href="#ctl_post_meta"><br/>- Timeline Story Settings (Date/Year)</a>';

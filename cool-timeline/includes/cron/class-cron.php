@@ -71,8 +71,7 @@ if (!class_exists('CTL_CRONJOB')) {
 
             
             if (is_wp_error($response)) {
-
-                error_log('ctl Feedback Send Failed: ' . $response->get_error_message());
+               
                 return;
             }
             
