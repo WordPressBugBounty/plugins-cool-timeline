@@ -3,7 +3,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.0.6
+  Version:3.0.8
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Configuration */
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.0.6' );
+	define( 'CTL_V', '3.0.8' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -63,7 +63,6 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 				deactivate_plugins( 'cool-timeline/cooltimeline.php' );
 				return;
 			}
-
 			// Installation and uninstallation hooks
 			register_activation_hook( __FILE__, array( $thisIns, 'ctl_activate' ) );
 			register_deactivation_hook( __FILE__, array( $thisIns, 'ctl_deactivate' ) );
@@ -81,7 +80,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 				add_filter( "plugin_action_links_$pluginpath", array( $thisIns, 'ctl_settings_link' ) );
 				// save extra story meta for timeline sorting
 				add_action( 'save_post', array( $thisIns, 'ctl_save_story_meta' ), 10, 3 );
-				add_action( 'admin_init', array( $thisIns, 'onInit' ) );
+                require_once plugin_dir_path( __FILE__ ) . 'admin/marketing/ctl-marketing.php';
 				add_action( 'admin_menu', array( $thisIns, 'ctl_add_new_item' ) );
 
 			}
@@ -93,9 +92,6 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			require CTL_PLUGIN_DIR . 'includes/shortcode-blocks/ctl-block.php';
 		}
 
-
-		
-
 		/** Constructor */
 		public function __construct() {
 			 // Setup your plugin object here
@@ -104,7 +100,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		}
 		public function cpfm_load_file(){
 			if(!class_exists('CPFM_Feedback_Notice')){
-					require_once __DIR__ . '/admin/feedback/cpfm-feedback-notice.php';
+					require_once __DIR__ . '/admin/cpfm-feedback/cpfm-feedback-notice.php';
 				}
 			require_once __DIR__ . '/includes/cron/class-cron.php';
 		}
@@ -113,8 +109,6 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		}
 
 		public function ctl_plugin_settings_saved(){
-
-
 			
 			$data = get_option('cool_timeline_settings'); 
 
@@ -159,13 +153,13 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			/* Loaded Backend files only */
 			if ( is_admin() ) {
 				
-				require_once CTL_PLUGIN_DIR . 'admin/feedback/users-feedback.php';
+				require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
 				// including timeline stories meta boxes class
 				
 				require_once CTL_PLUGIN_DIR . 'admin/codestar-framework/codestar-framework.php';
 
 
-				require_once CTL_PLUGIN_DIR . 'admin/feedback/users-feedback.php';
+				require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
 				
 				/*** Plugin review notice file */
 				require_once CTL_PLUGIN_DIR . '/admin/notices/admin-notices.php';
@@ -193,8 +187,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			'plugin_name'=>'ctl'
 		];
 	
-				
-	
+			
 				CPFM_Feedback_Notice::cpfm_register_notice('cool-timeline', $notice);
 	
 					if (!isset($GLOBALS['cool_plugins_feedback'])) {
@@ -205,86 +198,21 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 					$GLOBALS['cool_plugins_feedback']['cool-timeline'][] = $notice;
 		   
 			});
-			add_action('cpfm_after_opt_in_ctl', function($category) {
+			add_action('cpfm_after_opt_in_ctl', function($category){
 			
 
 				if ($category === 'cool-timeline') {
 					$data = get_option('cool_timeline_settings'); 
 					$data['ctl_cpfm_feedback_data'] = true;
 			update_option('cool_timeline_settings', $data);
-					
+		
 					require_once __DIR__ . '/includes/cron/class-cron.php';
-					CTL_CRONJOB::ctl_send_data();
-					
-					
+					CTL_CRONJOB::ctl_send_data();					
 				}
 			});
-
-
-
-			
-
 		}
 
-		public function onInit() {
 
-			if ( self::is_theme_activate( 'Divi' ) ) {
-				ctl_free_create_admin_notice(
-					array(
-						'id'              => 'ctl-divi-module-notice',
-						'message'         => __(
-							'Greetings! We have noticed that you are currently using the <strong>Divi Page Builder</strong>.</br> 
-					We would like to suggest trying out the latest <strong> <a href="https://wordpress.org/plugins/timeline-module-for-divi/" target="_blank"> Timeline Module For Divi </a></strong> plugin. <a class="button button-primary" href="https://wordpress.org/plugins/timeline-module-for-divi/" target="_blank">Try it now!</a> </br>Showcase your life story or <strong>company history</strong> an <strong>elegant & precise</strong> way.
-					
-					',
-							'cool-timeline'
-						),
-						'review_interval' => 3,
-						'logo'            => CTL_PLUGIN_URL . 'assets/images/divi-timeline-logo.png',
-						'plugin_name'     => 'Timeline Module For Divi',
-					)
-				);
-			}
-
-			if ( did_action( 'elementor/loaded' ) ) {
-				$old_user_ele_install_notice = get_option( 'dismiss_ele_addon_notice' ) != false ? get_option( 'dismiss_ele_addon_notice' ) : 'no';
-				// check user already rated
-				
-
-				if ( $old_user_ele_install_notice == 'no' ) {
-					ctl_free_create_admin_notice(
-						array(
-							'id'              => 'ctl-elementor-addon-notice',
-							'message'         => __(
-								'Greetings! We have noticed that you are currently using the <strong>Elementor Page Builder</strong>.</br> 
-						We would like to suggest trying out the latest <strong> <a href="https://cooltimeline.com/plugin/elementor-timeline-widget-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=twea_inside_notice" target="_blank"> Timeline Widget Pro for Elementor </a></strong> plugin. <a class="button button-primary" href="https://cooltimeline.com/plugin/elementor-timeline-widget-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=twea_inside_notice" target="_blank">Try it now!</a> </br>Showcase your life story or <strong>company history</strong> an <strong>elegant & precise</strong> way.
-						
-						',
-								'cool-timeline'
-							),
-							'review_interval' => 3,
-							'logo'            => CTL_PLUGIN_URL . 'assets/images/elementor-addon.png',
-							'plugin_name'     => 'Timeline Widget Pro for Elementor',
-						)
-					);
-
-				}
-			}
-			/*** Plugin review notice file */
-			ctl_free_create_admin_notice(
-				array(
-					'id'              => 'ctl_review_box',  // required and must be unique
-					'slug'            => 'ctl',      // required in case of review box
-					'review'          => true,     // required and set to be true for review box
-					'review_url'      => esc_url( 'https://wordpress.org/support/plugin/cool-timeline/reviews/?filter=5#new-post' ), // required
-					'plugin_name'     => 'Cool Timeline',    // required
-					'logo'            => CTL_PLUGIN_URL . 'assets/images/cool-timeline-logo.png',    // optional: it will display logo
-					'review_interval' => 3,                    // optional: this will display review notice
-													  // after 5 days from the installation_time
-														  // default is 3
-				)
-			);
-		}
 
 		// flush rewrite rules after activation
 		public function ctl_flush_rules() {

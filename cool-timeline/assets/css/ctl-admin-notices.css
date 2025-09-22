@@ -1,26 +1,39 @@
-.ctl-feedback-notice-wrapper.notice.notice-info.is-dismissible,
-.ctl-elementor-addon-notice_admin_notice {
-  padding: 5px;
+.ctl-feedback-notice-wrapper.notice.notice-info.is-dismissible{
+  padding: 5px !important;
   display: table;
   width: calc(100% - 10px);
   max-width: 870px;
   clear: both;
   border-radius: 5px;
-  border: 2px solid #b7bfc7;
   box-sizing: border-box;
   /* margin: 5px; */
 }
-
-.ctl-feedback-notice-wrapper.notice.notice-info.is-dismissible,
-.ctl-divi-module-notice_admin_notice {
-  padding: 5px;
+.ctl-elementor-addon-notice_admin_notice {
+  padding: 0px 1px;
+  /* margin-top: 4px; */
   display: table;
   width: calc(100% - 10px);
   max-width: 870px;
   clear: both;
   border-radius: 5px;
-  border: 2px solid #8f42ec;
   box-sizing: border-box;
+  /* margin: 5px; */
+}
+.ctl-new-mkt-notice{
+  display: flex;
+  align-items: center;
+  margin: 4px 0 0 0;
+}
+
+.ctl-divi-module-notice_admin_notice {
+  padding: 0px 1px;
+  display: table;
+  width: calc(100% - 10px);
+  max-width: 870px;
+  clear: both;
+  border-radius: 5px;
+  box-sizing: border-box;
+  min-height: 38px;
   /* margin: 5px; */
 }
 
@@ -42,7 +55,7 @@
 .ctl-feedback-notice-wrapper .message_container,
 .ctl-simple-notice .message_container {
   display: table-cell;
-  padding: 0px 22px 0px 0px;
+  padding: 0px 22px 5px 5px;
   vertical-align: middle;
 }
 
@@ -51,35 +64,18 @@
   margin: 0px 10px 0 0;
 }
 
-.ctl-feedback-notice-wrapper ul li.already_rated a:after {
+.ctl-feedback-notice-wrapper ul li.already_rated a:before {
   color: #f12945;
   content: "\f153";
   font: normal 18px/21px dashicons;
   display: inline-block;
   vertical-align: middle;
-  margin-left: 3px;
+  margin-right: 5px;
 }
 
 .ctl-feedback-notice-wrapper ul li .button-primary {
-  background: #02c5be;
   box-shadow: none;
-  border: 1px solid #02c5be;
   text-shadow: none;
 }
 
-.ctl-feedback-notice-wrapper ul li .button-primary:hover {
-  background: #01b8b2;
-  border: 1px solid #017571;
-}
 
-.ctp-notice-red.uninstall {
-  max-width: 700px;
-  display: block;
-  padding: 8px;
-  border: 2px solid #157d0f;
-  margin: 10px 0;
-  background: #13a50b;
-  font-weight: bold;
-  font-size: 13px;
-  color: #ffffff;
-}

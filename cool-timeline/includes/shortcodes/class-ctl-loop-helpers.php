@@ -265,7 +265,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
                              'allowfullscreen' => true,
                              'loading'         => true,
                              'referrerpolicy'  => true,
-                        );
+						);
 			    $output .= '<!-- ' . $this->tm_type . ' Description -->';
                 $output .= '<div class="ctl-description">' . wp_kses( $content, $allowed_tags ) . '</div>';
 			}

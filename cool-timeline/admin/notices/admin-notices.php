@@ -84,7 +84,7 @@ if (!class_exists('ctl_admin_notices')):
                 return;
             }
             $message = (isset($notice['message']) && !empty($notice['message'])) ?  wp_kses( $notice['message'], 'post' ) : null ;
-            $type = (isset($notice['type']) && !empty($notice['type'])) ? 'notice-' . sanitize_text_field( $notice['type'] ) : 'notice-success' ;
+            $type = (isset($notice['type']) && !empty($notice['type'])) ? 'notice-' . sanitize_text_field( $notice['type'] ) : 'notice-info' ;
             $class = (isset($notice['class']) && !empty($notice['class'])) ? sanitize_text_field( $notice['class'] ): '';
             $review = (bool)(isset($notice['review'] ) && !empty( $notice['review'] ) ) ? sanitize_text_field( $notice['review'] ) : false;
             $slug = (isset($notice['slug']) && !empty($notice['slug'])) ? sanitize_text_field( $notice['slug'] ): '' ;
@@ -109,9 +109,10 @@ if (!class_exists('ctl_admin_notices')):
                                         );
 
             add_action('admin_notices', array($this, 'ctl_show_notice'));
-            add_action( 'admin_print_scripts', array($this, 'ctl_load_script' ) );
-            add_action('wp_ajax_cool_plugins_admin_notice', array($this, 'ctl_admin_notice_dismiss'));
-            add_action('wp_ajax_ctl_free_admin_review_notice_dismiss', array($this, 'ctl_admin_review_notice_dismiss'));
+            add_action( 'admin_enqueue_scripts', array($this, 'ctl_load_script' ) );
+            add_action('wp_ajax_ctl_admin_notice_dismiss', array($this, 'ctl_admin_notice_dismiss'));
+            add_action('wp_ajax_ctl_admin_review_notice_dismiss', array($this, 'ctl_admin_review_notice_dismiss'));
+
         }
 
         /**
@@ -121,7 +122,34 @@ if (!class_exists('ctl_admin_notices')):
     	 */
     	public function ctl_load_script() {    	
             wp_register_style( 'ctl-feedback-notice-styles', CTL_PLUGIN_URL.'assets/css/ctl-admin-notices.css',array(),CTL_V,'all' );
-            wp_enqueue_style( 'ctl-feedback-notice-styles' );
+            wp_register_script( 'admin-notices-js', CTL_PLUGIN_URL . 'admin/notices/admin-notices.js', array( 'jquery' ), CTL_V, true );
+             wp_enqueue_style( 'ctl-feedback-notice-styles' );
+            wp_enqueue_script( 'admin-notices-js' );
+
+            
+        if (!empty($this->messages)) {
+            foreach ($this->messages as $id => $message) {
+                $nonce = $message['review']
+                    ? wp_create_nonce($id . '_review_nonce')
+                    : wp_create_nonce($id . '_notice_nonce');
+
+            $localized_data = array(
+        'id'            => $id,
+        'ajax_url'      => admin_url('admin-ajax.php'),
+        'wp_nonce'      => $nonce,
+        'plugin_slug'   => $message['slug'] ?? $id,
+        'review'        => $message['review'],
+        'ajax_callback' => $message['review']
+                            ? 'ctl_admin_review_notice_dismiss'
+                            : 'ctl_admin_notice_dismiss',
+    );
+                $js_safe_id = str_replace('-', '_', $id);
+
+                wp_localize_script('admin-notices-js', 'CtlNoticeData_' . $js_safe_id, $localized_data);
+            }
+    }
+        
+        
         }
 
         /**
@@ -151,21 +179,6 @@ if (!class_exists('ctl_admin_notices')):
             if( get_option($id . '_remove_notice') ) return;
             
             $classes = 'notice ' . trim( $message['type'] ) . ' is-dismissible ' . trim( $message['class'] );
-            $script = '<script>
-            jQuery(document).ready(function ($) {
-                $(".'.esc_attr($id).'_admin_notice .notice-dismiss").css("border","2px solid red");
-                $(document).on("click",".'.esc_attr($id).'_admin_notice button.notice-dismiss", function (event) {
-                    var $this = $(this);
-                    var wrapper=$this.parents(".'.esc_attr($id).'_admin_notice");
-                    var ajaxURL=wrapper.data("ajax-url");
-                    var id = wrapper.data("plugin-slug");
-                    var wp_nonce = wrapper.data("wp-nonce");
-                    $.post(ajaxURL, { "action":"cool_plugins_admin_notice","id":id,"_nonce":wp_nonce }, function( data ) {
-                        wrapper.slideUp("fast");
-                      }, "json");
-                });
-            });
-            </script>';
             $nonce = wp_create_nonce( $id . '_notice_nonce' );
             $logo_container_link_href = "";
 
@@ -191,7 +204,7 @@ if (!class_exists('ctl_admin_notices')):
              ctl-simple-notice' data-ajax-url='".esc_url(admin_url('admin-ajax.php'))."'
               data-wp-nonce='". esc_attr($nonce) . "' 
               data-plugin-slug='".esc_attr($id)."'>".wp_kses_post($image_html)."<div class='message_container'>
-              <p>" . wp_kses_post($message['message']) . "</p></div></div>" . $script;
+              <span>" . wp_kses_post($message['message']) . "</span></div></div>";
         }
 
         /**
@@ -235,7 +248,9 @@ if (!class_exists('ctl_admin_notices')):
               
                 // check if installation days is greator then week
                if (isset($diff_days) && $diff_days>= $days ) {
+                   
                     echo $this->ctl_create_notice_content( $id, $messageObj );
+                
                }
         }
 
@@ -253,7 +268,7 @@ if (!class_exists('ctl_admin_notices')):
         $slug = $messageObj['slug'];
         $plugin_name= $messageObj['plugin_name'];
         $like_it_text='Rate Now! ★★★★★';
-        $already_rated_text=esc_html__( 'I already rated it', 'atlt2' );
+        $already_rated_text=esc_html__( 'Already Reviewed', 'atlt2' );
         $not_like_it_text=esc_html__( 'Not Interested', 'atlt2' );
         $plugin_link=  $messageObj['review_url'] ;
         $review_nonce = wp_create_nonce( $id . '_review_nonce' ); 
@@ -277,26 +292,7 @@ if (!class_exists('ctl_admin_notices')):
         </div>
         </div>
         </div>';
-        $script = '<script>
-        jQuery(document).ready(function ($) {
-            $(document).on("click", "#'.esc_attr($id).' .'.esc_attr($slug).'_dismiss_notice", function (event) {
-                var $this = $(this);
-                var wrapper=$this.parents(".'.esc_attr($slug).'-feedback-notice-wrapper");
-                var ajaxURL=wrapper.data("ajax-url");
-                var ajaxCallback=wrapper.data("ajax-callback");
-                var slug = wrapper.data("plugin-slug");
-                var id = wrapper.attr("id");
-                var wp_nonce = wrapper.data("wp-nonce");
-                $.post(ajaxURL, { "action":ajaxCallback,"slug":slug,"id":id,"_nonce":wp_nonce }, function( data ) {
-                    wrapper.slideUp("fast");
-                  })
-            });
-        });
-        </script>';
-
-        $html .= $script;
-      
-
+  
         return sprintf($html,
                 $wrap_cls,
                 $img_path,

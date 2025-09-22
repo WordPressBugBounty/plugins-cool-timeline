@@ -27,7 +27,7 @@ if (!class_exists('CTL_CRONJOB')) {
        static public function ctl_send_data() {
                    
             $feedback_url = CTL_FEEDBACK_API.'wp-json/coolplugins-feedback/v1/site';
-            require_once CTL_PLUGIN_DIR . 'admin/feedback/users-feedback.php';
+            require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
             
             if (!defined('CTL_PLUGIN_DIR')  ) {
                 
