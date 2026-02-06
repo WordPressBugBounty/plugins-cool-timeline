@@ -68,11 +68,10 @@ class ctlCompact {
 				topPosDiff =
 					jQuery(element).position().top -
 					jQuery(element).prev().position().top;
-					console.log("topPosDiff",topPosDiff);
-					console.log("element",element);
+					
 					const iconWrp=element.querySelector('.ctl-icon,.ctl-icondot');
 					const expectedSize=iconWrp.offsetHeight + 12;
-					console.log("expectedSize",expectedSize);
+				
 					if (topPosDiff < expectedSize) {
 						const gapSize=expectedSize - topPosDiff -5;
 					jQuery(element)

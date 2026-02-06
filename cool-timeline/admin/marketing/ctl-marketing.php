@@ -215,6 +215,20 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
 
             $plugin_slug = sanitize_key( wp_unslash( $_POST['slug'] ) );
 
+            	// Only allow installation of known marketing plugins (ignore client-manipulated slugs).
+			$allowed_slugs = array(
+				'timeline-module-for-divi',
+				'timeline-module-pro-for-divi/timeline-module-pro-for-divi.php',
+			);
+			if ( ! in_array( $plugin_slug, $allowed_slugs, true ) ) {
+				wp_send_json_error( array(
+					'slug'         => $plugin_slug,
+					'errorCode'    => 'plugin_not_allowed',
+					// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+					'errorMessage' => __( 'This plugin cannot be installed from here.', 'ctl' ),
+				));
+			}
+
             $status = array(
                 'install' => 'plugin',
                 'slug'    => $plugin_slug,

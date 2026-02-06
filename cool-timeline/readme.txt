@@ -4,7 +4,7 @@ Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.0
 Tested up to: 6.9
-Stable tag:3.2.1
+Stable tag:3.2.2
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -194,6 +194,10 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 7. Create any type of timeline using Cool Timeline PRO.
 
 == Changelog ==
+
+= Version 3.2.2 | 06 Feb 2026 =
+
+* **Fixed:** Incorrect plugin slug that could prevent proper installation.
 
 = Version 3.2.1 | 30 Jan 2026 =
 
