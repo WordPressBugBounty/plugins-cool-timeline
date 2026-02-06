@@ -128,7 +128,113 @@ class CtlPreview {
     }
 
     CtlCompactReInit() {
-        const script = `<script type="text/javascript">const initializeCompactMasonry=()=>{const wrapper=jQuery(".ctl-compact-wrapper .ctl-timeline-container"),animation=wrapper.data("animation");ctlCompactMasonry(wrapper,animation)};const ctlCompactMasonry=(grids,animation)=>{let grid="",leftReminder=0,rightReminder=0;grid=grids.masonry({itemSelector:".ctl-story",initLayout:!1}),grid.one("layoutComplete",()=>{let leftPos=0,topPosDiff;grid.find(".ctl-story").each((index,element)=>{if(leftPos=jQuery(element).position().left,leftPos<=0){const extraCls=leftReminder%2==0?"ctl-left-odd":"ctl-left-even",prevCls="ctl-left-odd"===extraCls?"ctl-left-even":"ctl-left-odd";jQuery(element).removeClass("ctl-story-right").removeClass("ctl-right-even").removeClass("ctl-right-odd").removeClass(prevCls).addClass("ctl-story-left").addClass(extraCls),leftReminder++}else{const extraCls=rightReminder%2==0?"ctl-right-odd":"ctl-right-even",prevCls="ctl-right-odd"===extraCls?"ctl-right-even":"ctl-right-odd";jQuery(element).removeClass("ctl-story-left").removeClass("ctl-left-odd").removeClass("ctl-left-even").removeClass(prevCls).addClass("ctl-story-right").addClass(extraCls),rightReminder++}topPosDiff=jQuery(element).position().top-jQuery(element).prev().position().top,topPosDiff<40&&(jQuery(element).removeClass("ctl-compact-up").addClass("ctl-compact-down"),jQuery(element).prev().removeClass("ctl-compact-down").addClass("ctl-compact-up"))}),jQuery(".ctl-icon").addClass("showit"),jQuery(".ctl-title").addClass("showit-after"),"none"!==animation&&AOS.refreshHard()})};setTimeout(()=>{initializeCompactMasonry(); jQuery('.ctl-compact-wrapper').css('padding','0px');},200)</script>`;
+        // const script = `<script type="text/javascript">const initializeCompactMasonry=()=>{const wrapper=jQuery(".ctl-compact-wrapper .ctl-timeline-container"),animation=wrapper.data("animation");ctlCompactMasonry(wrapper,animation)};const ctlCompactMasonry=(grids,animation)=>{let grid="",leftReminder=0,rightReminder=0;grid=grids.masonry({itemSelector:".ctl-story",initLayout:!1}),grid.one("layoutComplete",()=>{let leftPos=0,topPosDiff;grid.find(".ctl-story").each((index,element)=>{if(leftPos=jQuery(element).position().left,leftPos<=0){const extraCls=leftReminder%2==0?"ctl-left-odd":"ctl-left-even",prevCls="ctl-left-odd"===extraCls?"ctl-left-even":"ctl-left-odd";jQuery(element).removeClass("ctl-story-right").removeClass("ctl-right-even").removeClass("ctl-right-odd").removeClass(prevCls).addClass("ctl-story-left").addClass(extraCls),leftReminder++}else{const extraCls=rightReminder%2==0?"ctl-right-odd":"ctl-right-even",prevCls="ctl-right-odd"===extraCls?"ctl-right-even":"ctl-right-odd";jQuery(element).removeClass("ctl-story-left").removeClass("ctl-left-odd").removeClass("ctl-left-even").removeClass(prevCls).addClass("ctl-story-right").addClass(extraCls),rightReminder++}topPosDiff=jQuery(element).position().top-jQuery(element).prev().position().top,topPosDiff<40&&(jQuery(element).removeClass("ctl-compact-up").addClass("ctl-compact-down"),jQuery(element).prev().removeClass("ctl-compact-down").addClass("ctl-compact-up"))}),jQuery(".ctl-icon").addClass("showit"),jQuery(".ctl-title").addClass("showit-after"),"none"!==animation&&AOS.refreshHard()})};setTimeout(()=>{initializeCompactMasonry(); jQuery('.ctl-compact-wrapper').css('padding','0px');},200)</script>`;
+        const script = `<script type="text/javascript">
+(function ($) {
+
+    const initializeCompactMasonry = () => {
+        const wrapper = $('.ctl-compact-wrapper .ctl-timeline-container');
+        if (!wrapper.length) {
+            return;
+        }
+
+        const animation = wrapper.data('animation') || 'none';
+        ctlCompactMasonry(wrapper, animation);
+    };
+
+    const ctlCompactMasonry = (grids, animation) => {
+        let leftReminder = 0;
+        let rightReminder = 0;
+
+        const grid = grids.masonry({
+            itemSelector: '.ctl-story',
+            initLayout: false
+        });
+
+        /* 🔥 CRITICAL FIX:
+         * Ensure layout runs AFTER images load
+         */
+        if ($.fn.imagesLoaded) {
+            grid.imagesLoaded(() => {
+                grid.masonry('layout');
+            });
+        } else {
+            grid.masonry('layout');
+        }
+
+        grid.one('layoutComplete', () => {
+            let leftPos = 0;
+            let topPosDiff = 0;
+
+            grid.find('.ctl-story').each((index, element) => {
+                const $el   = $(element);
+                const $prev = $el.prev('.ctl-story');
+
+                leftPos = $el.position().left;
+
+                if (leftPos <= 0) {
+                    const extraCls = (leftReminder % 2 === 0) ? 'ctl-left-odd' : 'ctl-left-even';
+                    const prevCls  = extraCls === 'ctl-left-odd' ? 'ctl-left-even' : 'ctl-left-odd';
+
+                    $el
+                        .removeClass('ctl-story-right ctl-right-even ctl-right-odd ' + prevCls)
+                        .addClass('ctl-story-left ' + extraCls);
+
+                    leftReminder++;
+                } else {
+                    const extraCls = (rightReminder % 2 === 0) ? 'ctl-right-odd' : 'ctl-right-even';
+                    const prevCls  = extraCls === 'ctl-right-odd' ? 'ctl-right-even' : 'ctl-right-odd';
+
+                    $el
+                        .removeClass('ctl-story-left ctl-left-odd ctl-left-even ' + prevCls)
+                        .addClass('ctl-story-right ' + extraCls);
+
+                    rightReminder++;
+                }
+
+                if ($prev.length) {
+                    topPosDiff = $el.position().top - $prev.position().top;
+
+                    const iconWrp = element.querySelector('.ctl-icon, .ctl-icondot');
+                    if (iconWrp) {
+                        const expectedSize = iconWrp.offsetHeight + 12;
+
+                        if (topPosDiff < expectedSize) {
+                            const gapSize = expectedSize - topPosDiff - 5;
+
+                            $el
+                                .removeClass('ctl-compact-up')
+                                .addClass('ctl-compact-down')
+                                .css('--ctw-compact-top-spacing', gapSize + 'px');
+
+                            $prev
+                                .removeClass('ctl-compact-down')
+                                .addClass('ctl-compact-up');
+                        }
+                    }
+                }
+            });
+
+            $('.ctl-icon').addClass('showit');
+            $('.ctl-title').addClass('showit-after');
+
+            if (animation !== 'none' && typeof AOS !== 'undefined') {
+                AOS.refreshHard();
+            }
+        });
+    };
+
+    $(document).ready(initializeCompactMasonry);
+
+    $(window).on('load', function () {
+        setTimeout(initializeCompactMasonry, 200);
+    });
+
+    $(window).on('resize', initializeCompactMasonry);
+
+})(jQuery);
+</script>`;
+
         return script;
     }
 }

@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) {
 	die;
 } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: checkbox
@@ -74,13 +75,14 @@ if ( ! class_exists( 'CSF_Field_checkbox' ) ) {
 						}
 					}
 
-					echo '</ul>';
+				echo '</ul>';
 
-				} else {
+			} else {
 
-					echo ( ! empty( $this->field['empty_message'] ) ) ? esc_attr( $this->field['empty_message'] ) : esc_html__( 'No data available.', 'csf' );
+				// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+				echo ( ! empty( $this->field['empty_message'] ) ) ? esc_attr( $this->field['empty_message'] ) : esc_html__( 'No data available.', 'csf' );
 
-				}
+			}
 			} else {
 
 						  echo '<label class="csf-checkbox">';

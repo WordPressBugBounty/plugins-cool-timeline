@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: icon
@@ -16,10 +17,12 @@ if ( ! class_exists( 'CSF_Field_icon' ) ) {
 
     public function render() {
 
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
       $args = wp_parse_args( $this->field, array(
         'button_title' => esc_html__( 'Add Icon', 'csf' ),
         'remove_title' => esc_html__( 'Remove Icon', 'csf' ),
       ) );
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       echo $this->field_before();
 
@@ -50,11 +53,14 @@ if ( ! class_exists( 'CSF_Field_icon' ) ) {
             <div class="csf-modal-overlay"></div>
             <div class="csf-modal-inner">
               <div class="csf-modal-title">
-                <?php esc_html_e( 'Add Icon', 'csf' ); ?>
+                <?php // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+                esc_html_e( 'Add Icon', 'csf' ); ?>
                 <div class="csf-modal-close csf-icon-close"></div>
               </div>
               <div class="csf-modal-header">
-                <input type="text" placeholder="<?php esc_html_e( 'Search...', 'csf' ); ?>" class="csf-icon-search" />
+                <input type="text" placeholder="<?php 
+                // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+                esc_html_e( 'Search...', 'csf' ); ?>" class="csf-icon-search" />
               </div>
               <div class="csf-modal-content">
                 <div class="csf-modal-loading"><div class="csf-loading"></div></div>

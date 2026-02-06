@@ -31,9 +31,12 @@ if ( ! class_exists( 'CSF_Taxonomy_Options' ) ) {
     public function __construct( $key, $params ) {
 
       $this->unique     = $key;
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->args       = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->sections   = apply_filters( "csf_{$this->unique}_sections", $params['sections'], $this );
       $this->taxonomies = ( is_array( $this->args['taxonomy'] ) ) ? $this->args['taxonomy'] : array_filter( (array) $this->args['taxonomy'] );
+      // phpcs:ignore WordPress.Security.NonceVerification.Recommended
       $this->taxonomy   = ( ! empty( $_REQUEST[ 'taxonomy' ] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST[ 'taxonomy' ] ) ) : '';
       $this->pre_fields = $this->pre_fields( $this->sections );
 
@@ -140,7 +143,9 @@ if ( ! class_exists( 'CSF_Taxonomy_Options' ) ) {
           $section_icon  = ( ! empty( $section['icon'] ) ) ? '<i class="csf-section-icon '. esc_attr( $section['icon'] ) .'"></i>' : '';
           $section_title = ( ! empty( $section['title'] ) ) ? $section['title'] : '';
 
+          // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
           echo ( $section_title || $section_icon ) ? '<div class="csf-section-title"><h3>'. $section_icon . $section_title .'</h3></div>' : '';
+          // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
           echo ( ! empty( $section['description'] ) ) ? '<div class="csf-field csf-section-description">'. $section['description'] .'</div>' : '';
 
           if ( ! empty( $section['fields'] ) ) {
@@ -182,7 +187,8 @@ if ( ! class_exists( 'CSF_Taxonomy_Options' ) ) {
 
       // XSS ok.
       // No worries, This "POST" requests is sanitizing in the below foreach.
-      $request = ( ! empty( $_POST[ $this->unique ] ) ) ? $_POST[ $this->unique ] : array();
+      // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+      $request = ( ! empty( $_POST[ $this->unique ] ) ) ? wp_unslash( $_POST[ $this->unique ] ) : array();
 
       if ( ! empty( $request ) ) {
 
@@ -243,8 +249,10 @@ if ( ! class_exists( 'CSF_Taxonomy_Options' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $data = apply_filters( "csf_{$this->unique}_save", $data, $term_id, $this );
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_before", $data, $term_id, $this );
 
       if ( empty( $data ) ) {
@@ -273,8 +281,10 @@ if ( ! class_exists( 'CSF_Taxonomy_Options' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_saved", $data, $term_id, $this );
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_after", $data, $term_id, $this );
 
     }

@@ -5176,3 +5176,13 @@ span.flatpickr-weekday {
   font-size: 13px;
     line-height: 25px;
 }
+
+.csf-field-checkbox .csf-fieldset {
+  display:flex;
+  gap:4px;
+  align-items: center;
+  
+}
+.csf-field-checkbox .csf-fieldset .csf-desc-text{
+  margin-top: 0px;
+}

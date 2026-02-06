@@ -65,6 +65,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
     public function __construct() {
 
       // Init action
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( 'csf_init' );
 
       // Setup textdomain
@@ -176,6 +177,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
       // Setup taxonomy option framework
       $params = array();
       if ( class_exists( 'CSF_Taxonomy_Options' ) && ! empty( self::$args['taxonomy_options'] ) ) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $taxonomy = ( isset( $_GET['taxonomy'] ) ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : '';
         foreach ( self::$args['taxonomy_options'] as $key => $value ) {
           if ( ! empty( self::$args['sections'][$key] ) && ! isset( self::$inited[$key] ) ) {
@@ -247,6 +249,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( 'csf_loaded' );
 
     }
@@ -328,6 +331,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
 
       $path     = '';
       $file     = ltrim( $file, '/' );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $override = apply_filters( 'csf_override', 'csf-override' );
 
       if ( file_exists( get_parent_theme_file_path( $override .'/'. $file ) ) ) {
@@ -404,6 +408,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
       }
 
       // Include all framework fields
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $fields = apply_filters( 'csf_fields', array(
         'accordion',
         'background',
@@ -561,6 +566,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       if ( ! apply_filters( 'csf_enqueue_assets', self::$enqueue ) ) {
         return;
       }
@@ -573,10 +579,14 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
       wp_enqueue_script( 'wp-color-picker' );
 
       // Font awesome 4 and 5 loader
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       if ( apply_filters( 'csf_fa4', false ) ) {
+        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
         wp_enqueue_style( 'csf-fa', 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css', array(), '4.7.0', 'all' );
       } else {
+        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
         wp_enqueue_style( 'csf-fa5', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css', array(), '5.15.5', 'all' );
+        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
         wp_enqueue_style( 'csf-fa5-v4-shims', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.min.css', array(), '5.15.5', 'all' );
       }
 
@@ -597,11 +607,16 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
 
       // Main variables
       wp_localize_script( 'csf', 'csf_vars', array(
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         'color_palette'     => apply_filters( 'csf_color_palette', array() ),
         'i18n'              => array(
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           'confirm'         => esc_html__( 'Are you sure?', 'csf' ),
-          'typing_text'     => esc_html__( 'Please enter %s or more characters', 'csf' ),
+          /* translators: %s: minimum number of characters */
+          'typing_text'     => esc_html__( 'Please enter %s or more characters', 'csf' ), // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           'searching_text'  => esc_html__( 'Searching...', 'csf' ),
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           'no_results_text' => esc_html__( 'No results found.', 'csf' ),
         ),
       ) );
@@ -624,6 +639,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
         }
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( 'csf_enqueue' );
 
     }
@@ -652,6 +668,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
 
           $query['display'] = 'swap';
 
+          // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
           wp_enqueue_style( 'csf-google-web-fonts', esc_url( add_query_arg( $query, '//fonts.googleapis.com/css' ) ), array(), null );
 
         }
@@ -664,6 +681,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
             $fonts[] = $family . ( ( ! empty( $styles ) ) ? ':'. implode( ',', $styles ) : '' );
           }
 
+          // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter,WordPress.WP.EnqueuedResourceParameters.MissingVersion,PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
           wp_enqueue_script( 'csf-google-web-fonts', esc_url( '//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js' ), array(), null );
 
           wp_localize_script( 'csf-google-web-fonts', 'WebFontConfig', array( 'google' => array( 'families' => $fonts ) ) );
@@ -677,6 +695,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
     // Add admin body class
     public static function add_admin_body_class( $classes ) {
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       if ( apply_filters( 'csf_fa4', false ) ) {
         $classes .= 'csf-fa5-shims';
       }
@@ -689,6 +708,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
     public static function add_custom_css() {
 
       if ( ! empty( self::$css ) ) {
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo '<style type="text/css">'. wp_strip_all_tags( self::$css ) .'</style>';
       }
 
@@ -703,6 +723,7 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
         $field_type = $field['type'];
 
         $field            = array();
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         $field['content'] = esc_html__( 'Oops! Not allowed.', 'csf' ) .' <strong>('. $field_type .')</strong>';
         $field['type']    = 'notice';
         $field['style']   = 'danger';
@@ -749,13 +770,16 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
       }
 
       // These attributes has been sanitized above.
+      // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
       echo '<div class="csf-field csf-field-'. $field_type . $is_pseudo . $class . $visible .'"'. $depend .'>';
 
       if ( ! empty( $field_type ) ) {
 
         if ( ! empty( $field['title'] ) ) {
           echo '<div class="csf-title">';
+          // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
           echo '<h4>'. $field['title'] .'</h4>';
+          // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
           echo ( ! empty( $field['subtitle'] ) ) ? '<div class="csf-subtitle-text">'. $field['subtitle'] .'</div>' : '';
           echo '</div>';
         }
@@ -771,10 +795,12 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
           $instance = new $classname( $field, $value, $unique, $where, $parent );
           $instance->render();
         } else {
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           echo '<p>'. esc_html__( 'Field not found!', 'csf' ) .'</p>';
         }
 
       } else {
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<p>'. esc_html__( 'Field not found!', 'csf' ) .'</p>';
       }
 

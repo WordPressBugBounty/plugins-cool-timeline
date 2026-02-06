@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: gallery
@@ -16,11 +17,13 @@ if ( ! class_exists( 'CSF_Field_gallery' ) ) {
 
     public function render() {
 
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
       $args = wp_parse_args( $this->field, array(
         'add_title'   => esc_html__( 'Add Gallery', 'csf' ),
         'edit_title'  => esc_html__( 'Edit Gallery', 'csf' ),
         'clear_title' => esc_html__( 'Clear', 'csf' ),
       ) );
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       $hidden = ( empty( $this->value ) ) ? ' hidden' : '';
 

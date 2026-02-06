@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) {
 	die;
 } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: border
@@ -19,29 +20,31 @@ if ( ! class_exists( 'CSF_Field_border' ) ) {
 
 		public function render() {
 
-			$args = wp_parse_args(
-				$this->field,
-				array(
-					'top_icon'           => '<i class="fas fa-long-arrow-alt-up"></i>',
-					'left_icon'          => '<i class="fas fa-long-arrow-alt-left"></i>',
-					'bottom_icon'        => '<i class="fas fa-long-arrow-alt-down"></i>',
-					'right_icon'         => '<i class="fas fa-long-arrow-alt-right"></i>',
-					'all_icon'           => '<i class="fas fa-arrows-alt"></i>',
-					'top_placeholder'    => esc_html__( 'top', 'csf' ),
-					'right_placeholder'  => esc_html__( 'right', 'csf' ),
-					'bottom_placeholder' => esc_html__( 'bottom', 'csf' ),
-					'left_placeholder'   => esc_html__( 'left', 'csf' ),
-					'all_placeholder'    => esc_html__( 'all', 'csf' ),
-					'top'                => true,
-					'left'               => true,
-					'bottom'             => true,
-					'right'              => true,
-					'all'                => false,
-					'color'              => true,
-					'style'              => true,
-					'unit'               => 'px',
-				)
-			);
+		// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+		$args = wp_parse_args(
+			$this->field,
+			array(
+				'top_icon'           => '<i class="fas fa-long-arrow-alt-up"></i>',
+				'left_icon'          => '<i class="fas fa-long-arrow-alt-left"></i>',
+				'bottom_icon'        => '<i class="fas fa-long-arrow-alt-down"></i>',
+				'right_icon'         => '<i class="fas fa-long-arrow-alt-right"></i>',
+				'all_icon'           => '<i class="fas fa-arrows-alt"></i>',
+				'top_placeholder'    => esc_html__( 'top', 'csf' ),
+				'right_placeholder'  => esc_html__( 'right', 'csf' ),
+				'bottom_placeholder' => esc_html__( 'bottom', 'csf' ),
+				'left_placeholder'   => esc_html__( 'left', 'csf' ),
+				'all_placeholder'    => esc_html__( 'all', 'csf' ),
+				'top'                => true,
+				'left'               => true,
+				'bottom'             => true,
+				'right'              => true,
+				'all'                => false,
+				'color'              => true,
+				'style'              => true,
+				'unit'               => 'px',
+			)
+		);
+		// phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
 			$default_value = array(
 				'top'    => '',
@@ -53,17 +56,19 @@ if ( ! class_exists( 'CSF_Field_border' ) ) {
 				'all'    => '',
 			);
 
-			$border_props = array(
-				'solid'  => esc_html__( 'Solid', 'csf' ),
-				'dashed' => esc_html__( 'Dashed', 'csf' ),
-				'dotted' => esc_html__( 'Dotted', 'csf' ),
-				'double' => esc_html__( 'Double', 'csf' ),
-				'inset'  => esc_html__( 'Inset', 'csf' ),
-				'outset' => esc_html__( 'Outset', 'csf' ),
-				'groove' => esc_html__( 'Groove', 'csf' ),
-				'ridge'  => esc_html__( 'ridge', 'csf' ),
-				'none'   => esc_html__( 'None', 'csf' ),
-			);
+		// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+		$border_props = array(
+			'solid'  => esc_html__( 'Solid', 'csf' ),
+			'dashed' => esc_html__( 'Dashed', 'csf' ),
+			'dotted' => esc_html__( 'Dotted', 'csf' ),
+			'double' => esc_html__( 'Double', 'csf' ),
+			'inset'  => esc_html__( 'Inset', 'csf' ),
+			'outset' => esc_html__( 'Outset', 'csf' ),
+			'groove' => esc_html__( 'Groove', 'csf' ),
+			'ridge'  => esc_html__( 'ridge', 'csf' ),
+			'none'   => esc_html__( 'None', 'csf' ),
+		);
+		// phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
 			$default_value = ( ! empty( $this->field['default'] ) ) ? wp_parse_args( $this->field['default'], $default_value ) : $default_value;
 

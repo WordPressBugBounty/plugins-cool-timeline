@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) {
 	die;
 } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: dimensions
@@ -17,22 +18,24 @@ if ( ! class_exists( 'CSF_Field_dimensions' ) ) {
 			parent::__construct( $field, $value, $unique, $where, $parent );
 		}
 
-		public function render() {
+	public function render() {
 
-			$args = wp_parse_args(
-				$this->field,
-				array(
-					'width_icon'         => '<i class="fas fa-arrows-alt-h"></i>',
-					'height_icon'        => '<i class="fas fa-arrows-alt-v"></i>',
-					'width_placeholder'  => esc_html__( 'width', 'csf' ),
-					'height_placeholder' => esc_html__( 'height', 'csf' ),
-					'width'              => true,
-					'height'             => true,
-					'unit'               => true,
-					'show_units'         => true,
-					'units'              => array( 'px', '%', 'em' ),
-				)
-			);
+		// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+		$args = wp_parse_args(
+			$this->field,
+			array(
+				'width_icon'         => '<i class="fas fa-arrows-alt-h"></i>',
+				'height_icon'        => '<i class="fas fa-arrows-alt-v"></i>',
+				'width_placeholder'  => esc_html__( 'width', 'csf' ),
+				'height_placeholder' => esc_html__( 'height', 'csf' ),
+				'width'              => true,
+				'height'             => true,
+				'unit'               => true,
+				'show_units'         => true,
+				'units'              => array( 'px', '%', 'em' ),
+			)
+		);
+		// phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
 			$default_values = array(
 				'width'  => '',

@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' )  ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 
 //
 // Create a widget 1
@@ -49,6 +50,7 @@ CSF::createWidget( 'csf_widget_example_1', array(
 // Attention: This function named considering above widget base id.
 //
 if ( ! function_exists( 'csf_widget_example_1' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_widget_example_1( $args, $instance ) {
 
     echo $args['before_widget'];
@@ -156,6 +158,7 @@ CSF::createWidget( 'csf_widget_example_2', array(
 // Attention: This function named considering above widget base id.
 //
 if ( ! function_exists( 'csf_widget_example_2' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_widget_example_2( $args, $instance ) {
 
     echo $args['before_widget'];

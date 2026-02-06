@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: group
@@ -16,6 +17,7 @@ if ( ! class_exists( 'CSF_Field_group' ) ) {
 
     public function render() {
 
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
       $args = wp_parse_args( $this->field, array(
         'max'                       => 0,
         'min'                       => 0,
@@ -27,6 +29,7 @@ if ( ! class_exists( 'CSF_Field_group' ) ) {
         'accordion_title_by'        => array(),
         'accordion_title_by_prefix' => ' ',
       ) );
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       $title_prefix    = ( ! empty( $args['accordion_title_prefix'] ) ) ? $args['accordion_title_prefix'] : '';
       $title_number    = ( ! empty( $args['accordion_title_number'] ) ) ? true : false;
@@ -38,6 +41,7 @@ if ( ! class_exists( 'CSF_Field_group' ) ) {
 
       if ( preg_match( '/'. preg_quote( '['. $this->field['id'] .']' ) .'/', $this->unique ) ) {
 
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<div class="csf-notice csf-notice-danger">'. esc_html__( 'Error: Field ID conflict.', 'csf' ) .'</div>';
 
       } else {
@@ -49,6 +53,7 @@ if ( ! class_exists( 'CSF_Field_group' ) ) {
           echo '<div class="csf-cloneable-helper">';
           echo '<i class="csf-cloneable-sort fas fa-arrows-alt"></i>';
           echo '<i class="csf-cloneable-clone far fa-clone"></i>';
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           echo '<i class="csf-cloneable-remove csf-confirm fas fa-times" data-confirm="'. esc_html__( 'Are you sure to delete this item?', 'csf' ) .'"></i>';
           echo '</div>';
 
@@ -104,6 +109,7 @@ if ( ! class_exists( 'CSF_Field_group' ) ) {
               echo '<div class="csf-cloneable-helper">';
               echo '<i class="csf-cloneable-sort fas fa-arrows-alt"></i>';
               echo '<i class="csf-cloneable-clone far fa-clone"></i>';
+              // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
               echo '<i class="csf-cloneable-remove csf-confirm fas fa-times" data-confirm="'. esc_html__( 'Are you sure to delete this item?', 'csf' ) .'"></i>';
               echo '</div>';
 
@@ -138,7 +144,9 @@ if ( ! class_exists( 'CSF_Field_group' ) ) {
 
         echo '</div>';
 
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<div class="csf-cloneable-alert csf-cloneable-max">'. esc_html__( 'You cannot add more.', 'csf' ) .'</div>';
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<div class="csf-cloneable-alert csf-cloneable-min">'. esc_html__( 'You cannot remove more.', 'csf' ) .'</div>';
         echo '<a href="#" class="button button-primary csf-cloneable-add">'. $args['button_title'] .'</a>';
 

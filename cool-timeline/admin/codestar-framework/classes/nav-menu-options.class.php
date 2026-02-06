@@ -24,7 +24,9 @@ if ( ! class_exists( 'CSF_Nav_Menu_Options' ) ) {
     public function __construct( $key, $params ) {
 
       $this->unique   = $key;
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->args     = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->sections = apply_filters( "csf_{$this->unique}_sections", $params['sections'], $this );
 
       add_action( 'wp_nav_menu_item_custom_fields', array( $this, 'wp_nav_menu_item_custom_fields' ), 10, 4 );
@@ -111,7 +113,9 @@ if ( ! class_exists( 'CSF_Nav_Menu_Options' ) ) {
 
           echo '<div class="csf-fields">';
 
+          // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
           echo ( $section_title || $section_icon ) ? '<div class="csf-nav-menu-title"><h4>'. $section_icon . $section_title .'</h4></div>' : '';
+          // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
           echo ( ! empty( $section['description'] ) ) ? '<div class="csf-field csf-section-description">'. $section['description'] .'</div>' : '';
 
           if ( ! empty( $section['fields'] ) ) {
@@ -154,7 +158,8 @@ if ( ! class_exists( 'CSF_Nav_Menu_Options' ) ) {
 
       // XSS ok.
       // No worries, This "POST" requests is sanitizing in the below foreach.
-      $request = ( ! empty( $_POST[ $this->unique ][ $menu_item_db_id ] ) ) ? $_POST[ $this->unique ][ $menu_item_db_id ] : array();
+      // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+      $request = ( ! empty( $_POST[ $this->unique ][ $menu_item_db_id ] ) ) ? wp_unslash( $_POST[ $this->unique ][ $menu_item_db_id ] ) : array();
 
       if ( ! empty( $request ) ) {
 
@@ -215,8 +220,10 @@ if ( ! class_exists( 'CSF_Nav_Menu_Options' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $data = apply_filters( "csf_{$this->unique}_save", $data, $menu_item_db_id, $this );
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_before", $data, $menu_item_db_id, $this );
 
       if ( empty( $data ) ) {
@@ -245,8 +252,10 @@ if ( ! class_exists( 'CSF_Nav_Menu_Options' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_saved", $data, $menu_item_db_id, $this );
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_after", $data, $menu_item_db_id, $this );
 
     }

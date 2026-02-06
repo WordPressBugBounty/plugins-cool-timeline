@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: background
@@ -33,6 +34,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
         'background_auto_attributes'    => false,
         'compact'                       => false,
         'background_image_library'      => 'image',
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         'background_image_placeholder'  => esc_html__( 'Not selected', 'csf' ),
       ) );
 
@@ -69,6 +71,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
 
         echo '<div class="csf--color">';
 
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="csf--title">'. esc_html__( 'From', 'csf' ) .'</div>' : '';
 
         CSF::field( array(
@@ -87,6 +90,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
 
         echo '<div class="csf--color">';
 
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="csf--title">'. esc_html__( 'To', 'csf' ) .'</div>' : '';
 
         CSF::field( array(
@@ -105,8 +109,10 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
 
         echo '<div class="csf--color">';
 
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo ( ! empty( $args['background_gradient'] ) ) ? '<div class="csf---title">'. esc_html__( 'Direction', 'csf' ) .'</div>' : '';
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'          => 'background-gradient-direction',
           'type'        => 'select',
@@ -118,6 +124,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             '-135deg'   => esc_html__( '&#8665; corner top to left', 'csf' ),
           ),
         ), $this->value['background-gradient-direction'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
         echo '</div>';
 
@@ -154,6 +161,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Position
       if ( ! empty( $args['background_position'] ) ) {
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'              => 'background-position',
           'type'            => 'select',
@@ -170,6 +178,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             'right bottom'  => esc_html__( 'Right Bottom', 'csf' ),
           ),
         ), $this->value['background-position'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       }
 
@@ -177,6 +186,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Repeat
       if ( ! empty( $args['background_repeat'] ) ) {
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'          => 'background-repeat',
           'type'        => 'select',
@@ -188,6 +198,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             'repeat-y'  => esc_html__( 'Repeat Vertically', 'csf' ),
           ),
         ), $this->value['background-repeat'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       }
 
@@ -195,6 +206,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Attachment
       if ( ! empty( $args['background_attachment'] ) ) {
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'       => 'background-attachment',
           'type'     => 'select',
@@ -204,6 +216,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             'fixed'  => esc_html__( 'Fixed', 'csf' ),
           ),
         ), $this->value['background-attachment'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       }
 
@@ -211,6 +224,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Size
       if ( ! empty( $args['background_size'] ) ) {
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'        => 'background-size',
           'type'      => 'select',
@@ -221,6 +235,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             'auto'    => esc_html__( 'Auto', 'csf' ),
           ),
         ), $this->value['background-size'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       }
 
@@ -228,6 +243,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Origin
       if ( ! empty( $args['background_origin'] ) ) {
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'            => 'background-origin',
           'type'          => 'select',
@@ -238,6 +254,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             'content-box' => esc_html__( 'Content Box', 'csf' ),
           ),
         ), $this->value['background-origin'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       }
 
@@ -245,6 +262,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Clip
       if ( ! empty( $args['background_clip'] ) ) {
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'            => 'background-clip',
           'type'          => 'select',
@@ -255,6 +273,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             'content-box' => esc_html__( 'Content Box', 'csf' ),
           ),
         ), $this->value['background-clip'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       }
 
@@ -262,6 +281,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
       // Background Blend Mode
       if ( ! empty( $args['background_blend_mode'] ) ) {
 
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         CSF::field( array(
           'id'            => 'background-blend-mode',
           'type'          => 'select',
@@ -279,6 +299,7 @@ if ( ! class_exists( 'CSF_Field_background' ) ) {
             'luminosity'  => esc_html__( 'Luminosity', 'csf' ),
           ),
         ), $this->value['background-blend-mode'], $this->field_name(), 'field/background' );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       }
 

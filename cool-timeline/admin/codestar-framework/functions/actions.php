@@ -8,10 +8,12 @@
  *
  */
 if ( ! function_exists( 'csf_get_icons' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_get_icons() {
 
     // Check user capabilities
     if ( ! current_user_can( 'manage_options' ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
       wp_die();
     }
@@ -19,15 +21,18 @@ if ( ! function_exists( 'csf_get_icons' ) ) {
     $nonce = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
 
     if ( ! wp_verify_nonce( $nonce, 'csf_icon_nonce' ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
     }
 
     ob_start();
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
     $icon_library = ( apply_filters( 'csf_fa4', false ) ) ? 'fa4' : 'fa5';
 
     CSF::include_plugin_file( 'fields/icon/'. $icon_library .'-icons.php' );
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
     $icon_lists = apply_filters( 'csf_field_icon_add_icons', csf_get_default_icons() );
 
     if ( ! empty( $icon_lists ) ) {
@@ -44,6 +49,7 @@ if ( ! function_exists( 'csf_get_icons' ) ) {
 
     } else {
 
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       echo '<div class="csf-error-text">'. esc_html__( 'No data available.', 'csf' ) .'</div>';
 
     }
@@ -65,16 +71,19 @@ if ( ! function_exists( 'csf_get_icons' ) ) {
  *
  */
 if ( ! function_exists( 'csf_export' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_export() {
 
     $nonce  = ( ! empty( $_GET[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'nonce' ] ) ) : '';
     $unique = ( ! empty( $_GET[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'unique' ] ) ) : '';
 
     if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       die( esc_html__( 'Error: Invalid nonce verification.', 'csf' ) );
     }
 
     if ( empty( $unique ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       die( esc_html__( 'Error: Invalid key.', 'csf' ) );
     }
 
@@ -102,21 +111,26 @@ if ( ! function_exists( 'csf_export' ) ) {
  *
  */
 if ( ! function_exists( 'csf_import_ajax' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_import_ajax() {
 
     $nonce  = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
     $unique = ( ! empty( $_POST[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'unique' ] ) ) : '';
+    // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
     $data   = ( ! empty( $_POST[ 'data' ] ) ) ? wp_kses_post_deep( json_decode( wp_unslash( trim( $_POST[ 'data' ] ) ), true ) ) : array();
 
     if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
     }
 
     if ( empty( $unique ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid key.', 'csf' ) ) );
     }
 
     if ( empty( $data ) || ! is_array( $data ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: The response is not a valid JSON response.', 'csf' ) ) );
     }
 
@@ -138,12 +152,14 @@ if ( ! function_exists( 'csf_import_ajax' ) ) {
  *
  */
 if ( ! function_exists( 'csf_reset_ajax' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_reset_ajax() {
 
     $nonce  = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
     $unique = ( ! empty( $_POST[ 'unique' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'unique' ] ) ) : '';
 
     if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
     }
 
@@ -165,24 +181,30 @@ if ( ! function_exists( 'csf_reset_ajax' ) ) {
  *
  */
 if ( ! function_exists( 'csf_chosen_ajax' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_chosen_ajax() {
 
     $nonce = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
     $type  = ( ! empty( $_POST[ 'type' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'type' ] ) ) : '';
     $term  = ( ! empty( $_POST[ 'term' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'term' ] ) ) : '';
-    $query = ( ! empty( $_POST[ 'query_args' ] ) ) ? wp_kses_post_deep( $_POST[ 'query_args' ] ) : array();
+    // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $query = ( ! empty( $_POST[ 'query_args' ] ) ) ? wp_kses_post_deep( wp_unslash( $_POST[ 'query_args' ] ) ) : array();
 
     if ( ! wp_verify_nonce( $nonce, 'csf_chosen_ajax_nonce' ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
     }
 
     if ( empty( $type ) || empty( $term ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid term ID.', 'csf' ) ) );
     }
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
     $capability = apply_filters( 'csf_chosen_ajax_capability', 'manage_options' );
 
     if ( ! current_user_can( $capability ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       wp_send_json_error( array( 'error' => esc_html__( 'Error: You do not have permission to do that.', 'csf' ) ) );
     }
 

@@ -249,6 +249,7 @@ if (!class_exists('ctl_admin_notices')):
                 // check if installation days is greator then week
                if (isset($diff_days) && $diff_days>= $days ) {
                    
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo $this->ctl_create_notice_content( $id, $messageObj );
                 
                }
@@ -268,7 +269,9 @@ if (!class_exists('ctl_admin_notices')):
         $slug = $messageObj['slug'];
         $plugin_name= $messageObj['plugin_name'];
         $like_it_text='Rate Now! ★★★★★';
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         $already_rated_text=esc_html__( 'Already Reviewed', 'atlt2' );
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         $not_like_it_text=esc_html__( 'Not Interested', 'atlt2' );
         $plugin_link=  $messageObj['review_url'] ;
         $review_nonce = wp_create_nonce( $id . '_review_nonce' ); 
@@ -322,10 +325,11 @@ if (!class_exists('ctl_admin_notices')):
                 wp_die();
             }
 
-            $slug = sanitize_text_field(wp_unslash($_REQUEST['slug']));
-            $id = sanitize_text_field(wp_unslash($_REQUEST['id'])); 
+            $slug = isset( $_REQUEST['slug'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['slug'] ) ) : '';
+            $id = isset( $_REQUEST['id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['id'] ) ) : ''; 
             $nonce_key = $id . '_review_nonce' ;
 
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             if( isset( $_REQUEST['_nonce'] ) && !empty( $_REQUEST['_nonce'] ) && wp_verify_nonce( wp_unslash($_REQUEST['_nonce']), $nonce_key ) ){
                 update_option( 'cool-timeline-already-rated','yes' );
                 echo json_encode( array("success"=>"true") );
@@ -347,9 +351,10 @@ if (!class_exists('ctl_admin_notices')):
                 wp_die();
             }
            
-            $id = sanitize_text_field(wp_unslash($_REQUEST['id'])); 
+            $id = isset( $_REQUEST['id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['id'] ) ) : ''; 
             $wp_nonce = $id . '_notice_nonce';
 
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             if( isset( $_REQUEST[ '_nonce' ] ) && wp_verify_nonce( wp_unslash($_REQUEST[ '_nonce' ]) , $wp_nonce ) ){
                 $us=update_option( $id . '_remove_notice','yes' );
                 die( 'Admin message removed!' );
@@ -376,6 +381,7 @@ endif;
      * A global function to create admin notice/review box using the above class.   *
      * This function makes it easy to use above class                               *
      ********************************************************************************/
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
     function ctl_free_create_admin_notice($notice)
     {
         // Do not initialize anything if it's not wordpress admin dashboard

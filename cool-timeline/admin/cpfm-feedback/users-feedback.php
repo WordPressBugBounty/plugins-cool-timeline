@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedNamespaceFound
 namespace CTL\feedback;
 
 // Exit if accessed directly.
@@ -35,6 +36,7 @@ class UsersFeedback {
 	function enqueue_feedback_scripts() {
 		$screen = get_current_screen();
 		if ( isset( $screen ) && $screen->id == 'plugins' ) {
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 			wp_enqueue_script( __NAMESPACE__ . 'feedback-script', $this->plugin_url . 'admin/cpfm-feedback/js/admin-feedback.js', array( 'jquery' ), $this->plugin_version );
 			wp_enqueue_style( 'cool-plugins-feedback-style', $this->plugin_url . 'admin/cpfm-feedback/css/admin-feedback.css', null, $this->plugin_version );
 		}
@@ -121,7 +123,7 @@ class UsersFeedback {
 						</div>
 					<?php endforeach; ?>
 
-					<input class="cool-plugins-GDPR-data-notice" id="cool-plugins-GDPR-data-notice-<?php echo $this->plugin_slug; ?>" type="checkbox"><label for="cool-plugins-GDPR-data-notice"><?php echo esc_html__( 'I agree to share anonymous usage data and basic site details (such as server, PHP, and WordPress versions) to support Cool Timeline improvement efforts. Additionally, I allow Cool Plugins to store all information provided through this form and to respond to my inquiry.' ); ?></label>
+					<input class="cool-plugins-GDPR-data-notice" id="cool-plugins-GDPR-data-notice-<?php echo esc_attr( $this->plugin_slug ); ?>" type="checkbox"><label for="cool-plugins-GDPR-data-notice"><?php echo esc_html__( 'I agree to share anonymous usage data and basic site details (such as server, PHP, and WordPress versions) to support Cool Timeline improvement efforts. Additionally, I allow Cool Plugins to store all information provided through this form and to respond to my inquiry.','cool-timeline' ); ?></label>
 					
 
 				</div>
@@ -144,11 +146,12 @@ class UsersFeedback {
 			wp_die();
 		}
 
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_cool-plugins_deactivate_feedback_nonce' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), '_cool-plugins_deactivate_feedback_nonce' ) ) {
 			wp_send_json_error();
 		} else {
-			$reason             = sanitize_text_field( $_POST['reason'] ); // Sanitize reason input
-			$message            = isset( $_POST['message'] ) ? sanitize_textarea_field( $_POST['message'] ) : ''; // Sanitize message input
+			$reason             = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : ''; // Sanitize reason input
+			$message            = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : ''; // Sanitize message input
 			$deactivate_reasons = array(
 				'didnt_work_as_expected'         => array(
 					'title'             => esc_html( __( 'The plugin didn\'t work as expected', 'cool-timeline' ) ),
@@ -174,11 +177,12 @@ class UsersFeedback {
 
 			$deativation_reason = array_key_exists( $reason, $deactivate_reasons ) ? $reason : 'other';
 		
-			$sanitized_message = sanitize_text_field( $_POST['message'] ) == '' ? 'N/A' : sanitize_text_field( $_POST['message'] );
+			$sanitized_message = isset( $_POST['message'] ) && sanitize_text_field( wp_unslash( $_POST['message'] ) ) != '' ? sanitize_text_field( wp_unslash( $_POST['message'] ) ) : 'N/A';
 			$admin_email       = sanitize_email( get_option( 'admin_email' ) );
 			$site_url          = esc_url( site_url() );
 			$feedback_url      = CTL_FEEDBACK_API.'wp-json/coolplugins-feedback/v1/feedback' ;
-			$plugin_initial    = get_option('ctl_initial_save_version') ?: 'N/A';
+			$initial_version = get_option('ctl_initial_save_version');
+			$initial_version = is_string($initial_version) ? sanitize_text_field($initial_version) : 'N/A';
 			$install_date      = get_option('ctl-install-date') ?: 'N/A';
 			$unique_key        = '31';
 			$site_id        	= $site_url . '-' . $install_date . '-' . $unique_key;
@@ -191,12 +195,12 @@ class UsersFeedback {
 						'extra_details' => serialize(\CoolTimeline::ctl_get_user_info()['extra_details']),
 						'plugin_version' => $this->plugin_version,
 						'plugin_name'    => $this->plugin_name,
-						'plugin_initial' => $plugin_initial,
+						'plugin_initial' => $initial_version,
 						'reason'         => $deativation_reason,
 						'review'         => $sanitized_message,
 						'email'          => $admin_email,
 						'domain'         => $site_url,
-						'site_id'    	 => md5($site_id),
+						'site_id'    	 => md5($site_id), 
 					),
 				)
 			);

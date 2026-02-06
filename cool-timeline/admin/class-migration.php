@@ -264,7 +264,7 @@ class CTL_free_migrations {
 			$attachment_id   = intval( get_post_meta( $old_post->ID, 'announcement_image_id', true ) );
 			$excerpt         = wp_kses_post(get_post_meta($old_post->ID,'announcement_custom_excerpt',true));
 			
-			$formatted_for_meta = $event_timestamp ? date( 'm/d/Y h:i A', $event_timestamp ) : '';
+			$formatted_for_meta = $event_timestamp ? gmdate( 'm/d/Y h:i A', $event_timestamp ) : '';
 			$color = sanitize_text_field( $color_raw );
 
 			if (strpos($icon_raw, 'fa-') === false) {
@@ -276,7 +276,7 @@ class CTL_free_migrations {
 			$new_post = array(
 				'post_title'   => sanitize_text_field( $old_post->post_title ),
 				'post_content' => wp_kses_post( $old_post->post_content ),
-				'post_excerpt'=>$excerpt,
+				'post_excerpt' =>$excerpt,
 				'post_type'    => 'cool_timeline',
 				'post_status'  => $old_post->post_status,
 				'post_date'    => $old_post->post_date,

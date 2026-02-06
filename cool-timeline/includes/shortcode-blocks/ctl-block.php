@@ -8,11 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Hook scripts function into block editor hook
 add_action( 'enqueue_block_editor_assets', 'ctl_gutenberg_scripts' );
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function ctl_gutenberg_scripts() {
 	$blockPath = '/dist/block.js';
 	$stylePath = '/dist/block.css';
 
 	// Enqueue the bundled block JS file
+	// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 	wp_enqueue_script(
 		'ctl-block-js',
 		plugins_url( $blockPath, __FILE__ ),
@@ -91,6 +93,7 @@ add_action(
 /**
  * Block Output.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function ctl_block_callback( $attr ) {
 	// Sanitize attributes
 	$layout = isset( $attr['layout'] ) ? sanitize_text_field( $attr['layout'] ) : 'default'; // Sanitize layout

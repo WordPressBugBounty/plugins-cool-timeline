@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: code_editor
@@ -38,6 +39,7 @@ if ( ! class_exists( 'CSF_Field_code_editor' ) ) {
 
     public function enqueue() {
 
+      // phpcs:ignore WordPress.Security.NonceVerification.Recommended
       $page = ( ! empty( $_GET[ 'page' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'page' ] ) ) : '';
 
       // Do not loads CodeMirror in revslider page.

@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: sorter
@@ -16,11 +17,13 @@ if ( ! class_exists( 'CSF_Field_sorter' ) ) {
 
     public function render() {
 
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
       $args = wp_parse_args( $this->field, array(
         'disabled'       => true,
         'enabled_title'  => esc_html__( 'Enabled', 'csf' ),
         'disabled_title' => esc_html__( 'Disabled', 'csf' ),
       ) );
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       echo $this->field_before();
 

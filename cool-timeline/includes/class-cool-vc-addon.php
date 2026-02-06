@@ -67,7 +67,7 @@ class CoolTmVCAddon {
 							'class'       => '',
 							'heading'     => __( 'Show number of Stories', 'cool-timeline' ),
 							'param_name'  => 'show-posts',
-							'value'       => __( 10, 'cool-timeline' ),
+							'value'       => 10,
 							'save_always' => true,
 							'description' => __( 'You Can Show Pagination After These Posts In Vertical Timeline.', 'cool-timeline' ),
 							'admin_label' => true,
@@ -77,7 +77,7 @@ class CoolTmVCAddon {
 							'class'       => '',
 							'heading'     => __( 'Set show items', 'cool-timeline' ),
 							'param_name'  => 'items',
-							'value'       => __( 4, 'cool-timeline' ),
+							'value'       => 4,
 							'save_always' => true,
 							'description' => __( 'You can set the number of items in Horizontal Layout.', 'cool-timeline' ),
 							'dependency'  => array(

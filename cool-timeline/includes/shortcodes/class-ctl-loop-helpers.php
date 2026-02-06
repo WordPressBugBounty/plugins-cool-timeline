@@ -216,12 +216,12 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 			$output         = '';
 			if ( $ctl_story_date ) {
 				if ( strtotime( $ctl_story_date ) !== false ) {
-					$posted_date = date_i18n( __( "$date_formats", 'cool-timeline' ), strtotime( "$ctl_story_date" ) );
+					$posted_date = date_i18n( $date_formats, strtotime( $ctl_story_date ) );
 				} else {
 					$ctl_story_date = trim( str_ireplace( array( 'am', 'pm' ), '', $ctl_story_date ) );
 					$dateobj        = DateTime::createFromFormat( 'm/d/Y H:i', $ctl_story_date, wp_timezone() );
 					if ( $dateobj ) {
-						$posted_date = $dateobj->format( __( "$date_formats", 'cool-timeline' ) );
+						$posted_date = $dateobj->format( $date_formats );
 					}
 				}
 				if ( ! empty( $posted_date ) ) {
@@ -246,6 +246,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 			$content    = '';
 			if ( 'full' === $attributes['story-content'] ) {
 				global $post;
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				$content .= apply_filters( 'the_content', $post->post_content );
 				
 			} else {
@@ -398,6 +399,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 							esc_attr( $design ),
 							esc_attr( $story_year ),
 							esc_attr( $story_year ),
+							// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 							apply_filters( 'ctl_story_year', $story_year_label )
 						);
 					}
@@ -429,11 +431,11 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 				return $timezone;
 			}
 				// last try, guess timezone string manually.
-				$is_dst = date( 'I' );
+				$is_dst = gmdate( 'I' );
 			foreach ( timezone_abbreviations_list() as $abbr ) {
 				foreach ( $abbr as $city ) {
 					if ( $city['dst'] === $is_dst && $city['offset'] === $utc_offset ) {
-						return $city['timezone_id'];
+						return  $city['timezone_id'];
 					}
 				}
 			}

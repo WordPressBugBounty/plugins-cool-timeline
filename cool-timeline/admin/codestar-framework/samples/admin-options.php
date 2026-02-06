@@ -3,6 +3,7 @@
 //
 // Set a unique slug-like ID
 //
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $prefix = '_prefix_my_options';
 
 //

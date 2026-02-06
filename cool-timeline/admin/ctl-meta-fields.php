@@ -10,6 +10,7 @@ Creating Meta boxes for timeline stories section
 if ( class_exists( 'CSF' ) ) {
 
 	// Set a unique slug-like ID
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$prefix = 'ctl_post_meta';
 
 	//
@@ -100,6 +101,7 @@ if ( class_exists( 'CSF' ) ) {
 			)
 		);
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$pro_list = 'feautre_list';
 	// Create a metabox
 	CSF::createMetabox(
@@ -164,6 +166,7 @@ if ( class_exists( 'CSF' ) ) {
 			),
 		)
 	);
+	   // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	   $review_us = 'review_us';
 	   // Create a metabox
 	CSF::createMetabox(

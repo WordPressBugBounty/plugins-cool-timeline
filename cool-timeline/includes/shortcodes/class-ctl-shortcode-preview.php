@@ -18,6 +18,7 @@ if ( ! class_exists( 'CTL_Shortcode_Preivew' ) ) {
 	/**
 	 * CTL Preview Assets Class.
 	 */
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 	class CTL_Shortcode_Preivew {
 		/**
 		 * Member Variable
@@ -156,10 +157,14 @@ if ( ! class_exists( 'CTL_Shortcode_Preivew' ) ) {
 				array_push( $file_names, 'ctl-horizontal.min.js' );
 			} elseif ( 'compact' === $this->designs ) {
 				array_push( $file_names, 'ctl-compact.min.js' );
-				array_push( $file_names, 'masonry.pkgd.min.js' );
 			}
 
-			$this->assets_object['script'] = $this->files_path( $file_names, 'js' );
+			$scripts = $this->files_path( $file_names, 'js' );
+			// Compact layout: load WordPress core Masonry before compact script.
+			if ( 'compact' === $this->designs ) {
+				array_splice( $scripts, 1, 0, array( includes_url( 'js/masonry.min.js' ) ) );
+			}
+			$this->assets_object['script'] = $scripts;
 		}
 
 		/**

@@ -33,7 +33,9 @@ if ( ! class_exists( 'CSF_Customize_Options' ) ) {
     public function __construct( $key, $params ) {
 
       $this->unique     = $key;
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->args       = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->sections   = apply_filters( "csf_{$this->unique}_sections", $params['sections'], $this );
       $this->pre_fields = $this->pre_fields( $this->sections );
 
@@ -59,8 +61,11 @@ if ( ! class_exists( 'CSF_Customize_Options' ) ) {
     }
 
     public function add_customize_save_after( $wp_customize ) {
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_before", $this->get_options(), $this, $wp_customize );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_saved", $this->get_options(), $this, $wp_customize );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_after", $this->get_options(), $this, $wp_customize );
     }
 

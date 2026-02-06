@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * WP Customize custom panel
@@ -8,6 +9,7 @@
  *
  */
 if ( ! class_exists( 'WP_Customize_Panel_CSF' ) && class_exists( 'WP_Customize_Panel' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class WP_Customize_Panel_CSF extends WP_Customize_Panel {
     public $type = 'csf';
   }
@@ -22,6 +24,7 @@ if ( ! class_exists( 'WP_Customize_Panel_CSF' ) && class_exists( 'WP_Customize_P
  *
  */
 if ( ! class_exists( 'WP_Customize_Section_CSF' ) && class_exists( 'WP_Customize_Section' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class WP_Customize_Section_CSF extends WP_Customize_Section {
     public $type = 'csf';
   }
@@ -36,6 +39,7 @@ if ( ! class_exists( 'WP_Customize_Section_CSF' ) && class_exists( 'WP_Customize
  *
  */
 if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize_Control' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class WP_Customize_Control_CSF extends WP_Customize_Control {
 
     public $type   = 'csf';
@@ -91,6 +95,7 @@ if ( ! class_exists( 'WP_Customize_Control_CSF' ) && class_exists( 'WP_Customize
 
     public function render_field_content() {
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $complex = apply_filters( 'csf_customize_complex_fields', array(
         'accordion',
         'background',

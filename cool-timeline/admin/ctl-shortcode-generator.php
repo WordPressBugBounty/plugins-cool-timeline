@@ -102,8 +102,10 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
 
 		public function CSF_free_shortcode_generator() {
 					// Sanitize input data
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$id        = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : '';
-		$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : get_post_type( $id );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : get_post_type( $id );
 
 			// change block name if older block exists in current page condition start
 			$block_name = 'ctl-gutenberg-block';

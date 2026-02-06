@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) {
 	die;
 } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: button_set
@@ -55,13 +56,14 @@ if ( ! class_exists( 'CSF_Field_button_set' ) ) {
 
 					}
 
-					   echo '</div>';
+				   echo '</div>';
 
-				} else {
+			} else {
 
-					  echo ( ! empty( $this->field['empty_message'] ) ) ? esc_attr( $this->field['empty_message'] ) : esc_html__( 'No data available.', 'csf' );
+				  // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+				  echo ( ! empty( $this->field['empty_message'] ) ) ? esc_attr( $this->field['empty_message'] ) : esc_html__( 'No data available.', 'csf' );
 
-				}
+			}
 			}
 
 			echo $this->field_after();

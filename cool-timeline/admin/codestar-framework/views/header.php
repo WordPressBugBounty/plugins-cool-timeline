@@ -1,10 +1,15 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
 
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
   $demo    = get_option( 'csf_demo_mode', false );
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
   $text    = ( ! empty( $demo ) ) ? 'Deactivate' : 'Activate';
   $status  = ( ! empty( $demo ) ) ? 'deactivate' : 'activate';
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
   $class   = ( ! empty( $demo ) ) ? ' csf-warning-primary' : '';
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound,WordPress.Security.NonceVerification.Recommended
   $section = ( ! empty( $_GET[ 'section' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'section' ] ) ) : 'about';
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
   $links   = array(
     'about'           => 'About',
     'quickstart'      => 'Quick Start',
@@ -36,10 +41,12 @@
   <h2 class="nav-tab-wrapper wp-clearfix">
     <?php
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
       foreach ( $links as $key => $link ) {
 
         if ( CSF::$premium && $key === 'free-vs-premium' ) { continue; }
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
         $activate = ( $section === $key ) ? ' nav-tab-active' : '';
 
         echo '<a href="'. esc_url( add_query_arg( array( 'page' => 'csf-welcome', 'section' => $key ), admin_url( 'tools.php' ) ) ) .'" class="nav-tab'. esc_attr( $activate ) .'">'. esc_attr( $link ) .'</a>';

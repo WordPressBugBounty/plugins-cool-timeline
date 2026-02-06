@@ -72,11 +72,11 @@ class CoolTimelinePosttypeFree {
 	// custom columns for all stories
 	public function add_new_cool_timeline_columns( $gallery_columns ) {
 		$new_columns['cb']         = '<input type="checkbox" />';
-		$new_columns['title']      = _x( 'Story Title', 'column name' );
+		$new_columns['title']      = _x( 'Story Title', 'column name', 'cool-timeline' );
 		$new_columns['story_year'] = __( 'Story Year', 'cool-timeline' );
 		$new_columns['story_date'] = __( 'Story Date', 'cool-timeline' );
 		$new_columns['icon']       = __( 'Story Icon', 'cool-timeline' );
-		$new_columns['date']       = _x( 'Published Date', 'column name' );
+		$new_columns['date']       = _x( 'Published Date', 'column name', 'cool-timeline' );
 		return $new_columns;
 	}
 
@@ -116,6 +116,7 @@ class CoolTimelinePosttypeFree {
 	}
 
 	public function ctl_generted_page_label( $states ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_REQUEST['post_type'] ) && sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) == 'cool_timeline' ) {
 			unset( $states['scheduled'] );
 		}
@@ -123,7 +124,9 @@ class CoolTimelinePosttypeFree {
 	}
 
 	public function ctl_submitbox_metabox() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_REQUEST['post'] ) && get_post_type( intval( $_REQUEST['post'] ) ) == 'cool_timeline' ||
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		isset( $_REQUEST['post_type'] ) && sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) == 'cool_timeline' ) {
 			$html  = '<div class="misc-pub-section ctl-notice">';
 			$html .= '<span style="font-weight:bold;">*Please select story Date / Year from settings below the story content.';

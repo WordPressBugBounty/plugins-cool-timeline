@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: spacing
@@ -22,11 +23,13 @@ if ( ! class_exists( 'CSF_Field_spacing' ) ) {
         'bottom_icon'        => '<i class="fas fa-long-arrow-alt-down"></i>',
         'left_icon'          => '<i class="fas fa-long-arrow-alt-left"></i>',
         'all_icon'           => '<i class="fas fa-arrows-alt"></i>',
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         'top_placeholder'    => esc_html__( 'top', 'csf' ),
         'right_placeholder'  => esc_html__( 'right', 'csf' ),
         'bottom_placeholder' => esc_html__( 'bottom', 'csf' ),
         'left_placeholder'   => esc_html__( 'left', 'csf' ),
         'all_placeholder'    => esc_html__( 'all', 'csf' ),
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
         'top'                => true,
         'left'               => true,
         'bottom'             => true,

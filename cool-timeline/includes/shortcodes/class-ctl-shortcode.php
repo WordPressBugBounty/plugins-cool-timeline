@@ -176,18 +176,13 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 				'post_type'      => 'cool_timeline',
 				'post_status'    => array( 'publish', 'future', 'Scheduled' ),
 				'order'          => isset( $attributes['order'] ) ? sanitize_text_field( $attributes['order'] ) : sanitize_text_field( $settings['story_orders'] ),
-				'orderby'        => 'ctl_story_timestamp',
+				'meta_key'       => 'ctl_story_timestamp', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'orderby'        => 'meta_value_num',
 				'posts_per_page' => $show_posts,
 				'paged'          => sanitize_text_field( $attributes['paged'] ),
 			);
-			$query_args['meta_query'] = array(
-				array(
-					'key'     => 'ctl_story_timestamp',
-					'compare' => 'EXISTS',
-					'type'    => 'NUMERIC',
-				),
-			);
 
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$query_args = apply_filters( 'ctp_story_query_args', $query_args, $attributes );
 			return new WP_Query( $query_args );
 		}

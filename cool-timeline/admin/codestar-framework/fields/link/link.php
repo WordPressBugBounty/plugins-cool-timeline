@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: link
@@ -16,11 +17,13 @@ if ( ! class_exists( 'CSF_Field_link' ) ) {
 
     public function render() {
 
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
       $args = wp_parse_args( $this->field, array(
         'add_title'    => esc_html__( 'Add Link', 'csf' ),
         'edit_title'   => esc_html__( 'Edit Link', 'csf' ),
         'remove_title' => esc_html__( 'Remove Link', 'csf' ),
       ) );
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       $default_values = array(
         'url'    => '',

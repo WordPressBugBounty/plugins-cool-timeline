@@ -8,6 +8,7 @@
  *
  */
 if ( ! function_exists( 'csf_array_search' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_array_search( $array, $key, $value ) {
 
     $results = array();
@@ -37,6 +38,7 @@ if ( ! function_exists( 'csf_array_search' ) ) {
  *
  */
 if ( ! function_exists( 'csf_timeout' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_timeout( $timenow, $starttime, $timeout = 30 ) {
     return ( ( $timenow - $starttime ) < $timeout ) ? true : false;
   }
@@ -51,6 +53,7 @@ if ( ! function_exists( 'csf_timeout' ) ) {
  *
  */
 if ( ! function_exists( 'csf_wp_editor_api' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_wp_editor_api() {
     global $wp_version;
     return version_compare( $wp_version, '4.8', '>=' );

@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: link_color
@@ -32,6 +33,7 @@ if ( ! class_exists( 'CSF_Field_link_color' ) ) {
         'focus'   => '',
       );
 
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
       $color_props = array(
         'color'    => esc_html__( 'Normal', 'csf' ),
         'hover'    => esc_html__( 'Hover', 'csf' ),
@@ -39,6 +41,7 @@ if ( ! class_exists( 'CSF_Field_link_color' ) ) {
         'visited'  => esc_html__( 'Visited', 'csf' ),
         'focus'    => esc_html__( 'Focus', 'csf' )
       );
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       $value = wp_parse_args( $this->value, $default_values );
 

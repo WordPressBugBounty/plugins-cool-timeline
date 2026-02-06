@@ -56,11 +56,16 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
         public function show_marketing_notices(){
            
 
+           
             $is_tec_settings = (
-                ( isset( $_GET['page'] ) && sanitize_key( $_GET['page'] ) === 'cool-plugins-timeline-addon' )
-                || ( isset( $_GET['post_type'] ) && sanitize_key( $_GET['post_type'] ) === 'cool_timeline' )
-                || ( isset( $_GET['page'] ) && sanitize_key( $_GET['page'] ) === 'twae-welcome-page' )
-                || ( isset( $_GET['page'] ) && sanitize_key( $_GET['page'] ) === 'cool_timeline_settings' )
+                 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                ( isset( $_GET['page'] ) && sanitize_key( wp_unslash( $_GET['page'] ) ) === 'cool-plugins-timeline-addon' )
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                || ( isset( $_GET['post_type'] ) && sanitize_key( wp_unslash( $_GET['post_type'] ) ) === 'cool_timeline' )
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                || ( isset( $_GET['page'] ) && sanitize_key( wp_unslash( $_GET['page'] ) ) === 'twae-welcome-page' )
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                || ( isset( $_GET['page'] ) && sanitize_key( wp_unslash( $_GET['page'] ) ) === 'cool_timeline_settings' )
                 || ( isset( $_SERVER['PHP_SELF'] ) && strpos( sanitize_text_field( wp_unslash( $_SERVER['PHP_SELF'] ) ), 'plugins.php' ) !== false )
 
             );
@@ -87,28 +92,67 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
              
                 if ( self::is_theme_activate( 'Divi' ) && $is_tec_settings && !$is_divi_pro_path  && !defined('TM_DIVI_PRO_V') && !in_array('timeline-module-for-divi/timeline-module-for-divi.php', $active_plugins, true) ) {
                     
-                    ctl_free_create_admin_notice(
 
-                        
+
+                    $button_label = esc_html__( 'Install Timeline Module for Divi', 'cool-timeline' );
+
+                    /* translators: 1: opening strong tag, 2: closing strong tag, 3: opening link tag, 4: closing link tag */
+                    $message_text = sprintf(
+                        wp_kses_post(
+                             /* translators: 1: opening strong tag, 2: closing strong tag, 3: opening link tag, 4: closing link tag */
+                            __( 'We noticed you’re using %1$sDivi Page Builder%2$s. Try our latest %3$sTimeline Module For Divi%4$s plugin to showcase your life story or %1$scompany history%2$s.', 'cool-timeline' )
+                        ),
+                        '<strong>',
+                        '</strong>',
+                        '<a href="https://wordpress.org/plugins/timeline-module-for-divi/" target="_blank">',
+                        '</a>'
+                    );
+                    
+                    ctl_free_create_admin_notice(
                         array(
-                            'id'              => 'ctl-divi-module-notice',
-                            'message'         => __(
-                                '<div class="ctl-new-mkt-notice ctl-divi-notice" style=" display:flex !important;">
+                            'id' => 'ctl-divi-module-notice',
+                            'message' => '
+                                <div class="ctl-new-mkt-notice ctl-divi-notice" style="display:flex !important;">
                                     <div style="width:fit-content;">
-                                      <button style="padding:2px 10px; margin-right:5px;"
-                                         class="button button-primary ctl-install-plugin"
-                                         data-plugin="timeline-divi"
-                                      data-nonce="' . $nonce . '">    Install Timeline Module for Divi
-                                     </button>
+                                        <button
+                                            style="padding:2px 10px; margin-right:5px;"
+                                            class="button button-primary ctl-install-plugin"
+                                            data-plugin="timeline-divi"
+                                            data-nonce="' . esc_attr( $nonce ) . '">
+                                            ' . $button_label . '
+                                        </button>
                                     </div>
-                                    <div>We noticed you&rsquo;re using <strong>Divi Page Builder</strong>. Try our latest <a href="https://wordpress.org/plugins/timeline-module-for-divi/" target="_blank"><strong> Timeline Module For Divi</strong></a> plugin to showcase your life story or <strong>company history</strong>.</div>
+                                    <div>' . $message_text . '</div>
                                 </div>',
-                                'cool-timeline'
-                            ),
                             'review_interval' => 3,
                             'plugin_name'     => 'Timeline Module For Divi',
                         )
                     );
+                    
+
+
+                    // ctl_free_create_admin_notice(
+
+                        
+                    //     array(
+                    //         'id'              => 'ctl-divi-module-notice',
+                    //         'message'         => __(
+                    //             '<div class="ctl-new-mkt-notice ctl-divi-notice" style=" display:flex !important;">
+                    //                 <div style="width:fit-content;">
+                    //                   <button style="padding:2px 10px; margin-right:5px;"
+                    //                      class="button button-primary ctl-install-plugin"
+                    //                      data-plugin="timeline-divi"
+                    //                   data-nonce="' . $nonce . '">    Install Timeline Module for Divi
+                    //                  </button>
+                    //                 </div>
+                    //                 <div>We noticed you&rsquo;re using <strong>Divi Page Builder</strong>. Try our latest <a href="https://wordpress.org/plugins/timeline-module-for-divi/" target="_blank"><strong> Timeline Module For Divi</strong></a> plugin to showcase your life story or <strong>company history</strong>.</div>
+                    //             </div>',
+                    //             'cool-timeline'
+                    //         ),
+                    //         'review_interval' => 3,
+                    //         'plugin_name'     => 'Timeline Module For Divi',
+                    //     )
+                    // );
                 }
 
                 if ( did_action( 'elementor/loaded' ) ) {
@@ -140,7 +184,9 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
                         'id'              => 'ctl_review_box',
                         'slug'            => 'ctl',
                         'review'          => true,
-                        'review_url'      => esc_url( 'https://wordpress.org/support/plugin/cool-timeline/reviews/?filter=5#new-post' ),
+                        'review_url' => esc_url(
+                            'https://wordpress.org/support/plugin/cool-timeline/reviews/#new-post'
+                        ),
                         'plugin_name'     => 'Cool Timeline',
                         'review_interval' => 3,
                     )
@@ -151,7 +197,7 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
         public function ctl_install_plugin() {
 
             if ( ! current_user_can( 'install_plugins' ) ) {
-                $status['errorMessage'] = __( 'Sorry, you are not allowed to install plugins on this site.' );
+                $status['errorMessage'] = __( 'Sorry, you are not allowed to install plugins on this site.','cool-timeline' );
                 wp_send_json_error( $status );
             }
 
@@ -162,7 +208,7 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
                     array(
                         'slug'         => '',
                         'errorCode'    => 'no_plugin_specified',
-                        'errorMessage' => __( 'No plugin specified.' ),
+                        'errorMessage' => __( 'No plugin specified.','cool-timeline' ),
                     )
                 );
             }
@@ -251,7 +297,7 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
                 global $wp_filesystem;
 
                 $status['errorCode']    = 'unable_to_connect_to_filesystem';
-                $status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
+                $status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.','cool-timeline' );
 
                 if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
                     $status['errorMessage'] = esc_html( $wp_filesystem->errors->get_error_message() );

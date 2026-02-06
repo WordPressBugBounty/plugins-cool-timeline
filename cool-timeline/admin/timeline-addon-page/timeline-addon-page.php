@@ -68,13 +68,13 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			 */
 		function cool_plugins_activate() {
 			if ( current_user_can( 'upload_plugins' ) ) {
-				$plugin_slug = isset( $_POST['cp_slug'] ) ? sanitize_text_field( $_POST['cp_slug'] ) : ''; // Sanitize input
+				$plugin_slug = isset( $_POST['cp_slug'] ) ? sanitize_text_field( wp_unslash( $_POST['cp_slug'] ) ) : ''; // Sanitize input
 				if ( ! empty( $plugin_slug ) ) {
 					if ( ! check_ajax_referer( 'cp-nonce-activate-' . $plugin_slug, 'wp_nonce', false ) ) {
 						wp_send_json_error( 'Invalid security token sent.' );
 						wp_die();
 					}
-					$pluginBase      = ( isset( $_POST['pluginbase'] ) && ! empty( $_POST['pluginbase'] ) ) ? sanitize_text_field( $_POST['pluginbase'] ) : null;
+					$pluginBase      = ( isset( $_POST['pluginbase'] ) && ! empty( $_POST['pluginbase'] ) ) ? sanitize_text_field( wp_unslash( $_POST['pluginbase'] ) ) : null;
 					$plugin_base_arr = explode( '/', $pluginBase );
 					if ( isset( $plugin_base_arr[0] ) && $plugin_base_arr[0] == $plugin_slug ) {
 						activate_plugin( $pluginBase );
@@ -97,7 +97,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			 */
 		function cool_plugins_install() {
 			if ( current_user_can( 'upload_plugins' ) ) {
-				$plugin_slug = isset( $_POST['cp_slug'] ) ? sanitize_text_field( $_POST['cp_slug'] ) : ''; // Sanitize input
+				$plugin_slug = isset( $_POST['cp_slug'] ) ? sanitize_text_field( wp_unslash( $_POST['cp_slug'] ) ) : ''; // Sanitize input
 				if ( ! empty( $plugin_slug ) ) {
 					if ( ! check_ajax_referer( 'cp-nonce-download-' . $plugin_slug, 'wp_nonce', false ) ) {
 						wp_send_json_error( 'Invalid security token sent.' );
@@ -223,8 +223,11 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			 */
 		function enqueue_required_scripts() {
 			// A common CSS file will be enqueued for admin panel
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			wp_enqueue_style( 'cool-plugins-timeline-addon', plugin_dir_url( __FILE__ ) . 'assets/css/styles.css', null, null, 'all' );
-			if ( isset( $_GET['page'] ) && ( sanitize_text_field( $_GET['page'] ) == $this->main_menu_slug ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET['page'] ) && ( sanitize_text_field( wp_unslash( $_GET['page'] ) ) == $this->main_menu_slug ) ) {
+				// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 				wp_enqueue_script( 'cool-plugins-timeline-addon', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), null, true );
 				wp_localize_script( 'cool-plugins-timeline-addon', 'cp_events', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 			}

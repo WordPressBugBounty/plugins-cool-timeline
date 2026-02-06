@@ -31,7 +31,9 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
     public function __construct( $key, $params = array() ) {
 
       $this->unique     = $key;
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->args       = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->sections   = apply_filters( "csf_{$this->unique}_sections", $params['sections'], $this );
       $this->pre_fields = $this->pre_fields( $this->sections );
 
@@ -148,6 +150,7 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
                 $tab_icon  = ( ! empty( $section['icon'] ) ) ? '<i class="csf-tab-icon '. esc_attr( $section['icon'] ) .'"></i>' : '';
                 $tab_error = ( ! empty( $errors['sections'][$tab_key] ) ) ? '<i class="csf-label-error csf-error">!</i>' : '';
 
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 echo '<li><a href="#">'. $tab_icon . $section['title'] . $tab_error .'</a></li>';
 
                 $tab_key++;
@@ -175,7 +178,9 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
 
               echo '<div class="csf-section hidden'. esc_attr( $section_onload . $section_class ) .'">';
 
+              // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
               echo ( $section_title || $section_icon ) ? '<div class="csf-section-title"><h3>'. $section_icon . $section_title .'</h3></div>' : '';
+              // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
               echo ( ! empty( $section['description'] ) ) ? '<div class="csf-field csf-section-description">'. $section['description'] .'</div>' : '';
 
               if ( ! empty( $section['fields'] ) ) {
@@ -196,6 +201,7 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
 
               } else {
 
+                // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
                 echo '<div class="csf-no-option">'. esc_html__( 'No data available.', 'csf' ) .'</div>';
 
               }
@@ -213,7 +219,9 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
               echo '<div class="csf-sections-reset">';
               echo '<label>';
               echo '<input type="checkbox" name="'. esc_attr( $this->unique ) .'[_reset]" />';
+              // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
               echo '<span class="button csf-button-reset">'. esc_html__( 'Reset', 'csf' ) .'</span>';
+              // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
               echo '<span class="button csf-button-cancel">'. sprintf( '<small>( %s )</small> %s', esc_html__( 'update post', 'csf' ), esc_html__( 'Cancel', 'csf' ) ) .'</span>';
               echo '</label>';
               echo '</div>';
@@ -247,7 +255,8 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
 
       // XSS ok.
       // No worries, This "POST" requests is sanitizing in the below foreach.
-      $request = ( ! empty( $_POST[ $this->unique ] ) ) ? $_POST[ $this->unique ] : array();
+      // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+      $request = ( ! empty( $_POST[ $this->unique ] ) ) ? wp_unslash( $_POST[ $this->unique ] ) : array();
 
       if ( ! empty( $request ) ) {
 
@@ -308,8 +317,10 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $data = apply_filters( "csf_{$this->unique}_save", $data, $comment_id, $this );
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_before", $data, $comment_id, $this );
 
       if ( empty( $data ) || ! empty( $request['_reset'] ) ) {
@@ -338,8 +349,10 @@ if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
 
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_saved", $data, $comment_id, $this );
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_after", $data, $comment_id, $this );
 
     }

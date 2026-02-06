@@ -3,6 +3,7 @@
 // Font Awesome 4 Icons
 //
 if ( ! function_exists( 'csf_get_default_icons' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_get_default_icons() {
     return array( array(
       'title' => 'Font Awesome',

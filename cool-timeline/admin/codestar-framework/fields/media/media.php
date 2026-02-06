@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: media
@@ -22,8 +23,10 @@ if ( ! class_exists( 'CSF_Field_media' ) ) {
         'preview_width'  => '',
         'preview_height' => '',
         'library'        => array(),
+        // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
         'button_title'   => esc_html__( 'Upload', 'csf' ),
         'remove_title'   => esc_html__( 'Remove', 'csf' ),
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
         'preview_size'   => 'thumbnail',
       ) );
 
@@ -56,6 +59,7 @@ if ( ! class_exists( 'CSF_Field_media' ) ) {
       $preview_src = ( $args['preview_size'] !== 'thumbnail' ) ? $this->value['url'] : $this->value['thumbnail'];
       $hidden_url  = ( empty( $args['url'] ) ) ? ' hidden' : '';
       $hidden_auto = ( empty( $this->value['url'] ) ) ? ' hidden' : '';
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       $placeholder = ( empty( $this->field['placeholder'] ) ) ? ' placeholder="'.  esc_html__( 'Not selected', 'csf' ) .'"' : '';
 
       echo $this->field_before();

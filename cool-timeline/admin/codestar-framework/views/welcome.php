@@ -14,6 +14,7 @@ if ( ! class_exists( 'CSF_Welcome' ) ) {
 
     public function __construct() {
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       if ( CSF::$premium && ( ! CSF::is_active_plugin( 'codestar-framework/codestar-framework.php' ) || apply_filters( 'csf_welcome_page', true ) === false ) ) { return; }
 
       add_action( 'admin_menu', array( $this, 'add_about_menu' ), 0 );
@@ -38,6 +39,7 @@ if ( ! class_exists( 'CSF_Welcome' ) ) {
 
     public function add_page_welcome() {
 
+      // phpcs:ignore WordPress.Security.NonceVerification.Recommended
       $section = ( ! empty( $_GET['section'] ) ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : '';
 
       CSF::include_plugin_file( 'views/header.php' );
@@ -102,6 +104,7 @@ if ( ! class_exists( 'CSF_Welcome' ) ) {
 
       $demo_mode = get_option( 'csf_demo_mode', false );
 
+      // phpcs:ignore WordPress.Security.NonceVerification.Recommended
       $demo_activate = ( ! empty( $_GET[ 'csf-demo' ] ) ) ? sanitize_text_field( wp_unslash( $_GET[ 'csf-demo' ] ) ) : '';
 
       if ( ! empty( $demo_activate ) ) {

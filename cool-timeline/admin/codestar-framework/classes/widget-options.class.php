@@ -28,6 +28,7 @@ if ( ! class_exists( 'CSF_Widget' ) ) {
       $control_ops = array();
 
       $this->unique = $key;
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->args   = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params, $this->args ), $this );
 
       // Set control options
@@ -45,7 +46,9 @@ if ( ! class_exists( 'CSF_Widget' ) ) {
       }
 
       // Set filters
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $widget_ops  = apply_filters( "csf_{$this->unique}_widget_ops", $widget_ops, $this );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $control_ops = apply_filters( "csf_{$this->unique}_control_ops", $control_ops, $this );
 
       parent::__construct( $this->unique, esc_attr( $this->args['title'] ), $widget_ops, $control_ops );
@@ -127,8 +130,10 @@ if ( ! class_exists( 'CSF_Widget' ) ) {
         }
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $new_instance = apply_filters( "csf_{$this->unique}_save", $new_instance, $this->args, $this );
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_save_before", $new_instance, $this->args, $this );
 
       return $new_instance;

@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
 
 if ( ! function_exists( 'csf_get_google_fonts' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_get_google_fonts() {
     return [
       'ABeeZee'=>[['normal','italic'],['latin']],

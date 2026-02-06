@@ -1,6 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) {
 	die;
 } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: date
@@ -28,15 +29,17 @@ if ( ! class_exists( 'CSF_Field_date' ) ) {
 
 			echo $this->field_before();
 
-			if ( ! empty( $this->field['from_to'] ) ) {
+		if ( ! empty( $this->field['from_to'] ) ) {
 
-				$args = wp_parse_args(
-					$this->field,
-					array(
-						'text_from' => esc_html__( 'From', 'csf' ),
-						'text_to'   => esc_html__( 'To', 'csf' ),
-					)
-				);
+			// phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+			$args = wp_parse_args(
+				$this->field,
+				array(
+					'text_from' => esc_html__( 'From', 'csf' ),
+					'text_to'   => esc_html__( 'To', 'csf' ),
+				)
+			);
+			// phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
 				$value = wp_parse_args(
 					$this->value,

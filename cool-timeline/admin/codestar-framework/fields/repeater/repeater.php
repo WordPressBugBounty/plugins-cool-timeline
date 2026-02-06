@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: repeater
@@ -24,6 +25,7 @@ if ( ! class_exists( 'CSF_Field_repeater' ) ) {
 
       if ( preg_match( '/'. preg_quote( '['. $this->field['id'] .']' ) .'/', $this->unique ) ) {
 
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<div class="csf-notice csf-notice-danger">'. esc_html__( 'Error: Field ID conflict.', 'csf' ) .'</div>';
 
       } else {
@@ -45,6 +47,7 @@ if ( ! class_exists( 'CSF_Field_repeater' ) ) {
         echo '<div class="csf-repeater-helper-inner">';
         echo '<i class="csf-repeater-sort fas fa-arrows-alt"></i>';
         echo '<i class="csf-repeater-clone far fa-clone"></i>';
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<i class="csf-repeater-remove csf-confirm fas fa-times" data-confirm="'. esc_html__( 'Are you sure to delete this item?', 'csf' ) .'"></i>';
         echo '</div>';
         echo '</div>';
@@ -73,6 +76,7 @@ if ( ! class_exists( 'CSF_Field_repeater' ) ) {
             echo '<div class="csf-repeater-helper-inner">';
             echo '<i class="csf-repeater-sort fas fa-arrows-alt"></i>';
             echo '<i class="csf-repeater-clone far fa-clone"></i>';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             echo '<i class="csf-repeater-remove csf-confirm fas fa-times" data-confirm="'. esc_html__( 'Are you sure to delete this item?', 'csf' ) .'"></i>';
             echo '</div>';
             echo '</div>';
@@ -86,7 +90,9 @@ if ( ! class_exists( 'CSF_Field_repeater' ) ) {
 
         echo '</div>';
 
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<div class="csf-repeater-alert csf-repeater-max">'. esc_html__( 'You cannot add more.', 'csf' ) .'</div>';
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<div class="csf-repeater-alert csf-repeater-min">'. esc_html__( 'You cannot remove more.', 'csf' ) .'</div>';
         echo '<a href="#" class="button button-primary csf-repeater-add">'. $args['button_title'] .'</a>';
 

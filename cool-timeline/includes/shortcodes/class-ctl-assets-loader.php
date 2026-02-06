@@ -65,6 +65,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 			// Enqueue FontAwesome styles for icons if needed.
 			if ( $icons ) {
 				wp_enqueue_style( 'ctl_font_awesome' );
+				// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion,PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
 				wp_enqueue_style( 'ctl_font_shims', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css' );
 			}
 
@@ -116,9 +117,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 				wp_enqueue_style( 'rtl_styles' );
 			}
 			wp_enqueue_style( 'ctl_vertical_style' );
-			if ( ! wp_script_is( 'ctl-masonry', 'enqueued' ) ) {
-				wp_enqueue_script( 'ctl-masonry' );
-			}
+			wp_enqueue_script( 'jquery-masonry' );
 			wp_enqueue_script( 'ctl_compact_script' );
 			wp_enqueue_style( 'ctl_compact_style' );
 		}
@@ -170,6 +169,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 
 			wp_register_style( 'rtl_styles', CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/rtl-styles.css', null, CTL_V, 'all' );
 
+			// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
 			wp_register_style( 'ctl_font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', null, CTL_V, 'all' );
 
 			// New cool timeline shortcode files.
@@ -179,11 +179,10 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 			wp_register_style( 'ctl_vertical_style', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-vertical-timeline$minified_file.css", null, CTL_V, 'all' );
 			wp_register_style( 'ctl_horizontal_style', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-horizontal-timeline$minified_file.css", null, CTL_V, 'all' );
 			wp_register_script( 'ctl_common_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-scripts$minified_file.js", array( 'jquery' ), CTL_V, true );
-			wp_register_script( 'ctl_compact_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-compact$minified_file.js", array( 'jquery' ), CTL_V, true );
+			wp_register_script( 'ctl_compact_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-compact$minified_file.js", array( 'jquery', 'jquery-masonry' ), CTL_V, true );
 			wp_register_script( 'ctl_hr_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-horizontal$minified_file.js", array( 'jquery' ), CTL_V, true );
 
-			// Compact layout masonry and image loaded library.
-			wp_register_script( 'ctl-masonry', CTL_PLUGIN_URL . 'includes/shortcodes/assets/js/masonry.pkgd.min.js', array( 'jquery' ), CTL_V, false );
+			// Compact layout uses WordPress core Masonry (jquery-masonry).
 			wp_register_style( 'ctl_compact_style', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-compact-style$minified_file.css", null, CTL_V, 'all' );
 
 			$this->ctl_google_fonts();
@@ -207,9 +206,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 					if ( in_array( 'compact', $active_layout ) ) {
 						wp_enqueue_style( 'ctl_compact_style' );
 						wp_enqueue_style( 'ctl_vertical_style' );
-						if ( ! wp_script_is( 'ctl-masonry', 'enqueued' ) ) {
-							wp_enqueue_script( 'ctl-masonry' );
-						}
+						wp_enqueue_script( 'jquery-masonry' );
 					} elseif ( in_array( 'horizontal', $active_layout ) ) {
 						wp_enqueue_style( 'ctl_horizontal_style' );
 						wp_enqueue_style( 'ctl_swiper_style' );

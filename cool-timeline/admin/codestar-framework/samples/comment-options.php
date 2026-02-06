@@ -4,6 +4,7 @@
 // Comment Metabox
 // Set a unique slug-like ID
 //
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $prefix_comment = '_prefix_comment';
 
 //

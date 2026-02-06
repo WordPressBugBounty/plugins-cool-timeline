@@ -4,6 +4,7 @@
 // Metabox of the PAGE
 // Set a unique slug-like ID
 //
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $prefix_page_opts = '_prefix_page_options';
 
 //
@@ -153,6 +154,7 @@ CSF::createSection( $prefix_page_opts, array(
 // Metabox of the POST
 // Set a unique slug-like ID
 //
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $prefix_post_opts = '_prefix_post_options';
 
 //
@@ -242,6 +244,7 @@ CSF::createSection( $prefix_post_opts, array(
 // Metabox of the PAGE and POST both.
 // Set a unique slug-like ID
 //
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $prefix_meta_opts = '_prefix_meta_options';
 
 //

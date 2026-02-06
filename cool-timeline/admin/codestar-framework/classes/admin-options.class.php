@@ -92,7 +92,9 @@ if ( ! class_exists( 'CSF_Options' ) ) {
     public function __construct( $key, $params = array() ) {
 
       $this->unique   = $key;
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->args     = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->sections = apply_filters( "csf_{$this->unique}_sections", $params['sections'], $this );
 
       // run only is admin panel options, avoid performance loss
@@ -226,6 +228,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
       // Check user capabilities
       if ( ! current_user_can( 'manage_options' ) ) {
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
         wp_die();
       }
@@ -233,6 +236,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
       $result = $this->set_options( true );
 
       if ( ! $result ) {
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         wp_send_json_error( array( 'error' => esc_html__( 'Error while saving the changes.', 'csf' ) ) );
       } else {
         wp_send_json_success( array( 'notice' => $this->notice, 'errors' => $this->errors ) );
@@ -272,6 +276,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
       // XSS ok.
       // No worries, This "POST" requests is sanitizing in the below foreach. see #L337 - #L341
+      // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
       $response  = ( $ajax && ! empty( $_POST['data'] ) ) ? json_decode( wp_unslash( trim( $_POST['data'] ) ), true ) : $_POST;
 
       // Set variables.
@@ -293,6 +298,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
           $import_data  = json_decode( wp_unslash( trim( $response[ 'csf_import_data' ] ) ), true );
           $options      = ( is_array( $import_data ) && ! empty( $import_data ) ) ? $import_data : array();
           $importing    = true;
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           $this->notice = esc_html__( 'Settings successfully imported.', 'csf' );
 
         }
@@ -305,6 +311,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
             }
           }
 
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           $this->notice = esc_html__( 'Default settings restored.', 'csf' );
 
         } else if ( ! empty( $transient['reset_section'] ) && ! empty( $section_id ) ) {
@@ -321,6 +328,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
           $data = wp_parse_args( $data, $this->options );
 
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           $this->notice = esc_html__( 'Default settings restored.', 'csf' );
 
         } else {
@@ -381,17 +389,21 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
         }
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         $data = apply_filters( "csf_{$this->unique}_save", $data, $this );
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         do_action( "csf_{$this->unique}_save_before", $data, $this );
 
         $this->options = $data;
 
         $this->save_options( $data );
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         do_action( "csf_{$this->unique}_save_after", $data, $this );
 
         if ( empty( $this->notice ) ) {
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           $this->notice = esc_html__( 'Settings saved.', 'csf' );
         }
 
@@ -416,6 +428,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
         update_option( $this->unique, $data );
       }
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( "csf_{$this->unique}_saved", $data, $this );
 
     }
@@ -547,6 +560,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
       $nav_type      = ( $this->args['nav'] === 'inline' ) ? 'inline' : 'normal';
       $form_action   = ( $this->args['form_action'] ) ? $this->args['form_action'] : '';
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( 'csf_options_before' );
 
       echo '<div class="csf csf-options'. esc_attr( $theme . $class . $wrapper_class ) .'" data-slug="'. esc_attr( $this->args['menu_slug'] ) .'" data-unique="'. esc_attr( $this->unique ) .'">';
@@ -573,15 +587,21 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
             echo '<div class="csf-form-result csf-form-success '. esc_attr( $notice_class ) .'">'.esc_html($notice_text) .'</div>';
 
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             echo ( $this->args['show_form_warning'] ) ? '<div class="csf-form-result csf-form-warning">'. esc_html__( 'You have unsaved changes, save your changes!', 'csf' ) .'</div>' : '';
 
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             echo ( $has_nav && $this->args['show_all_options'] ) ? '<div class="csf-expand-all" title="'. esc_html__( 'show all settings', 'csf' ) .'"><i class="fas fa-outdent"></i></div>' : '';
 
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             echo ( $this->args['show_search'] ) ? '<div class="csf-search"><input type="text" name="csf-search" placeholder="'. esc_html__( 'Search...', 'csf' ) .'" autocomplete="off" /></div>' : '';
 
             echo '<div class="csf-buttons">';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             echo '<input type="submit" name="'. esc_attr( $this->unique ) .'[_nonce][save]" class="button button-primary csf-top-save csf-save'. esc_attr( $ajax_class ) .'" value="'. esc_html__( 'Save', 'csf' ) .'" data-save="'. esc_html__( 'Saving...', 'csf' ) .'">';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             echo ( $this->args['show_reset_section'] ) ? '<input type="submit" name="csf_transient[reset_section]" class="button button-secondary csf-reset-section csf-confirm" value="'. esc_html__( 'Reset Section', 'csf' ) .'" data-confirm="'. esc_html__( 'Are you sure to reset this section options?', 'csf' ) .'">' : '';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             echo ( $this->args['show_reset_all'] ) ? '<input type="submit" name="csf_transient[reset]" class="button csf-warning-primary csf-reset-all csf-confirm" value="'. ( ( $this->args['show_reset_section'] ) ? esc_html__( 'Reset All', 'csf' ) : esc_html__( 'Reset', 'csf' ) ) .'" data-confirm="'. esc_html__( 'Are you sure you want to reset all settings to default values?', 'csf' ) .'">' : '';
             echo '</div>';
 
@@ -619,7 +639,8 @@ if ( ! class_exists( 'CSF_Options' ) ) {
                       $sub_error = $this->error_check( $sub );
                       $sub_icon  = ( ! empty( $sub['icon'] ) ) ? '<i class="csf-tab-icon '. esc_attr( $sub['icon'] ) .'"></i>' : '';
 
-                      echo '<li><a href="#tab='. esc_attr( $sub_id ) .'" data-tab-id="'. esc_attr( $sub_id ) .'">'. $sub_icon . $sub['title'] . $sub_error .'</a></li>';
+                  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                  echo '<li><a href="#tab='. esc_attr( $sub_id ) .'" data-tab-id="'. esc_attr( $sub_id ) .'">'. $sub_icon . $sub['title'] . $sub_error .'</a></li>';
 
                     }
 
@@ -629,6 +650,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
                 } else {
 
+                  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                   echo '<li class="csf-tab-item"><a href="#tab='. esc_attr( $tab_id ) .'" data-tab-id="'. esc_attr( $tab_id ) .'">'. $tab_icon . $tab['title'] . $tab_error .'</a></li>';
 
                 }
@@ -655,7 +677,9 @@ if ( ! class_exists( 'CSF_Options' ) ) {
               $section_slug   = ( ! empty( $section['title'] ) ) ? sanitize_title( $section_title ) : '';
 
               echo '<div class="csf-section hidden'. esc_attr( $section_onload . $section_class ) .'" data-section-id="'. esc_attr( $section_parent . $section_slug ) .'">';
+              // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
               echo ( $has_nav ) ? '<div class="csf-section-title"><h3>'. $section_icon . $section_title .'</h3></div>' : '';
+              // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
               echo ( ! empty( $section['description'] ) ) ? '<div class="csf-field csf-section-description">'. $section['description'] .'</div>' : '';
 
               if ( ! empty( $section['fields'] ) ) {
@@ -680,6 +704,7 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
               } else {
 
+                // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
                 echo '<div class="csf-no-option">'. esc_html__( 'No data available.', 'csf' ) .'</div>';
 
               }
@@ -703,11 +728,15 @@ if ( ! class_exists( 'CSF_Options' ) ) {
           echo '<div class="csf-footer">';
 
           echo '<div class="csf-buttons">';
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           echo '<input type="submit" name="csf_transient[save]" class="button button-primary csf-save'. esc_attr( $ajax_class ) .'" value="'. esc_html__( 'Save', 'csf' ) .'" data-save="'. esc_html__( 'Saving...', 'csf' ) .'">';
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           echo ( $this->args['show_reset_section'] ) ? '<input type="submit" name="csf_transient[reset_section]" class="button button-secondary csf-reset-section csf-confirm" value="'. esc_html__( 'Reset Section', 'csf' ) .'" data-confirm="'. esc_html__( 'Are you sure to reset this section options?', 'csf' ) .'">' : '';
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           echo ( $this->args['show_reset_all'] ) ? '<input type="submit" name="csf_transient[reset]" class="button csf-warning-primary csf-reset-all csf-confirm" value="'. ( ( $this->args['show_reset_section'] ) ? esc_html__( 'Reset All', 'csf' ) : esc_html__( 'Reset', 'csf' ) ) .'" data-confirm="'. esc_html__( 'Are you sure you want to reset all settings to default values?', 'csf' ) .'">' : '';
           echo '</div>';
 
+          // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
           echo ( ! empty( $this->args['footer_text'] ) ) ? '<div class="csf-copyright">'. $this->args['footer_text'] .'</div>' : '';
 
           echo '<div class="clear"></div>';
@@ -721,10 +750,12 @@ if ( ! class_exists( 'CSF_Options' ) ) {
 
         echo '<div class="clear"></div>';
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo ( ! empty( $this->args['footer_after'] ) ) ? $this->args['footer_after'] : '';
 
       echo '</div>';
 
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       do_action( 'csf_options_after' );
 
     }

@@ -50,6 +50,7 @@ class CPFM_Feedback_Notice {
          *     'pages' => ['dashboard', 'cpfm_'],
          * ]);
          */
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         do_action('cpfm_register_notice');
     }
 
@@ -62,6 +63,7 @@ class CPFM_Feedback_Notice {
         }
        
 
+       // phpcs:ignore WordPress.Security.NonceVerification.Recommended
        $current_page   = isset($_GET['page'])? sanitize_key($_GET['page']):'';
 
         
@@ -139,6 +141,7 @@ class CPFM_Feedback_Notice {
 
                     if($plugin_name){
 
+                        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
                         do_action('cpfm_after_opt_in_' . $plugin_name, $category);
                     }
               
@@ -158,6 +161,7 @@ class CPFM_Feedback_Notice {
         }
 
         $screen         = get_current_screen();
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $current_page   = isset($_GET['page']) ? sanitize_key($_GET['page']) : '';
 
        
@@ -174,6 +178,7 @@ class CPFM_Feedback_Notice {
     
         $output = '';
         $output .= '<div id="cpfNoticePanel" class="notice-panel"' . ($auto_show ? ' data-auto-show="true"' : '') . '>';
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         $output .= '<div class="notice-panel-header">' . esc_html__('Help Improve Plugins', 'ccpw') . ' <span class="dashicons dashicons-no" id="cpfm_remove_notice"></span></div>';
         $output .= '<div class="notice-panel-content">';
     
@@ -200,20 +205,26 @@ class CPFM_Feedback_Notice {
             $output .= '<strong>' . esc_html($notice['title']) . '</strong>';
             
             $output .= '<div class="notice-message-with-toggle">';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             $output .= '<p>' . esc_html($notice['message']) . '<a href="#" class="cpf-toggle-extra">' . esc_html__(' More info', 'ccpw') . '</a></p>';
             $output .= '</div>';
             
             $output .= '<div class="cpf-extra-info">';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             $output .= '<p>' . esc_html__('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect:', 'ccpw') . '</p>';
             $output .= '<ul>';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             $output .= '<li>' . esc_html__('Your website home URL and WordPress admin email.', 'ccpw') . '</li>';
-            $output .= '<li>' . esc_html__('To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'ccpw') . '</li>';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+            $output .= '<li>' . esc_html__('To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'ccpw') . ' <a href="' . esc_url( 'https://my.coolplugins.net/terms/usage-tracking/' ) . '" target="_blank" rel="noopener noreferrer">' .esc_html__( 'Click here', 'ccpw' ) .'</a></li>';
             $output .= '</ul>';
             
             $output .= '</div>';
             
             $output .= '<div class="notice-actions">';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             $output .= '<button class="button button-primary opt-in-yes" data-category="' . esc_attr($key) . '" id="yes-share-data" value="yes">' . esc_html__("Yes, I Agree", 'ccpw') . '</button>';
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             $output .= '<button class="button opt-in-no" data-category="' . esc_attr($key) . '" id="no-share-data" value="no">' . esc_html__('No, Thanks', 'ccpw') . '</button>';
             $output .= '</div>';
             

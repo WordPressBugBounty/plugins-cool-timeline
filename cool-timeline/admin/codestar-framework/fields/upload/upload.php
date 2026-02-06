@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: upload
@@ -16,6 +17,7 @@ if ( ! class_exists( 'CSF_Field_upload' ) ) {
 
     public function render() {
 
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
       $args = wp_parse_args( $this->field, array(
         'library'        => array(),
         'preview'        => false,
@@ -24,6 +26,7 @@ if ( ! class_exists( 'CSF_Field_upload' ) ) {
         'button_title'   => esc_html__( 'Upload', 'csf' ),
         'remove_title'   => esc_html__( 'Remove', 'csf' ),
       ) );
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
       echo $this->field_before();
 

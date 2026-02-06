@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: radio
@@ -72,6 +73,7 @@ if ( ! class_exists( 'CSF_Field_radio' ) ) {
 
         } else {
 
+          // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
           echo ( ! empty( $this->field['empty_message'] ) ) ? esc_attr( $this->field['empty_message'] ) : esc_html__( 'No data available.', 'csf' );
 
         }

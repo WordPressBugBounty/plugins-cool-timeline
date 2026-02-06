@@ -39,7 +39,9 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
     public function __construct( $key, $params = array() ) {
 
       $this->unique       = $key;
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->args         = apply_filters( "csf_{$this->unique}_args", wp_parse_args( $params['args'], $this->args ), $this );
+      // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       $this->sections     = apply_filters( "csf_{$this->unique}_sections", $params['sections'], $this );
       $this->pre_tabs     = $this->pre_tabs( $this->sections );
       $this->pre_sections = $this->pre_sections( $this->sections );
@@ -143,6 +145,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
             <div class="csf-modal-overlay"></div>
             <div class="csf-modal-inner">
               <div class="csf-modal-title">
+                <?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                 <?php echo $this->args['button_title']; ?>
                 <div class="csf-modal-close"></div>
               </div>
@@ -166,6 +169,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
                       $shortcode = ( ! empty( $sub['shortcode'] ) ) ? ' data-shortcode="'. esc_attr( $sub['shortcode'] ) .'"' : '';
                       $group     = ( ! empty( $sub['group_shortcode'] ) ) ? ' data-group="'. esc_attr( $sub['group_shortcode'] ) .'"' : '';
 
+                      // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                       echo '<option value="'. esc_attr( $tab_key ) .'"'. $view . $shortcode . $group .'>'. esc_attr( $sub['title'] ) .'</option>';
 
                       $tab_key++;
@@ -180,6 +184,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
                       $shortcode = ( ! empty( $tab['shortcode'] ) ) ? ' data-shortcode="'. esc_attr( $tab['shortcode'] ) .'"' : '';
                       $group     = ( ! empty( $tab['group_shortcode'] ) ) ? ' data-group="'. esc_attr( $tab['group_shortcode'] ) .'"' : '';
 
+                      // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                       echo '<option value="'. esc_attr( $tab_key ) .'"'. $view . $shortcode . $group .'>'. esc_attr( $tab['title'] ) .'</option>';
 
                     $tab_key++;
@@ -196,7 +201,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
                 <div class="csf-modal-loading"><div class="csf-loading"></div></div>
                 <div class="csf-modal-load"></div>
               </div>
-              <div class="csf-modal-insert-wrapper hidden"><a href="#" class="button button-primary csf-modal-insert"><?php echo $this->args['insert_title']; ?></a></div>
+              <div class="csf-modal-insert-wrapper hidden"><a href="#" class="button button-primary csf-modal-insert"><?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php echo $this->args['insert_title']; ?></a></div>
             </div>
           </div>
         </div>
@@ -208,6 +213,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
 
       // Check user capabilities
       if ( ! current_user_can( 'manage_options' ) ) {
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
         wp_die();
       }
@@ -232,6 +238,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
 
             echo '<div class="csf-fields">';
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             echo ( ! empty( $section['description'] ) ) ? '<div class="csf-field csf-section-description">'. $section['description'] .'</div>' : '';
 
             foreach ( $section['fields'] as $field ) {
@@ -258,6 +265,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
 
           if ( ! empty( $repeatable_fields ) ) {
 
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
             $button_title    = ( ! empty( $section['button_title'] ) ) ? ' '. $section['button_title'] : esc_html__( 'Add New', 'csf' );
             $inner_shortcode = ( ! empty( $section['group_shortcode'] ) ) ? $section['group_shortcode'] : $shortcode;
 
@@ -288,6 +296,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
 
             echo '</div>';
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             echo '<div class="csf--repeat-button-block"><a class="button csf--repeat-button" href="#"><i class="fas fa-plus-circle"></i> '. $button_title .'</a></div>';
 
           }
@@ -295,6 +304,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
         }
 
       } else {
+        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
         echo '<div class="csf-field csf-error-text">'. esc_html__( 'Error: Invalid nonce verification.', 'csf' ) .'</div>';
       }
 
@@ -326,7 +336,8 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
         $depends[] = 'wp-edit-post';
       }
 
-      wp_enqueue_script( 'csf-gutenberg-block', CSF::include_plugin_url( 'assets/js/gutenberg.js' ), $depends );
+      // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion,WordPress.WP.EnqueuedResourceParameters.NotInFooter
+      wp_enqueue_script( 'csf-gutenberg-block', CSF::include_plugin_url( 'assets/js/gutenberg.js' ), $depends ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion,WordPress.WP.EnqueuedResourceParameters.NotInFooter
 
       wp_localize_script( 'csf-gutenberg-block', 'csf_gutenberg_blocks', CSF::$shortcode_instances );
 
@@ -344,6 +355,7 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
     public static function add_media_buttons( $editor_id ) {
 
       foreach ( CSF::$shortcode_instances as $value ) {
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo '<a href="#" class="button button-primary csf-shortcode-button" data-editor-id="'. esc_attr( $editor_id ) .'" data-modal-id="'. esc_attr( $value['modal_id'] ) .'">'. $value['button_title'] .'</a>';
       }
 

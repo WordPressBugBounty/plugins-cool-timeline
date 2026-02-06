@@ -9,6 +9,7 @@
  *
  */
 if ( ! function_exists( 'csf_sanitize_replace_a_to_b' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_sanitize_replace_a_to_b( $value ) {
     return str_replace( 'a', 'b', $value );
   }
@@ -23,6 +24,7 @@ if ( ! function_exists( 'csf_sanitize_replace_a_to_b' ) ) {
  *
  */
 if ( ! function_exists( 'csf_sanitize_title' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_sanitize_title( $value ) {
     return sanitize_title( $value );
   }

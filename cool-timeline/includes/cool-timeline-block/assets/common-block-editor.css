@@ -256,11 +256,18 @@ background: whitesmoke;
 }
 .timeline-block-typography-options .timeline-block-size-btn {
     float: right;
-  }
+}
 
 
-  .timeline-block-typography-options .timeline-block-typography-font-family-options input[type=text]:focus {
+.timeline-block-typography-options .timeline-block-typography-font-family-options input[type=text]:focus {
     box-shadow: none !important;
+}
+.timeline-block-typography-options .timeline-block-typography-font-family-options{
+	margin-top: 12px !important;
+}
+	
+.cp-timeline-block-demo-button a{
+	margin-right: 5px !important;
 }
 
 .rfipbtn,
@@ -973,6 +980,9 @@ i.fipicon-angle-left:before {
   .timeline-block-control__actions h2 {
     display: inline-flex;
     margin-bottom: 1em;
+	white-space: pre-wrap;
+	width: fit-content;
+	max-width: 100px;
   }
 
   .timeline-block-spacing-control .timeline-block-control__units,

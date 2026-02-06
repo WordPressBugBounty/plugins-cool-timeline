@@ -151,22 +151,22 @@ span.plugin-update-available {
   font-weight: bold;
 }
 
-.wp-submenu a[href*="edit.php?post_type=timeline-builder"],
-.wp-submenu a[href*="post-new.php?post_type=timeline-builder"],
-.wp-submenu a[href*="admin.php?page=timeline-demo-preview"] {
-  color: #27e4dd !important;
-  background: #0c1111 !important;
+.wp-submenu li:has(> a[href*="edit.php?post_type=timeline-builder"])::before {
+    content: "";
+    border-bottom: 1px solid rgb(255 255 255 / 0.2);
+    display: block;
+    float: left;
+    margin: 8px 0; 
+    width: 100%;
 }
-.wp-submenu a[href*="edit.php?post_type=cool_timeline"],
-.wp-submenu a[href*="post-new.php?post_type=cool_timeline"],
-.wp-submenu
-  a[href*="edit-tags.php?taxonomy=ctl-stories&post_type=cool_timeline"],
-.wp-submenu a[href*="admin.php?page=cool_timeline_settings"],
-.toplevel_page_cool-plugins-timeline-addon
-  .wp-submenu
-  a[href*="admin.php?page=twae-welcome-page"] {
-  color: #f98f9e !important;
-  background: #0c1111 !important;
+
+.wp-submenu li:has(> a[href*="edit.php?post_type=cool_timeline"])::before {
+    content: "";
+    border-bottom: 1px solid rgb(255 255 255 / 0.2);
+    display: block;
+    float: left;
+    margin: 8px 0; 
+    width: 100%;
 }
 
 @media only screen and (max-width: 600px) {

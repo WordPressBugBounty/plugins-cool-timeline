@@ -3,7 +3,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.0.8
+  Version:3.2.1
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -17,10 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-
 /** Configuration */
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.0.8' );
+	define( 'CTL_V', '3.2.1' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -180,7 +179,9 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 	
 		$notice = [
 	
+			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
 			'title' => __('Timeline Plugins by Cool Plugins', 'ctl'),
+			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
 			'message' => __('Help us make this plugin more compatible with your site by sharing non-sensitive site data.', 'cool-plugins-feedback'),
 			'pages' => ['cool_timeline_settings', 'cool-plugins-timeline-addon'],
 			'always_show_on' => ['cool_timeline_settings', 'cool-plugins-timeline-addon'],
@@ -225,7 +226,6 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		// loading language files
 		public function ctl_load_plugin_textdomain() {
 
-			load_plugin_textdomain( 'cool-timeline', false, basename( dirname( __FILE__ ) ) . '/languages/' );
 
 			if (!get_option( 'ctl_initial_save_version' ) ) {
 				add_option( 'ctl_initial_save_version', CTL_V );
@@ -246,7 +246,8 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 		public function ctl_plugin_redirection( $plugin ) {
 			if ( plugin_basename( __FILE__ ) === $plugin ) {
-				exit( wp_redirect( admin_url( 'admin.php?page=cool_timeline_settings#tab=get-started' ) ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=cool_timeline_settings#tab=get-started' ) );
+				exit;
 			}
 		}
 
@@ -266,20 +267,54 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		 * @param bool $update Whether this is an existing post being updated or not.
 		 */
 		public function ctl_save_story_meta( $post_id, $post, $update ) {
-			// Check if our nonce is set and valid
-			if ( ! isset( $_POST['ctl_nonce'] ) || ! wp_verify_nonce( $_POST['ctl_nonce'], 'ctl_save_story_meta' ) ) {
-				return; // Nonce is invalid, exit
-			}
-
-			$post_type = get_post_type( $post_id );
-			// If this isn't a 'cool_timeline' post, don't update it.
-
-			if ( 'cool_timeline' != $post_type ) {
+			// Bail on autosaves/revisions.
+			if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
 				return;
 			}
-			// - Update the post's metadata.
-			if ( isset( $_POST['ctl_post_meta']['story_type']['ctl_story_date'] ) ) {
-				$story_date      = sanitize_text_field( $_POST['ctl_post_meta']['story_type']['ctl_story_date'] );
+
+			// If this isn't a 'cool_timeline' post, don't update it.
+			$post_type = get_post_type( $post_id );
+			if ( 'cool_timeline' !== $post_type ) {
+				return;
+			}
+
+			// Permission check.
+			if ( ! current_user_can( 'edit_post', $post_id ) ) {
+				return;
+			}
+
+			$story_date = '';
+
+			/**
+			 * Prefer using posted metabox value when a valid WP core post nonce exists.
+			 * This avoids relying on a custom nonce that may not be present in all editors/requests.
+			 */
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( isset( $_POST['_wpnonce'] ) ) {
+				$wp_nonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
+				if ( wp_verify_nonce( $wp_nonce, 'update-post_' . $post_id ) ) {
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing
+					if ( isset( $_POST['ctl_post_meta']['story_type']['ctl_story_date'] ) ) {
+						// phpcs:ignore WordPress.Security.NonceVerification.Missing
+						$story_date = sanitize_text_field( wp_unslash( $_POST['ctl_post_meta']['story_type']['ctl_story_date'] ) );
+					}
+				}
+			}
+
+			// Fallback: read already-saved metabox meta (works for REST/Gutenberg flows too).
+			if ( empty( $story_date ) ) {
+				$ctl_post_meta = get_post_meta( $post_id, 'ctl_post_meta', true );
+				if ( is_array( $ctl_post_meta ) && isset( $ctl_post_meta['story_type']['ctl_story_date'] ) ) {
+					$story_date = sanitize_text_field( $ctl_post_meta['story_type']['ctl_story_date'] );
+				}
+			}
+
+			// Fallback: read legacy/meta fields if present.
+			if ( empty( $story_date ) ) {
+				$story_date = sanitize_text_field( (string) get_post_meta( $post_id, 'ctl_story_date', true ) );
+			}
+
+			if ( ! empty( $story_date ) ) {
 				$story_timestamp = CTL_Helpers::ctlfree_generate_custom_timestamp( $story_date );
 				update_post_meta( $post_id, 'ctl_story_timestamp', $story_timestamp );
 				update_post_meta( $post_id, 'story_based_on', 'default' );
@@ -365,8 +400,11 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		global $wpdb;
 	
 		// Server and WP environment details
+
 		$server_info = [
-			'server_software'        => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field($_SERVER['SERVER_SOFTWARE']) : 'N/A',
+
+		'server_software'        => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'N/A',
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			'mysql_version'          => $wpdb ? sanitize_text_field($wpdb->get_var("SELECT VERSION()")) : 'N/A',
 			'php_version'            => sanitize_text_field(phpversion() ?: 'N/A'),
 			'wp_version'             => sanitize_text_field(get_bloginfo('version') ?: 'N/A'),
@@ -427,6 +465,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 }
 
 /*** THANKS - CoolPlugins.net ) */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $ctl = CoolTimeline::get_instance();
 $ctl->registers();
 

@@ -8,9 +8,11 @@
  *
  */
 if ( ! function_exists( 'csf_validate_email' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_validate_email( $value ) {
 
     if ( ! filter_var( $value, FILTER_VALIDATE_EMAIL ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       return esc_html__( 'Please enter a valid email address.', 'csf' );
     }
 
@@ -26,9 +28,11 @@ if ( ! function_exists( 'csf_validate_email' ) ) {
  *
  */
 if ( ! function_exists( 'csf_validate_numeric' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_validate_numeric( $value ) {
 
     if ( ! is_numeric( $value ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       return esc_html__( 'Please enter a valid number.', 'csf' );
     }
 
@@ -44,9 +48,11 @@ if ( ! function_exists( 'csf_validate_numeric' ) ) {
  *
  */
 if ( ! function_exists( 'csf_validate_required' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_validate_required( $value ) {
 
     if ( empty( $value ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       return esc_html__( 'This field is required.', 'csf' );
     }
 
@@ -62,9 +68,11 @@ if ( ! function_exists( 'csf_validate_required' ) ) {
  *
  */
 if ( ! function_exists( 'csf_validate_url' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_validate_url( $value ) {
 
     if ( ! filter_var( $value, FILTER_VALIDATE_URL ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       return esc_html__( 'Please enter a valid URL.', 'csf' );
     }
 
@@ -80,9 +88,11 @@ if ( ! function_exists( 'csf_validate_url' ) ) {
  *
  */
 if ( ! function_exists( 'csf_customize_validate_email' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_customize_validate_email( $validity, $value, $wp_customize ) {
 
     if ( ! sanitize_email( $value ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       $validity->add( 'required', esc_html__( 'Please enter a valid email address.', 'csf' ) );
     }
 
@@ -100,9 +110,11 @@ if ( ! function_exists( 'csf_customize_validate_email' ) ) {
  *
  */
 if ( ! function_exists( 'csf_customize_validate_numeric' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_customize_validate_numeric( $validity, $value, $wp_customize ) {
 
     if ( ! is_numeric( $value ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       $validity->add( 'required', esc_html__( 'Please enter a valid number.', 'csf' ) );
     }
 
@@ -120,9 +132,11 @@ if ( ! function_exists( 'csf_customize_validate_numeric' ) ) {
  *
  */
 if ( ! function_exists( 'csf_customize_validate_required' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_customize_validate_required( $validity, $value, $wp_customize ) {
 
     if ( empty( $value ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       $validity->add( 'required', esc_html__( 'This field is required.', 'csf' ) );
     }
 
@@ -140,9 +154,11 @@ if ( ! function_exists( 'csf_customize_validate_required' ) ) {
  *
  */
 if ( ! function_exists( 'csf_customize_validate_url' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
   function csf_customize_validate_url( $validity, $value, $wp_customize ) {
 
     if ( ! filter_var( $value, FILTER_VALIDATE_URL ) ) {
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       $validity->add( 'required', esc_html__( 'Please enter a valid URL.', 'csf' ) );
     }
 

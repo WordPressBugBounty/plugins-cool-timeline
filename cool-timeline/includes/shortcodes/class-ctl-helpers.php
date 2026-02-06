@@ -66,7 +66,9 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 				return $typenow;
 			} elseif ( $current_screen && $current_screen->post_type ) {
 				return $current_screen->post_type;
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 					} elseif ( isset( $_REQUEST['post_type'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) );
 			}
 			return null;
@@ -117,7 +119,7 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 				$url             = get_the_permalink( get_the_ID() );
 				$read_more_lbl   = __( 'Read More', 'cool-timeline' );
 				$target          = ! empty( $settings['story_link_target'] ) ? $settings['story_link_target'] : '_self';
-				$read_more_link .= '&hellip;<a class="read_more ctl_read_more" target="' . esc_attr( $target ) . '" href="' . esc_url( $url ) . '" role="link">' . esc_html__( $read_more_lbl, 'cool-timeline' ) . '</a>';
+				$read_more_link .= '&hellip;<a class="read_more ctl_read_more" target="' . esc_attr( $target ) . '" href="' . esc_url( $url ) . '" role="link">' . esc_html($read_more_lbl) . '</a>';
 			}
 			  // Trim content
                $excerpt = wp_trim_words(
@@ -127,6 +129,7 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
                );
  
           // ✅ Run embed + shortcode filters
+              // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
               $excerpt = apply_filters( 'the_content', $excerpt );
 
               // Auto <p> tags
@@ -179,6 +182,7 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 		 * @param int      $paged current page number.
 		 */
 		public static function ctl_pagination( $wp_query, $paged, $fontawesome ) {
+			$paged = max( 1, absint( $paged ) );
 			$output   = '';
 			$numpages = $wp_query->max_num_pages;
 			if ( ! $numpages ) {

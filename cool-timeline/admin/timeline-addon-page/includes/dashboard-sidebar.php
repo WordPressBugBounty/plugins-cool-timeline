@@ -21,7 +21,7 @@ if ( ! isset( $this->main_menu_slug ) ) {
 	</a>
 	<ul>
 	  <li><?php echo esc_html__( 'Cool Plugins develops best timeline plugins for WordPress.', 'cool-timeline' ); ?></li>
-	  <li><?php printf( esc_html__( 'Our timeline plugins have %1$s50000+%2$s active installs.', 'cool-timeline' ), '<b>', '</b>' ); ?></li>
+	  <li><?php /* translators: 1: opening bold tag, 2: closing bold tag */ printf( esc_html__( 'Our timeline plugins have %1$s50000+%2$s active installs.', 'cool-timeline' ), '<b>', '</b>' ); ?></li>
 	  <li><?php echo esc_html__( 'For any query or support, please contact plugin support team.', 'cool-timeline' ); ?>
 	  <br><br>
 	  <a href="<?php echo esc_url( $cool_support_email ); ?>" target="_blank" class="button button-secondary"><?php echo esc_html__( 'Premium Plugin Support', 'cool-timeline' ); ?></a>

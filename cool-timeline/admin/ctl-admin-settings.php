@@ -5,10 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Add admin notice for timeline express migration
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function ctl_admin_notice_for_migration() {
 
 	 // Check if we're on the Cool Timeline settings page and Get Started tab
-	if (!isset($_GET['page']) || sanitize_text_field($_GET['page']) !== 'cool_timeline_settings') {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if (!isset($_GET['page']) || sanitize_text_field( wp_unslash( $_GET['page'] ) ) !== 'cool_timeline_settings') {
         return;
     }
     // Check if timeline express is installed and migration is not completed
@@ -37,10 +39,11 @@ if ( class_exists( 'CSF' ) ) {
 
 
 
-
+	
 
 
 	
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$prefix = 'cool_timeline_settings';
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
@@ -65,6 +68,7 @@ if ( class_exists( 'CSF' ) ) {
 		)
 	);
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$fields=array(
 
 
@@ -160,25 +164,33 @@ if ( class_exists( 'CSF' ) ) {
                 
 			);
 
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 					$review_option = get_option( 'cpfm_opt_in_choice_cool-timeline' );
 					
 					if($review_option){
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		$fields[]= array(
 			'id'      => 'ctl_cpfm_feedback_data',
 			'type'    => 'checkbox',
+			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
 			'title'   => __('Usage Data Sharing', 'ccpw1'),
 			'default' => $review_option === 'yes' ? true : false,
 			'desc'    => 'Help us make this plugin more compatible with your site by sharing non-sensitive site data. 
 				<a href="#" class="cpfm-see-terms">[See terms]</a>
 				<div id="termsBox" style="display: none; margin-top: 10px; ">
 					' . sprintf(
-        __('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect: <a href="%s" target="_blank" rel="noopener noreferrer">click here</a>', 'ccpw'),
+       // translators: %s: minimum number of characters
+        __('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect: <a href="%s" target="_blank" rel="noopener noreferrer">click here</a>', 'ccpw'), // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch 
         esc_url('https://my.coolplugins.net/terms/usage-tracking/')
     ) . '
 					<ul class="ctl_data_share" >
-						<li>' . esc_html__('1. Your website home URL and WordPress admin email.', 'ccpw') . '</li>
-						<li>' . esc_html__('2. To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'ccpw') . '</li>
+						' . 
+						// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+						'<li>' . esc_html__('1. Your website home URL and WordPress admin email.', 'ccpw') . '</li>
+						' . 
+						// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+						'<li>' . esc_html__('2. To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'ccpw') . '</li>
 					</ul>
 				</div>',
 		);
@@ -197,6 +209,7 @@ if ( class_exists( 'CSF' ) ) {
 	
 
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$timeline_express_installed = file_exists(WP_PLUGIN_DIR . '/timeline-express/timeline-express.php');
 	
 	
@@ -373,6 +386,7 @@ if ( class_exists( 'CSF' ) ) {
 	);
 
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	function ctl_demo_page_content() {
           
 		ob_start();
@@ -396,8 +410,9 @@ if ( class_exists( 'CSF' ) ) {
 									<li class="ctl_step-data">
 										<span class="ctl_list-text"><?php echo esc_html__( 'Open timeline addons and add a new story.', 'cool-timeline' ); ?></span>
 									</li>
+									
 									<li class="ctl_step-data">
-										<span class="ctl_list-text"><?php printf( esc_html__( 'Craft a compelling %1$s Title %2$s and %3$s Description %4$s for your story.', 'cool-timeline' ), '<b>', '</b>', '<b>', '</b>' ); ?></span>
+										<span class="ctl_list-text"><?php /* translators: 1: opening bold tag, 2: closing bold tag, 3: opening bold tag, 4: closing bold tag */ printf( esc_html__( 'Craft a compelling %1$s Title %2$s and %3$s Description %4$s for your story.', 'cool-timeline' ), '<b>', '</b>', '<b>', '</b>' ); ?></span>
 									</li>
 									<li class="ctl_step-data">
 										<span class="ctl_list-text"><?php echo esc_html__( 'Specify the date for your timeline story.', 'cool-timeline' ); ?></span>
@@ -424,7 +439,7 @@ if ( class_exists( 'CSF' ) ) {
 							<div class="ctl_steps-list">
 								<ol>
 									<li class="ctl_step-data">
-										<span class="ctl_list-text"><?php printf( esc_html__( 'Search for %1$s Cool Timeline %2$s in the block search box.', 'cool-timeline' ), '<b>', '</b>' ); ?></span>
+										<span class="ctl_list-text"><?php /* translators: 1: opening bold tag, 2: closing bold tag */ printf( esc_html__( 'Search for %1$s Cool Timeline %2$s in the block search box.', 'cool-timeline' ), '<b>', '</b>' ); ?></span>
 									</li>
 									<li class="ctl_step-data">
 										<span class="ctl_list-text"><?php echo esc_html__( 'Access settings in the shortcode block to generate the timeline shortcode.', 'cool-timeline' ); ?></span>
@@ -448,7 +463,7 @@ if ( class_exists( 'CSF' ) ) {
 										<span class="ctl_list-text"><?php echo esc_html__( 'Create or edit a page.', 'cool-timeline' ); ?></span>
 									</li>
 									<li class="ctl_step-data">
-										<span class="ctl_list-text"><?php printf( esc_html__( 'Click the %1$s Add Timeline %2$s button.', 'cool-timeline' ), '<b>', '</b>' ); ?></span>
+										<span class="ctl_list-text"><?php /* translators: 1: opening bold tag, 2: closing bold tag */ printf( esc_html__( 'Click the %1$s Add Timeline %2$s button.', 'cool-timeline' ), '<b>', '</b>' ); ?></span>
 									</li>
 									<li class="ctl_step-data">
 										<span class="ctl_list-text"><?php echo esc_html__( 'Access General Settings to configure options.', 'cool-timeline' ); ?></span>
@@ -457,7 +472,7 @@ if ( class_exists( 'CSF' ) ) {
 										<span class="ctl_list-text"><?php echo esc_html__( 'Navigate to the preview tab for a Live Preview.', 'cool-timeline' ); ?></span>
 									</li>
 									<li class="ctl_step-data">
-										<span class="ctl_list-text"><?php printf( esc_html__( 'Click the %s button to add the shortcode.', 'cool-timeline' ), '<b>' . esc_html__( 'Insert Shortcode', 'cool-timeline' ) . '</b>' ); ?></span>
+										<span class="ctl_list-text"><?php /* translators: 1: opening bold tag, 2: closing bold tag */ printf( esc_html__( 'Click the %s button to add the shortcode.', 'cool-timeline' ), '<b>' . esc_html__( 'Insert Shortcode', 'cool-timeline' ) . '</b>' ); ?></span>
 									</li>
 								</ol>
 							</div>
@@ -503,7 +518,7 @@ if ( class_exists( 'CSF' ) ) {
 							<div class="ctl_steps-list">
 								<ol>
 									<li class="ctl_step-data">
-										<span class="ctl_list-text"><?php printf( esc_html__( 'Search for %1$s Cool Timeline Block %2$s in the block search box.', 'cool-timeline' ), '<b>', '</b>' ); ?></span>
+										<span class="ctl_list-text"><?php /* translators: 1: opening bold tag, 2: closing bold tag */ printf( esc_html__( 'Search for %1$s Cool Timeline Block %2$s in the block search box.', 'cool-timeline' ), '<b>', '</b>' ); ?></span>
 									</li>
 									<li class="ctl_step-data">
 										<span class="ctl_list-text"><?php echo esc_html__( 'Access Additional Settings by navigating to the right side of the Cool Timeline Block.', 'cool-timeline' ); ?></span>

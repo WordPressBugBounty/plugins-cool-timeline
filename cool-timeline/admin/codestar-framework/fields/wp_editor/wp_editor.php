@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: wp_editor
@@ -74,6 +75,7 @@ if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
 
       ob_start();
         echo '<div class="wp-media-buttons">';
+          // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
           do_action( 'media_buttons' );
         echo '</div>';
       $media_buttons = ob_get_clean();
@@ -89,6 +91,7 @@ if ( ! class_exists( 'CSF_Field_wp_editor' ) ) {
 
       if ( csf_wp_editor_api() && class_exists( '_WP_Editors') ) {
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         $defaults = apply_filters( 'csf_wp_editor', array(
           'tinymce' => array(
             'wp_skip_init' => true

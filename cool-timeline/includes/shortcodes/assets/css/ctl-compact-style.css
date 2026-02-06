@@ -274,7 +274,7 @@
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-down .ctl-icon {
-    top: 27px;
+    top: calc(27px + var(--ctw-compact-top-spacing, 0px));
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-up .ctl-icon {
@@ -282,7 +282,7 @@
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-down .ctl-icondot {
-    top: 22px;
+    top: calc(22px + var(--ctw-compact-top-spacing, 0px));
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-up .ctl-icondot {
@@ -290,7 +290,7 @@
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-down .ctl-arrow {
-    top: 30px;
+    top: calc(30px + var(--ctw-compact-top-spacing, 0px));
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-up .ctl-arrow {
@@ -298,7 +298,7 @@
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-down .ctl-icondot~.ctl-arrow {
-    top: 22px;
+    top: calc(22px + var(--ctw-compact-top-spacing, 0px));
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-up .ctl-icondot~.ctl-arrow {
@@ -346,14 +346,16 @@
         right: auto;
     }
     .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-down .ctl-arrow {
-        top: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 100 + var(--ctw-ibx-size) / 2 - var(--ctw-ibx-size) / 7);
+        top: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 100 + var(--ctw-ibx-size) / 2 - var(--ctw-ibx-size) / 7 + var(--ctw-compact-top-spacing, 0px));
     }
     .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-up .ctl-arrow{
-        top: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 100 + var(--ctw-ibx-size) / 2 - var(--ctw-ibx-size) / 7)
+        top: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 100 + var(--ctw-ibx-size) / 2 - var(--ctw-ibx-size) / 7);
     }
-    .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-up .ctl-icondot,
+    .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-up .ctl-icondot{
+        top: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 100 + var(--ctw-ibx-size) / 3 + 2px);
+    }
     .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-down .ctl-icondot{
-        top: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 100 + var(--ctw-ibx-size) / 3 + 2px)
+        top: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 100 + var(--ctw-ibx-size) / 3 + 2px + var(--ctw-compact-top-spacing, 0px));
     }
     .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-arrow {
         left: calc(var(--ctw-ibx-size) + var(--ctw-ibx-size) / 0.9 - var(--ctw-ibx-size) / 1.9 + var(--ctw-cbx-bd-left-width) / 1 - 10px)!important;

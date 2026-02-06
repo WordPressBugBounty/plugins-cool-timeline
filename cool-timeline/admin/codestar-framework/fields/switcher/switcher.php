@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: switcher
@@ -17,7 +18,9 @@ if ( ! class_exists( 'CSF_Field_switcher' ) ) {
     public function render() {
 
       $active     = ( ! empty( $this->value ) ) ? ' csf--active' : '';
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       $text_on    = ( ! empty( $this->field['text_on'] ) ) ? $this->field['text_on'] : esc_html__( 'On', 'csf' );
+      // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
       $text_off   = ( ! empty( $this->field['text_off'] ) ) ? $this->field['text_off'] : esc_html__( 'Off', 'csf' );
       $text_width = ( ! empty( $this->field['text_width'] ) ) ? ' style="width: '. esc_attr( $this->field['text_width'] ) .'px;"': '';
 
@@ -34,7 +37,7 @@ if ( ! class_exists( 'CSF_Field_switcher' ) ) {
 
       echo $this->field_after();
 
-    }
+     }
 
-  }
+   }
 }

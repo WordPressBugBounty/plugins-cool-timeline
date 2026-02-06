@@ -1,4 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access directly.
+// phpcs:ignoreFile WordPress.Security.EscapeOutput.OutputNotEscaped
 /**
  *
  * Field: typography
@@ -19,6 +20,8 @@ if ( ! class_exists( 'CSF_Field_typography' ) ) {
     }
 
     public function render() {
+
+      // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
 
       echo $this->field_before();
 
@@ -43,6 +46,7 @@ if ( ! class_exists( 'CSF_Field_typography' ) ) {
         'text_decoration'    => false,
         'custom_style'       => false,
         'compact'            => false,
+        // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
         'exclude'            => '',
         'unit'               => 'px',
         'line_height_unit'   => '',
@@ -315,6 +319,8 @@ if ( ! class_exists( 'CSF_Field_typography' ) ) {
 
       echo $this->field_after();
 
+      // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
+
     }
 
     public function create_select( $options, $name, $placeholder = '', $is_multiple = false ) {
@@ -351,13 +357,16 @@ if ( ! class_exists( 'CSF_Field_typography' ) ) {
 
         CSF::include_plugin_file( 'fields/typography/google-fonts.php' );
 
+        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
         wp_enqueue_script( 'csf-webfontloader', 'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js', array( 'csf' ), '1.6.28', true );
 
         $webfonts = array();
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         $customwebfonts = apply_filters( 'csf_field_typography_customwebfonts', array() );
 
         if ( ! empty( $customwebfonts ) ) {
+          // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
           $webfonts['custom'] = array(
             'label' => esc_html__( 'Custom Web Fonts', 'csf' ),
             'fonts' => $customwebfonts
@@ -366,6 +375,7 @@ if ( ! class_exists( 'CSF_Field_typography' ) ) {
 
         $webfonts['safe'] = array(
           'label' => esc_html__( 'Safe Web Fonts', 'csf' ),
+          // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
           'fonts' => apply_filters( 'csf_field_typography_safewebfonts', array(
             'Arial',
             'Arial Black',
@@ -386,11 +396,15 @@ if ( ! class_exists( 'CSF_Field_typography' ) ) {
 
         $webfonts['google'] = array(
           'label' => esc_html__( 'Google Web Fonts', 'csf' ),
+          // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
           'fonts' => apply_filters( 'csf_field_typography_googlewebfonts', csf_get_google_fonts()
         ) );
+        // phpcs:enable WordPress.WP.I18n.TextDomainMismatch
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         $defaultstyles = apply_filters( 'csf_field_typography_defaultstyles', array( 'normal', 'italic', '700', '700italic' ) );
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         $googlestyles = apply_filters( 'csf_field_typography_googlestyles', array(
           '100'       => 'Thin 100',
           '100italic' => 'Thin 100 Italic',
@@ -412,6 +426,7 @@ if ( ! class_exists( 'CSF_Field_typography' ) ) {
           '900italic' => 'Black 900 Italic'
         ) );
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         $webfonts = apply_filters( 'csf_field_typography_webfonts', $webfonts );
 
         wp_localize_script( 'csf', 'csf_typography_json', array(
