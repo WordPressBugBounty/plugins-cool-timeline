@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Shortcoder' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Shortcoder extends CSF_Abstract{
 
     // constans

@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Welcome' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Welcome{
 
     private static $instance = null;

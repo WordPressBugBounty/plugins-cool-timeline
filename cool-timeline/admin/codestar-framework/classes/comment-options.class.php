@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Comment_Metabox' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Comment_Metabox extends CSF_Abstract{
 
     // constans

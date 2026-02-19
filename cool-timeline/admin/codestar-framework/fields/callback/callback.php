@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Field_callback' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Field_callback extends CSF_Fields {
 
     public function __construct( $field, $value = '', $unique = '', $where = '', $parent = '' ) {

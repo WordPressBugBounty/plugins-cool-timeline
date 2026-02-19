@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Options' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Options extends CSF_Abstract {
 
     // constans

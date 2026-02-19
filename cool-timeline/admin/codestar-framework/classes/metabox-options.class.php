@@ -9,6 +9,7 @@
  * @version 1.0.0
  */
 if ( ! class_exists( 'CSF_Metabox' ) ) {
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 	class CSF_Metabox extends CSF_Abstract {
 
 

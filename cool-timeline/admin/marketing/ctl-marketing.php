@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
     class Ctl_Marketing_Controllers {
 
         private static $instance = null;

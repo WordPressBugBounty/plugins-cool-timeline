@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Setup' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Setup {
 
     // Default constants
@@ -825,5 +826,6 @@ CSF_Setup::init( __FILE__, true );
  *
  */
 if ( ! class_exists( 'CSF' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF extends CSF_Setup{}
 }

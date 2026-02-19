@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Widget' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Widget extends WP_Widget {
 
     // constans

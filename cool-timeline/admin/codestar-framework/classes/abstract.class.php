@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Abstract' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   abstract class CSF_Abstract {
 
     public $abstract   = '';

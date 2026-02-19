@@ -8,6 +8,7 @@
  *
  */
 if ( ! class_exists( 'CSF_Nav_Menu_Options' ) ) {
+  // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
   class CSF_Nav_Menu_Options extends CSF_Abstract{
 
     // constans

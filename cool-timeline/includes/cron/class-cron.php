@@ -4,6 +4,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!class_exists('CTL_CRONJOB')) {
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
     class CTL_CRONJOB
     {
     
