@@ -3,7 +3,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.2.4
+  Version:3.3.0
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Configuration */
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.2.4' );
+	define( 'CTL_V', '3.3.0' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -33,6 +33,7 @@ if ( ! defined( 'CTL_BUY_PRO' ) ) {
 	define( 'CTL_BUY_PRO', 'https://cooltimeline.com/plugin/cool-timeline-pro/' );
 }
 // phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+
 
 if ( ! class_exists( 'CoolTimeline' ) ) {
 	final class CoolTimeline {
@@ -83,7 +84,8 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 				add_action( 'save_post', array( $thisIns, 'ctl_save_story_meta' ), 10, 3 );
                 require_once plugin_dir_path( __FILE__ ) . 'admin/marketing/ctl-marketing.php';
 				add_action( 'admin_menu', array( $thisIns, 'ctl_add_new_item' ) );
-
+				add_action( 'admin_print_scripts', array( $thisIns, 'ctl_hide_unrelated_notices' ), 999 );
+				add_action( 'admin_enqueue_scripts', array( $thisIns, 'ctl_enqueue_addon_fonts' ), 20 );
 			}
 
 			// Fixed bridge theme confliction using this action hook
@@ -92,6 +94,8 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			// gutenberg block integartion
 			require CTL_PLUGIN_DIR . 'includes/shortcode-blocks/ctl-block.php';
 		}
+
+		
 
 		/** Constructor */
 		public function __construct() {
@@ -129,6 +133,185 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			}
 		}
 
+		/**
+		 * On timeline addon pages, hide unrelated admin notices by pruning the core notice hooks.
+		 *
+		 * Desired behavior:
+		 * - On ALL admin pages: our own plugin notices behave normally.
+		 * - Only on Timeline Addons pages: third‑party notices are removed, but our notices remain.
+		 *
+		 * This follows the same core idea as the Events plugin's ect_hide_unrelated_notices()
+		 * but keeps Cool Timeline notices (by class/function name) instead of routing through a
+		 * separate dispatcher hook.
+		 */
+		public function ctl_hide_unrelated_notices() {
+			// Always register dispatcher once, on all admin pages (Events-style).
+			if ( ! defined( 'CTL_ADMIN_NOTICE_HOOKED' ) ) {
+				define( 'CTL_ADMIN_NOTICE_HOOKED', true );
+				add_action(
+					'admin_notices',
+					array( $this, 'ctl_dash_admin_notices' ),
+					PHP_INT_MAX
+				);
+			}
+
+			// If this is not a Timeline Addons page, don't prune anything.
+			if ( ! function_exists( 'ctl_is_timeline_addon_page' ) || ! ctl_is_timeline_addon_page() ) {
+				return;
+			}
+
+			global $wp_filter;
+
+			$rules = array(
+				'user_admin_notices'    => array(), // remove all non‑Cool Plugins callbacks.
+				'admin_notices'         => array(),
+				'all_admin_notices'     => array(),
+				'network_admin_notices' => array(),
+				'admin_footer'          => array(
+					'render_delayed_admin_notices', // remove this particular callback (e.g. Elementor delayed notices).
+				),
+			);
+
+			foreach ( array_keys( $rules ) as $notice_type ) {
+				if ( empty( $wp_filter[ $notice_type ] ) || empty( $wp_filter[ $notice_type ]->callbacks ) || ! is_array( $wp_filter[ $notice_type ]->callbacks ) ) {
+					continue;
+				}
+
+				$remove_all = empty( $rules[ $notice_type ] );
+
+				foreach ( $wp_filter[ $notice_type ]->callbacks as $priority => $hooks ) {
+					foreach ( $hooks as $name => $arr ) {
+						if ( ! isset( $arr['function'] ) ) {
+							continue;
+						}
+						$fn = $arr['function'];
+
+						// When remove_all is true, drop everything EXCEPT Cool Plugins/TWAe callbacks.
+						if ( $remove_all ) {
+							$keep  = false;
+							$class = '';
+
+							if ( is_array( $fn ) && ! empty( $fn[0] ) && is_object( $fn[0] ) ) {
+								$class = strtolower( get_class( $fn[0] ) );
+							} elseif ( is_object( $fn ) ) {
+								$class = strtolower( get_class( $fn ) );
+							}
+
+							if ( $class ) {
+								$keep = (
+									false !== strpos( $class, 'cooltimeline' ) ||
+									false !== strpos( $class, 'cool_plugins' ) ||
+									false !== strpos( $class, 'ctl_admin' ) ||
+									false !== strpos( $class, 'ctp_' ) ||
+									false !== strpos( $class, 'license_helper' ) ||
+									false !== strpos( $class, 'twae' )
+								);
+							}
+
+							// Also keep callbacks whose function name clearly belongs to Cool Plugins stack.
+							if ( ! $keep && is_string( $fn ) ) {
+								$keep = ( 0 === strpos( $fn, 'ctl_' ) || 0 === strpos( $fn, 'cool_' ) || 0 === strpos( $fn, 'twae_' ) );
+							}
+
+							if ( ! $keep ) {
+								unset( $wp_filter[ $notice_type ]->callbacks[ $priority ][ $name ] );
+							}
+							continue;
+						}
+
+						// When rules[notice_type] is non‑empty (e.g. admin_footer), remove only specific callbacks.
+						$cb = is_array( $fn ) ? $fn[1] : $fn;
+						if ( in_array( $cb, $rules[ $notice_type ], true ) ) {
+							unset( $wp_filter[ $notice_type ]->callbacks[ $priority ][ $name ] );
+						}
+					}
+				}
+			}
+		}
+
+		/**
+		 * Dispatcher for admin notices (fired once at PHP_INT_MAX on admin_notices).
+		 * Ensures CTL notices can be rendered after pruning on timeline addon pages.
+		 */
+		public function ctl_dash_admin_notices() {
+			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+			if ( defined( 'CTL_ADMIN_NOTICE_RENDERED' ) ) {
+				return;
+			}
+
+			define( 'CTL_ADMIN_NOTICE_RENDERED', true );
+			// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+
+			do_action( 'ctl_display_admin_notices' );
+		}
+
+		/**
+		 * On timeline addon pages, inject self-hosted Inter @font-face with absolute URLs
+		 * so fonts load on InstaWP/live (avoids relative-path and case-sensitivity issues).
+		 * Only injects if font files exist in admin/timeline-addon-page/assets/fonts/ to avoid 404s.
+		 */
+		public function ctl_enqueue_addon_fonts() {
+			if ( ! function_exists( 'ctl_is_timeline_addon_page' ) || ! ctl_is_timeline_addon_page() ) {
+				return;
+			}
+			$font_file    = 'Inter-Regular.woff2';
+			$style_handle = 'cool-plugins-timeline-addon';
+
+			// Ensure the main stylesheet is enqueued first.
+			if ( ! wp_style_is( $style_handle, 'enqueued' ) && ! wp_style_is( $style_handle, 'registered' ) ) {
+				wp_enqueue_style(
+					$style_handle,
+					CTL_PLUGIN_URL . 'admin/timeline-addon-page/assets/css/styles.css',
+					array(),
+					CTL_V
+				);
+			}
+
+			// Try self-hosted fonts: CTLB's directory first (if present), then CTL's own directory.
+			if ( defined( 'CTLB_Pro_Dir' ) && defined( 'CTLB_Pro_Url' )
+				&& file_exists( CTLB_Pro_Dir . 'admin/timeline-addon-page/assets/fonts/' . $font_file )
+			) {
+				$base     = CTLB_Pro_Url . 'admin/timeline-addon-page/assets/';
+				$font_url = $base . 'fonts/';
+				$font_face = sprintf(
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('%sInter-Regular.woff2') format('woff2');}\n" .
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('%sInter-Medium.woff2') format('woff2');}\n" .
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('%sInter-SemiBold.woff2') format('woff2');}\n" .
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('%sInter-Bold.woff2') format('woff2');}",
+					esc_url( $font_url ),
+					esc_url( $font_url ),
+					esc_url( $font_url ),
+					esc_url( $font_url )
+				);
+				wp_add_inline_style( $style_handle, $font_face );
+
+			} elseif ( file_exists( CTL_PLUGIN_DIR . 'admin/timeline-addon-page/assets/fonts/' . $font_file ) ) {
+				$base     = CTL_PLUGIN_URL . 'admin/timeline-addon-page/assets/';
+				$font_url = $base . 'fonts/';
+				$font_face = sprintf(
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('%sInter-Regular.woff2') format('woff2');}\n" .
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('%sInter-Medium.woff2') format('woff2');}\n" .
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('%sInter-SemiBold.woff2') format('woff2');}\n" .
+					"@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('%sInter-Bold.woff2') format('woff2');}",
+					esc_url( $font_url ),
+					esc_url( $font_url ),
+					esc_url( $font_url ),
+					esc_url( $font_url )
+				);
+				wp_add_inline_style( $style_handle, $font_face );
+
+			} else {
+				// No self-hosted files found – fall back to bunny.net CDN (GDPR-friendly).
+				// This guarantees Inter loads on InstaWP / staging without needing font files on disk.
+				wp_enqueue_style(
+					'cool-plugins-inter-font',
+					'https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap',
+					array(),
+					null
+				);
+			}
+		}
+
 		/*
 		  Including required files
 		*/
@@ -162,10 +345,11 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 				require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
 				
+				require_once __DIR__ . '/admin/timeline-addon-page/timeline-addon-page.php';
 				/*** Plugin review notice file */
 				require_once CTL_PLUGIN_DIR . '/admin/notices/admin-notices.php';
 
-				require_once __DIR__ . '/admin/timeline-addon-page/timeline-addon-page.php';
+				
 				cool_plugins_timeline_addons_settings_page( 'timeline', 'cool-plugins-timeline-addon', 'Timeline Addons', ' Timeline Addons', CTL_PLUGIN_URL . 'assets/images/cool-timeline-icon.svg' );
 
 			}

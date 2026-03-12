@@ -20,7 +20,7 @@ function ctl_admin_notice_for_migration() {
         // Only show notice if migration is not completed
         if (!$migration_completed) {
             ?>
-            <div class="notice ctl_migration notice-info is-dismissible">
+            <div class="notice  ctl_migration notice-info is-dismissible">
                 <div class="migration_message_container">
                     <p>
                         <?php echo esc_html__('Timeline Express plugin is installed on your site. To move your announcements into Cool Timeline, you can now start the migration process.', 'cool-timeline'); ?> 

@@ -1,0 +1,51 @@
+[
+  {
+    "slug": "cool-timeline-pro",
+    "name": "Cool Timeline (Pro)",
+    "info": "Create timelines with advanced layouts and styling options using post types, shortcodes, and the block editor.",
+    "version": "3.0.0",
+    "latest_version": "{{CTLPV}}",
+    "image_url": "cool-timeline.png",
+    "free_version": "cool-timeline",
+    "buy_url": "https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard/#pricing",
+    "docs_url": "https://cooltimeline.com/docs/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard",
+    "demo_url": "https://cooltimeline.com/demo/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard"
+  },
+  {
+    "slug": "timeline-widget-addon-for-elementor-pro",
+    "name": "Timeline Widget for Elementor (Pro)",
+    "info": "Create advanced vertical and horizontal timelines in Elementor with multiple layouts and extra styling controls.",
+    "version": "1.0.0",
+    "latest_version": "{{TWAE_PRO_VERSION}}",
+    "image_url": "timeline-widget-addon-for-elementor.png",
+    "free_version": "timeline-widget-addon-for-elementor",
+    "main_file": "timeline-widget-addon-pro-for-elementor.php",
+    "buy_url": "https://cooltimeline.com/plugin/elementor-timeline-widget-pro/?utm_source=twae_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard/#pricing",
+    "docs_url": "https://cooltimeline.com/docs/timeline-widget-pro-addon-for-elementor/?utm_source=twae_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard",
+    "demo_url": "https://cooltimeline.com/demo/elementor-timeline-widget/?utm_source=twae_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard"
+  },
+  {                    
+    "slug": "timeline-block-pro-for-gutenberg",
+    "name": "Timeline Block (Pro)",
+    "info": "Create vertical and horizontal timelines in the Gutenberg block editor with advanced layouts and styling options.",
+    "version": "1.0.0",
+    "latest_version": "{{CTLBV}}",
+    "image_url": "timeline-block.png",
+    "free_version": "timeline-block",
+    "buy_url": "https://cooltimeline.com/plugin/timeline-block-pro-for-gutenberg/?utm_source=tbg_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard/#pricing",
+    "docs_url": "https://cooltimeline.com/docs/timeline-block-pro/?utm_source=tbg_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard",
+    "demo_url": "https://cooltimeline.com/demo/timeline-block-pro/?utm_source=tbg_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard"
+  },
+  {
+    "slug": "cp-timeline-module-pro-for-divi",
+    "name": "Timeline Module for Divi (Pro)",
+    "info": "Create vertical and horizontal timelines in Divi Builder with advanced layouts and flexible styling options.",
+    "version": "1.0.0",
+    "latest_version": "{{TM_DIVI_PRO_V}}",
+    "image_url": "timeline-module-for-divi.png",
+    "free_version": "timeline-module-for-divi",
+    "buy_url": "https://cooltimeline.com/plugin/timeline-module-for-divi/?utm_source=tmdivi_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=dashboard/#pricing",
+    "docs_url": "https://cooltimeline.com/docs/timeline-module-pro-for-divi/?utm_source=tmdivi_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard",
+    "demo_url": "https://cooltimeline.com/divi/?utm_source=tmdivi_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard"
+  }
+]
