@@ -186,9 +186,8 @@ if (!class_exists('ctl_admin_notices')):
             $classes = 'notice ' . trim( $message['type'] ) . ' is-dismissible ' . trim( $message['class'] );
             $nonce = wp_create_nonce( $id . '_notice_nonce' );
             $logo_container_link_href = "";
-
             switch($message['plugin_name']){
-                case 'Timeline Widget Pro for Elementor';
+                case 'Timeline Widget Pro for Elementor':
                     $logo_container_link_href = 'https://wordpress.org/plugins/timeline-widget-addon-for-elementor';
                     break;
                 case 'Timeline Module For Divi':

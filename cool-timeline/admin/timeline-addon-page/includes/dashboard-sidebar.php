@@ -27,8 +27,49 @@ $prefix = sanitize_key( $prefix );
 $dashboard_instance = isset( $dashboard_instance ) ? $dashboard_instance : null;
 $addon_file         = ( $dashboard_instance && isset( $dashboard_instance->addon_file ) ) ? $dashboard_instance->addon_file : __FILE__;
 $support_url        = 'https://coolplugins.net/support/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=support&utm_content=dashboard';
-$reviews_url        = 'https://wordpress.org/support/plugin/cool-timeline/reviews/#new-post';
 $pro_url            = 'https://cooltimeline.com/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=pro&utm_content=dashboard';
+
+// Trustpilot when any Cool Timeline ecosystem Pro plugin is active; otherwise WP.org (Cool Timeline free).
+if ( ! function_exists( 'is_plugin_active' ) || ! function_exists( 'get_plugins' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
+
+$timeline_pro_slugs = array(
+	'cool-timeline-pro',
+	'timeline-widget-addon-for-elementor-pro',
+	'timeline-block-pro',
+	'timeline-block-pro-for-gutenberg',
+	'timeline-module-for-divi-pro',
+	'cp-timeline-module-pro-for-divi',
+);
+
+$timeline_pro_active = false;
+if ( function_exists( 'get_plugins' ) && function_exists( 'is_plugin_active' ) ) {
+	$all_plugins_sidebar = get_plugins();
+	foreach ( $all_plugins_sidebar as $path => $data ) {
+		$dir = dirname( $path );
+		if ( in_array( $dir, $timeline_pro_slugs, true ) && is_plugin_active( $path ) ) {
+			$timeline_pro_active = true;
+			break;
+		}
+	}
+}
+
+$reviews_image = defined( 'CTL_PLUGIN_URL' )
+	? CTL_PLUGIN_URL . 'admin/timeline-addon-page/assets/images/timeline-trustpilot.svg'
+	: plugin_dir_url( __FILE__ ) . '../assets/images/timeline-trustpilot.svg';
+
+if ( $timeline_pro_active ) {
+	$reviews_url        = 'https://www.trustpilot.com/review/coolplugins.net';
+	$reviews_heading    = __( 'LOVING OUR PLUGINS?', 'cool-timeline' );
+	$reviews_text       = __( 'Review us on Trustpilot and share your feedback with the community.', 'cool-timeline' );
+	$reviews_link_label = __( 'Rate us on trustpilot.com', 'cool-timeline' );
+} else {
+	$reviews_url        = 'https://wordpress.org/support/plugin/cool-timeline/reviews/#new-post';
+	$reviews_heading    = __( 'LOVING OUR PLUGIN?', 'cool-timeline' );
+	$reviews_text       = __( 'Review us on WordPress.org and share your feedback with the community.', 'cool-timeline' );
+	$reviews_link_label = __( 'Rate us on WordPress.org', 'cool-timeline' );
+}
 ?>
 <aside class="<?php echo esc_attr( $prefix ); ?>-sidebar">
 	<!-- Key Features -->
@@ -64,15 +105,15 @@ $pro_url            = 'https://cooltimeline.com/?utm_source=ctl_plugin&utm_mediu
 	<div class="<?php echo esc_attr( $prefix ); ?>-sidebar-card <?php echo esc_attr( $prefix ); ?>-trustpilot-rating">
 		<div class="<?php echo esc_attr( $prefix ); ?>-sidebar-header">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z"/></svg>
-			<h3><?php echo esc_html__( 'LOVING OUR PLUGINS?', 'cool-timeline' ); ?></h3>
+			<h3><?php echo esc_html( $reviews_heading ); ?></h3>
 		</div>
 		<div class="<?php echo esc_attr( $prefix ); ?>-trustpilot">
 			<div class="<?php echo esc_attr( $prefix ); ?>-stars">
-				<a href="<?php echo esc_url( $reviews_url ); ?>" target="_blank" rel="noopener"><img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . '../assets/images/timeline-trustpilot.svg' ); ?>" alt="<?php esc_attr_e( 'Rating', 'cool-timeline' ); ?>"></a>
+				<a href="<?php echo esc_url( $reviews_url ); ?>" target="_blank" rel="noopener"><img src="<?php echo esc_url( $reviews_image ); ?>" alt="<?php esc_attr_e( 'Rating', 'cool-timeline' ); ?>"></a>
 			</div>
-			<p class="<?php echo esc_attr( $prefix ); ?>-sidebar-text"><?php echo esc_html__( 'Review us on WP.org and share your feedback with the community.', 'cool-timeline' ); ?></p>
+			<p class="<?php echo esc_attr( $prefix ); ?>-sidebar-text"><?php echo esc_html( $reviews_text ); ?></p>
 			<a href="<?php echo esc_url( $reviews_url ); ?>" target="_blank" rel="noopener" class="<?php echo esc_attr( $prefix ); ?>-trustpilot-link">
-				<?php echo esc_html__( 'Rate us on WP.org', 'cool-timeline' ); ?> <span class="dashicons dashicons-external"></span>
+				<?php echo esc_html( $reviews_link_label ); ?> <span class="dashicons dashicons-external"></span>
 			</a>
 		</div>
 	</div>
