@@ -5,6 +5,13 @@ class ctlCommonScript {
 		this.callBack();
 	}
 
+	// Plain text for GLightbox (uses innerHTML); does not affect rich desc HTML.
+	ctlEscHtml = (s) => {
+		const d = document.createElement('div');
+		d.textContent = s == null ? '' : String(s);
+		return d.innerHTML;
+	};
+
 	// Lightbox Custom Html
 	CtlLightBoxHtml = (type) => {
 		// Lightbox Dynamic container class
@@ -47,42 +54,64 @@ class ctlCommonScript {
 
 		const targetHref = element.getAttribute('href');
 		const title = element.getAttribute('data-glightbox');
-		lightbox.setElements([{ href: targetHref, title }]);
+		lightbox.setElements([{ href: targetHref, title: this.ctlEscHtml(title) }]);
 		lightbox.open();
 	};
 
 	// Lightbox For minimal Layout
 	CtlLighBoxMinimal = (ele) => {
 		ele.preventDefault();
-		// const element = ele.currentTarget;
+	
 		const popUpContainerID = jQuery(ele.currentTarget).data('popup-id');
 		const popUpConatiner = jQuery(popUpContainerID);
-
+	
 		const lightbox = this.CtlLightBoxSettings('minimal');
+	
 		const img = popUpConatiner
 			.find('.ctl_popup_media .ctl_popup_img')
 			.data('popup-image');
-		const date = popUpConatiner.find('.ctl_popup_date').html();
-		const title = popUpConatiner.find('.ctl_popup_title').html();
+	
+		// Changed .html() -> .text()
+		const date = popUpConatiner.find('.ctl_popup_date').text();
+		const title = popUpConatiner.find('.ctl_popup_title').text();
+	
+		// Keep .html() because description supports rich HTML/iframe
 		const desc = popUpConatiner.find('.ctl_popup_desc').html();
-
+	
+		const safeTitle = this.ctlEscHtml(title);
+		const safeDate = this.ctlEscHtml(date);
 		const elements = [];
-
+	
 		if (img !== undefined) {
+	
 			elements.push({
 				href: img,
 				type: 'image',
-				description: `<div class='ctl_glightbox_content'><h2 class='ctl_glightbox_title'>${title}</h2><div class='ctl_glightbox_date'>${date}</div><div class="ctl_glightbox_desc">${desc}</div></div>`,
+				description: `
+					<div class='ctl_glightbox_content'>
+						<h2 class='ctl_glightbox_title'>${safeTitle}</h2>
+						<div class='ctl_glightbox_date'>${safeDate}</div>
+						<div class="ctl_glightbox_desc">${desc}</div>
+					</div>
+				`,
 				height: '200px',
 			});
-		}else {
+	
+		} else {
+	
 			elements.push({
-				content: `<h2 class='ctl_glightbox_title'>${title}</h2><div class='ctl_glightbox_content'><div class='ctl_glightbox_date'>${date}</div><div class="ctl_glightbox_desc">${desc}</div></div>`,
+				content: `
+					<h2 class='ctl_glightbox_title'>${safeTitle}</h2>
+					<div class='ctl_glightbox_content'>
+						<div class='ctl_glightbox_date'>${safeDate}</div>
+						<div class="ctl_glightbox_desc">${desc}</div>
+					</div>
+				`,
 				'max-width': '50vw',
 				height: 'auto',
 			});
 		}
-
+	
 		lightbox.setElements(elements);
 		lightbox.open();
 	};

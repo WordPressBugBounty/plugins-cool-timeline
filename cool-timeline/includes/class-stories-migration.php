@@ -27,6 +27,10 @@ class CTL_stories_migration {
 
 	// run migration from old version since version 1.7
 	public function ctl_migrate_old_stories() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		if ( get_option( 'ctl-upgraded' ) !== false ) {
 			return;
 		}

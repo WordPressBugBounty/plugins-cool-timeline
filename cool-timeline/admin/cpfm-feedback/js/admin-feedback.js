@@ -105,7 +105,7 @@
                 }
             }
             $.ajax({
-                url: ajaxurl,
+                url: (typeof ajaxurl !== 'undefined') ? ajaxurl : '/wp-admin/admin-ajax.php',
                 method: 'POST',
                 data: {
                     'action': plugin_slug + '_submit_deactivation_response',

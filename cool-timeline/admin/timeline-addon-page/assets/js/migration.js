@@ -81,7 +81,7 @@ jQuery(document).ready(function ($) {
             $status
               .hide()
               .html(
-                `🎉 Migration completed successfully! ${totalStories} announcements have been migrated.`
+                `Migration completed successfully! ${totalStories} announcements have been migrated.`
               )
               .fadeIn(600);
           }

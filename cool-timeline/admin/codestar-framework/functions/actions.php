@@ -14,15 +14,16 @@ if ( ! function_exists( 'csf_get_icons' ) ) {
     // Check user capabilities
     if ( ! current_user_can( 'manage_options' ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
-      wp_die();
+      return wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
+      
     }
 
     $nonce = ( ! empty( $_POST[ 'nonce' ] ) ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
 
     if ( ! wp_verify_nonce( $nonce, 'csf_icon_nonce' ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+      
     }
 
     ob_start();
@@ -121,17 +122,19 @@ if ( ! function_exists( 'csf_import_ajax' ) ) {
 
     if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+     
     }
 
     if ( empty( $unique ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid key.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid key.', 'csf' ) ) );
+
     }
 
     if ( empty( $data ) || ! is_array( $data ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: The response is not a valid JSON response.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: The response is not a valid JSON response.', 'csf' ) ) );
     }
 
     // Success
@@ -160,7 +163,8 @@ if ( ! function_exists( 'csf_reset_ajax' ) ) {
 
     if ( ! wp_verify_nonce( $nonce, 'csf_backup_nonce' ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+      
     }
 
     // Success
@@ -192,12 +196,14 @@ if ( ! function_exists( 'csf_chosen_ajax' ) ) {
 
     if ( ! wp_verify_nonce( $nonce, 'csf_chosen_ajax_nonce' ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid nonce verification.', 'csf' ) ) );
+      
     }
 
     if ( empty( $type ) || empty( $term ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid term ID.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: Invalid term ID.', 'csf' ) ) );
+      
     }
 
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
@@ -205,7 +211,8 @@ if ( ! function_exists( 'csf_chosen_ajax' ) ) {
 
     if ( ! current_user_can( $capability ) ) {
       // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-      wp_send_json_error( array( 'error' => esc_html__( 'Error: You do not have permission to do that.', 'csf' ) ) );
+      return wp_send_json_error( array( 'error' => esc_html__( 'Error: You do not have permission to do that.', 'csf' ) ) );
+
     }
 
     // Success

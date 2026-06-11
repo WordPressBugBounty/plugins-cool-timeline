@@ -58,6 +58,19 @@ if ( ! class_exists( 'CTL_Shortcode_Preivew' ) ) {
 		 */
 		public function ctl_create_shortcode( $data ) {
 
+			if ( ! is_array( $data ) ) {
+				$data = array();
+			}
+
+			$allowed_shortcode_tag = 'cool-timeline';
+			$incoming_type         = isset( $data['shortcodeType'] ) && is_string( $data['shortcodeType'] )
+				? sanitize_key( $data['shortcodeType'] )
+				: '';
+
+			if ( $allowed_shortcode_tag !== $incoming_type ) {
+				$data['shortcodeType'] = $allowed_shortcode_tag;
+			}
+
 			$shortcode_type = $this->ctl_shortcode_filter( $data['shortcodeType'] );
 			$shortcode      = '[' . $shortcode_type;
 			foreach ( $data as $key => $value ) {
@@ -107,10 +120,9 @@ if ( ! class_exists( 'CTL_Shortcode_Preivew' ) ) {
 			$style                               = $custom_style::render_global_style( $color_style );
 			$style                              .= $custom_style::ctl_global_typography( $ctl_options_arr );
 			$style                              .= $this->ctl_preview_custom_css();
-			$custom_css                          = isset( $ctl_options_arr['custom_styles'] ) ? $ctl_options_arr['custom_styles'] : '';
-			$custom_css                          = preg_replace( '/\\\\/', '', $custom_css );
+			$custom_css                          = isset( $ctl_options_arr['custom_styles'] ) ? $custom_style::sanitize_custom_css( $ctl_options_arr['custom_styles'] ) : '';
 			$final_css                           = $custom_style::clt_minify_css( $style );
-			$this->assets_object['custom_style'] = $final_css;
+			$this->assets_object['custom_style'] = $custom_css . ' ' . $final_css;
 		}
 
 		/**

@@ -42,7 +42,7 @@ jQuery(document).ready(function ($) {
 		var msg = cp_events.elementor_required_msg || 'Elementor plugin is required. Please install and activate it first.';
 		var $card = $btn.closest('.ctl-card');
 		$card.find('.ctl-dependency-notice').remove();
-		var $notice = $('<p class="ctl-dependency-notice">' + msg + '</p>');
+		var $notice = $('<p/>').addClass('ctl-dependency-notice').text(msg);
 		$btn.closest('.ctl-card-footer').after($notice);
 		$btn.prop('disabled', true).addClass('ctl-btn-processing');
 		setTimeout(function () {
@@ -114,7 +114,7 @@ jQuery(document).ready(function ($) {
 			enableAllBtns();
 			$btn.text($btn.hasClass('ctl-btn-activate') ? 'Activate Now' : 'Install Now');
 			if (msg) {
-				alert(msg);
+				$('<div/>').addClass('ctl-error-notice').text(msg).appendTo('body');
 			}
 		}).fail(function (xhr) {
 			enableAllBtns();
@@ -133,7 +133,7 @@ jQuery(document).ready(function ($) {
 				} catch (e) {}
 			}
 			if (msg) {
-				alert(msg);
+				$('<div/>').addClass('ctl-error-notice').text(msg).appendTo('body');
 			}
 		});
 	});
@@ -183,7 +183,7 @@ jQuery(document).ready(function ($) {
 		var $this = $(this);
 		var message = $this.attr('data-empty-message');
 		if ($this.children('.plugin-block').length === 0 && $this.children('.ctl-card').length === 0 && message) {
-			$this.append('<div class="empty-message">' + message + '</div>');
+			$('<div/>').addClass('empty-message').text(message).appendTo($this);
 		}
 	});
 });

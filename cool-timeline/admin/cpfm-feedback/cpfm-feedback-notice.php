@@ -41,15 +41,6 @@ class CPFM_Feedback_Notice {
             return;
         }
 
-        /**
-         * Allow other plugins to register notices dynamically.
-         * Example usage in other plugins:
-         * do_action('cpf_cpfm_register_notice', 'crypto', [
-         *     'title' => 'Crypto Plugin Notice',
-         *     'message' => 'This is a crypto dashboard setup notice.',
-         *     'pages' => ['dashboard', 'cpfm_'],
-         * ]);
-         */
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         do_action('cpfm_register_notice');
     }
@@ -64,7 +55,7 @@ class CPFM_Feedback_Notice {
        
 
        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-       $current_page   = isset($_GET['page'])? sanitize_key($_GET['page']):'';
+       $current_page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 
         
         $allowed_pages = [];
@@ -113,7 +104,7 @@ class CPFM_Feedback_Notice {
 
         if (!current_user_can('manage_options')) {
 
-            wp_send_json_error('Unauthorized access.');
+            return wp_send_json_error('Unauthorized access.');
         }
 
         check_ajax_referer('dismiss_admin_notice', 'nonce');
@@ -126,7 +117,7 @@ class CPFM_Feedback_Notice {
 
         if (!$category || !isset(self::$registered_notices[$category])) {
 
-            wp_send_json_error('Invalid notice category.');
+            return wp_send_json_error('Invalid notice category.');
         }
 
         update_option("cpfm_opt_in_choice_{$category}", $opt_in);
@@ -161,8 +152,10 @@ class CPFM_Feedback_Notice {
         }
 
         $screen         = get_current_screen();
+
+        // Read-only admin screen detection for notice panel display (no state change; nonce not required).
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $current_page   = isset($_GET['page']) ? sanitize_key($_GET['page']) : '';
+        $current_page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 
        
         $unread_count   = 0;
@@ -178,8 +171,7 @@ class CPFM_Feedback_Notice {
     
         $output = '';
         $output .= '<div id="cpfNoticePanel" class="notice-panel"' . ($auto_show ? ' data-auto-show="true"' : '') . '>';
-        // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-        $output .= '<div class="notice-panel-header">' . esc_html__('Help Improve Plugins', 'ccpw') . ' <span class="dashicons dashicons-no" id="cpfm_remove_notice"></span></div>';
+        $output .= '<div class="notice-panel-header">' . esc_html__( 'Help Improve Plugins', 'cool-timeline' ) . ' <span class="dashicons dashicons-no" id="cpfm_remove_notice"></span></div>';
         $output .= '<div class="notice-panel-content">';
     
         foreach (self::$registered_notices as $key => $notice) {
@@ -205,27 +197,21 @@ class CPFM_Feedback_Notice {
             $output .= '<strong>' . esc_html($notice['title']) . '</strong>';
             
             $output .= '<div class="notice-message-with-toggle">';
-            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-            $output .= '<p>' . esc_html($notice['message']) . '<a href="#" class="cpf-toggle-extra">' . esc_html__(' More info', 'ccpw') . '</a></p>';
+            $output .= '<p>' . esc_html($notice['message']) . '<a href="#" class="cpf-toggle-extra">' . esc_html__(' More info', 'cool-timeline') . '</a></p>';
             $output .= '</div>';
             
             $output .= '<div class="cpf-extra-info">';
-            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-            $output .= '<p>' . esc_html__('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect:', 'ccpw') . '</p>';
+            $output .= '<p>' . esc_html__('Opt in to receive email updates about security improvements, new features, helpful tutorials, and occasional special offers. We\'ll collect:', 'cool-timeline') . '</p>';
             $output .= '<ul>';
-            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-            $output .= '<li>' . esc_html__('Your website home URL and WordPress admin email.', 'ccpw') . '</li>';
-            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-            $output .= '<li>' . esc_html__('To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'ccpw') . ' <a href="' . esc_url( 'https://my.coolplugins.net/terms/usage-tracking/' ) . '" target="_blank" rel="noopener noreferrer">' .esc_html__( 'Click here', 'ccpw' ) .'</a></li>';
+            $output .= '<li>' . esc_html__('Your website home URL and WordPress admin email.', 'cool-timeline') . '</li>';
+            $output .= '<li>' . esc_html__('To check plugin compatibility, we will collect the following: list of active plugins and themes, server type, MySQL version, WordPress version, memory limit, site language and database prefix.', 'cool-timeline') . ' <a href="' . esc_url( 'https://my.coolplugins.net/terms/usage-tracking/' ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Click here', 'cool-timeline' ) . '</a></li>';
             $output .= '</ul>';
             
             $output .= '</div>';
             
             $output .= '<div class="notice-actions">';
-            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-            $output .= '<button class="button button-primary opt-in-yes" data-category="' . esc_attr($key) . '" id="yes-share-data" value="yes">' . esc_html__("Yes, I Agree", 'ccpw') . '</button>';
-            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-            $output .= '<button class="button opt-in-no" data-category="' . esc_attr($key) . '" id="no-share-data" value="no">' . esc_html__('No, Thanks', 'ccpw') . '</button>';
+            $output .= '<button class="button button-primary opt-in-yes" data-category="' . esc_attr($key) . '" id="yes-share-data" value="yes">' . esc_html__("Yes, I Agree", 'cool-timeline') . '</button>';
+            $output .= '<button class="button opt-in-no" data-category="' . esc_attr($key) . '" id="no-share-data" value="no">' . esc_html__('No, Thanks', 'cool-timeline') . '</button>';
             $output .= '</div>';
             
             $output .= '</div>';

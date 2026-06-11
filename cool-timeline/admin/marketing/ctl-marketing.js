@@ -5,11 +5,16 @@
          button = $(button);
         const plugin = button.data('plugin');
         const slug = getPluginSlug(pluginKey || plugin);
+        // Client-side validation for UX only.
+        // Matching validation is enforced server-side.
         const allowedSlugs = [
             'timeline-module-for-divi',
             'timeline-module-pro-for-divi/timeline-module-pro-for-divi.php'
         ];
-        if (!slug || allowedSlugs.indexOf(slug) === -1) return;
+
+        if ( ! slug || ! allowedSlugs.includes( slug ) ) {
+            return;
+        }
         // Get the nonce from the button data attribute
         let nonce = button.data('nonce');
       

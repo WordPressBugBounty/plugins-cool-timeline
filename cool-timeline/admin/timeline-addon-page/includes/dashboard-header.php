@@ -21,17 +21,17 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 if ( ! isset( $prefix ) ) {
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+	
 	$prefix = 'ctl';
 }
 if ( ! isset( $show_wrapper ) ) {
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+	
 	$show_wrapper = false;
 }
 
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 $prefix = sanitize_key( $prefix );
 
 $dashboard_instance = isset( $dashboard_instance ) ? $dashboard_instance : null;
@@ -39,6 +39,8 @@ $docs_url           = 'https://cooltimeline.com/docs/?utm_source=ctl_plugin&utm_
 $demos_url          = 'https://cooltimeline.com/demo/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard';
 $heading            = ( $dashboard_instance && isset( $dashboard_instance->dashboar_page_heading ) ) ? $dashboard_instance->dashboar_page_heading : __( 'Timeline Addons', 'cool-timeline' );
 $header_icon_url    = plugin_dir_url( __FILE__ ) . '../../../assets/images/timeline-icon.svg';
+
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <?php if ( $show_wrapper ) : ?>
 <div class="<?php echo esc_attr( $prefix ); ?>-dashboard-wrapper">

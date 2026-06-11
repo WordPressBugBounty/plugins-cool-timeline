@@ -171,15 +171,18 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 			$attributes = $this->attributes;
 			$settings   = $this->settings;
 			$show_posts = isset( $attributes['show-posts'] ) ? $attributes['show-posts'] : $settings['post_per_page'];
+			$show_posts = ( '-1' === trim( (string) $show_posts ) ) ? -1 : max( 1, absint( $show_posts ) );
+			$order      = isset( $attributes['order'] ) ? strtoupper( sanitize_key( $attributes['order'] ) ) : strtoupper( sanitize_key( $settings['story_orders'] ) );
+			$order      = in_array( $order, array( 'ASC', 'DESC' ), true ) ? $order : 'DESC';
 
 			$query_args               = array(
 				'post_type'      => 'cool_timeline',
 				'post_status'    => array( 'publish', 'future', 'Scheduled' ),
-				'order'          => isset( $attributes['order'] ) ? sanitize_text_field( $attributes['order'] ) : sanitize_text_field( $settings['story_orders'] ),
+				'order'          => $order,
 				'meta_key'       => 'ctl_story_timestamp', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'orderby'        => 'meta_value_num',
 				'posts_per_page' => $show_posts,
-				'paged'          => sanitize_text_field( $attributes['paged'] ),
+				'paged'          => max( 1, absint( $attributes['paged'] ) ),
 			);
 
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
@@ -251,7 +254,7 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 		public function attributes_migration( $attr, $shortcode_attr ) {
 			$shortcode_attr = empty( $shortcode_attr ) ? array() : $shortcode_attr;
 			if ( 'horizontal' === $attr['layout'] && ! array_key_exists( 'items', $shortcode_attr ) || array_key_exists( 'items', $shortcode_attr ) && empty( $shortcode_attr['items'] ) ) {
-				$attr['items']      = isset( $attr['show-posts'] ) ? $attr['show-posts'] : $this->settings['post_per_page'];
+				$attr['items']      = isset( $attr['show-posts'] ) ? max( 1, absint( $attr['show-posts'] ) ) : absint( $this->settings['post_per_page'] );
 				$attr['show-posts'] = '-1';
 			}
 			if ( isset( $attr['date-format'] ) && 'default' === $attr['date-format'] ) {

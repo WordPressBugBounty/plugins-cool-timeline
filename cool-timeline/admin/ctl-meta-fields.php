@@ -91,7 +91,7 @@ if ( class_exists( 'CSF' ) ) {
 					array(
 						'id'      => 'ctl_pro_screenshot',
 						'type'    => 'content',
-						'content' => '<input type="hidden" name="ctl_nonce" value="' . wp_create_nonce( 'ctl_save_story_meta' ) . '"><div class="desc-field"><h4 >Premium Settings | <a target="_blank" href="' . esc_url( CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=add_stories' ) . '">Buy Pro</a></h4><a target="_blank" href="' . esc_url( CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=add_stories' ) . '"><img src="' . esc_url(CTL_PLUGIN_URL . '/assets/images/pro-story-settings.png' ) . '" style="max-width: 100%;border: 2px solid #ef2e2e;"></a></div>',
+						'content' => '<div class="desc-field"><h4 >Premium Settings | <a target="_blank" href="' . esc_url( CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=add_stories' ) . '">Buy Pro</a></h4><a target="_blank" href="' . esc_url( CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=add_stories' ) . '"><img src="' . esc_url(CTL_PLUGIN_URL . '/assets/images/pro-story-settings.png' ) . '" style="max-width: 100%;border: 2px solid #ef2e2e;"></a></div>',
 						'class'   => 'story_format_image',
 					),
 

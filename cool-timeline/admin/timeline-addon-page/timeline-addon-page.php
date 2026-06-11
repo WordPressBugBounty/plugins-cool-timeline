@@ -5,9 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! function_exists( 'ctl_is_timeline_addon_page' ) ) {
+	 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	function ctl_is_timeline_addon_page() {
 		global $pagenow;
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended 
 		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : '';
@@ -189,6 +190,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			$show_wrapper        = false;
 			$dashboard_instance  = $this;
 			include $this->addon_dir . '/includes/dashboard-header.php';
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			do_action( 'ctl_after_timeline_header' );
 			echo '</div>';
 			self::$global_header_rendered = true;
@@ -198,30 +200,34 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		 * Handle AJAX: install plugin via WordPress core or activate if already installed (including Pro).
 		 */
 		public function ctl_dashboard_install_plugin() {
+			check_ajax_referer( 'ctl-plugins-download', 'wp_nonce' );
+
 			if ( ! current_user_can( 'install_plugins' ) ) {
-				wp_send_json_error( array(
+				return wp_send_json_error( array(
 					'errorMessage' => __( 'Sorry, you are not allowed to install plugins on this site.', 'cool-timeline' ),
 				) );
+				
+				
 			}
-
-			check_ajax_referer( 'ctl-plugins-download', 'wp_nonce' );
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked above
 			$slug = isset( $_POST['slug'] ) ? sanitize_key( wp_unslash( $_POST['slug'] ) ) : '';
 			if ( empty( $slug ) ) {
-				wp_send_json_error( array(
+				return wp_send_json_error( array(
 					'slug'         => '',
 					'errorCode'    => 'no_plugin_specified',
 					'errorMessage' => __( 'No plugin specified.', 'cool-timeline' ),
 				) );
+				
 			}
 
 			if ( ! in_array( $slug, self::$allowed_slugs, true ) ) {
-				wp_send_json_error( array(
+				return wp_send_json_error( array(
 					'slug'         => $slug,
 					'errorCode'    => 'plugin_not_allowed',
 					'errorMessage' => __( 'This plugin cannot be installed from here.', 'cool-timeline' ),
 				) );
+				
 			}
 
 			$status = array(
@@ -274,19 +280,22 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 					}
 				}
 				if ( ! file_exists( $plugin_path ) ) {
-					wp_send_json_error( array(
+					return wp_send_json_error( array(
 						'errorMessage' => __( 'Pro plugin must be installed manually. Purchase and download from the product page.', 'cool-timeline' ),
 					) );
+					
 				}
 				if ( ! current_user_can( 'activate_plugin', $plugin_file ) ) {
-					wp_send_json_error( array( 'message' => __( 'Permission denied', 'cool-timeline' ) ) );
+					return wp_send_json_error( array( 'message' => __( 'Permission denied', 'cool-timeline' ) ) );
+					
 				}
 				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked above
 				$pagenow       = isset( $_POST['pagenow'] ) ? sanitize_key( wp_unslash( $_POST['pagenow'] ) ) : '';
 				$network_wide  = is_multisite() && 'import' !== $pagenow;
 				$result        = activate_plugin( $plugin_file, '', $network_wide );
 				if ( is_wp_error( $result ) ) {
-					wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+					return wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+					
 				}
 				wp_send_json_success( array(
 					'message'      => __( 'Plugin activated successfully', 'cool-timeline' ),
@@ -306,7 +315,8 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 
 			if ( is_wp_error( $api ) ) {
 				$status['errorMessage'] = $api->get_error_message();
-				wp_send_json_error( $status );
+				return wp_send_json_error( $status );
+				
 			}
 
 			$status['pluginName'] = $api->name;
@@ -322,7 +332,8 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			if ( is_wp_error( $result ) ) {
 				$status['errorCode']    = $result->get_error_code();
 				$status['errorMessage'] = $result->get_error_message();
-				wp_send_json_error( $status );
+				return wp_send_json_error( $status );
+				
 			}
 
 			if ( is_wp_error( $skin->result ) ) {
@@ -337,7 +348,8 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 						if ( is_wp_error( $activation_result ) ) {
 							$status['errorCode']    = $activation_result->get_error_code();
 							$status['errorMessage'] = $activation_result->get_error_message();
-							wp_send_json_error( $status );
+							return wp_send_json_error( $status );
+							
 						}
 						$status['activated'] = true;
 					}
@@ -345,12 +357,14 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 				}
 				$status['errorCode']    = $skin->result->get_error_code();
 				$status['errorMessage'] = $skin->result->get_error_message();
-				wp_send_json_error( $status );
+				return wp_send_json_error( $status );
+				
 			}
 
 			if ( $skin->get_errors()->has_errors() ) {
 				$status['errorMessage'] = $skin->get_error_messages();
-				wp_send_json_error( $status );
+				return wp_send_json_error( $status );
+				
 			}
 
 			if ( is_null( $result ) ) {
@@ -360,7 +374,8 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
 					$status['errorMessage'] = esc_html( $wp_filesystem->errors->get_error_message() );
 				}
-				wp_send_json_error( $status );
+				return wp_send_json_error( $status );
+				
 			}
 
 			$install_status = install_plugin_install_status( $api );
@@ -373,7 +388,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 				if ( is_wp_error( $activation_result ) ) {
 					$status['errorCode']    = $activation_result->get_error_code();
 					$status['errorMessage'] = $activation_result->get_error_message();
-					wp_send_json_error( $status );
+					return wp_send_json_error( $status );
 				}
 				$status['activated'] = true;
 			}
@@ -407,7 +422,11 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		/**
 		 * Render the dashboard: load data, build activated/available/pro lists with Free→Pro mapping, then output via templates.
 		 */
-		public function displayPluginAdminDashboard() {
+	public function displayPluginAdminDashboard() {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_die( esc_html__( 'Access denied.', 'cool-timeline' ) );
+			}
+
 			$tag     = $this->plugin_tag;
 			$plugins = $this->request_wp_plugins_data( $tag );
 			$pro_plugins = $this->request_pro_plugins_data( $tag );
@@ -646,7 +665,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			} else {
 				echo '<div class="notice notice-warning"><p>' . esc_html__( 'No plugins data available at the moment.', 'cool-timeline' ) . '</p></div>';
 			}
-		}
+	}
 
 		/**
 		 * Check if a plugin has an update available.
@@ -689,8 +708,10 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
                 
                 <div class="<?php echo esc_attr( $prefix ); ?>-dashboard-wrapper">
                     <?php
+					
                     if ( ! self::$global_header_rendered ) {
                         include $this->addon_dir . '/includes/dashboard-header.php';
+						// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
                         do_action( 'ctl_after_timeline_header' );
                     }
                     ?>
@@ -864,7 +885,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 				return;
 			}
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 			if ( $page === $this->main_menu_slug ) {
 				// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 				wp_enqueue_script( 'cool-plugins-timeline-addon', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), null, true );

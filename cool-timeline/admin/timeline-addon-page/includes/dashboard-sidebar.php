@@ -15,15 +15,14 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 if ( ! isset( $prefix ) ) {
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$prefix = 'ctl';
 }
 
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-$prefix = sanitize_key( $prefix );
 
+$prefix = sanitize_key( $prefix );
 $dashboard_instance = isset( $dashboard_instance ) ? $dashboard_instance : null;
 $addon_file         = ( $dashboard_instance && isset( $dashboard_instance->addon_file ) ) ? $dashboard_instance->addon_file : __FILE__;
 $support_url        = 'https://coolplugins.net/support/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=support&utm_content=dashboard';
@@ -70,6 +69,8 @@ if ( $timeline_pro_active ) {
 	$reviews_text       = __( 'Review us on WordPress.org and share your feedback with the community.', 'cool-timeline' );
 	$reviews_link_label = __( 'Rate us on WordPress.org', 'cool-timeline' );
 }
+
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <aside class="<?php echo esc_attr( $prefix ); ?>-sidebar">
 	<!-- Key Features -->

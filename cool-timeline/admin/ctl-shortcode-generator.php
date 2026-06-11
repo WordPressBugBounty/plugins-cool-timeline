@@ -102,24 +102,26 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
 		}
 
 		public function CSF_free_shortcode_generator() {
-					// Sanitize input data
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$id        = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : '';
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : get_post_type( $id );
+
+		
+			// Sanitize input data (read-only admin screen detection).
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$id = isset( $_GET['post'] ) ? intval( wp_unslash( $_GET['post'] ) ) : 0;
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$post_type = isset( $_GET['post_type'] ) ? sanitize_key( wp_unslash( $_GET['post_type'] ) ) : get_post_type( $id );
 
 			// change block name if older block exists in current page condition start
 			$block_name = 'ctl-gutenberg-block';
-			if ( $id != '' ) {
+			if ( $id > 0 ) {
 				$ctl_post_id  = (int) $id;
 				$all_blocks   = array();
 				$post_content = get_post( $ctl_post_id );
-				if ( $post_content != null ) {
+				if ( null !== $post_content ) {
 					$parse_data = parse_blocks( $post_content->post_content );
 					foreach ( $parse_data as $parse ) {
-						if ( $parse['blockName'] != null ) {
+						if ( isset( $parse['blockName'] ) && null !== $parse['blockName'] ) {
 							array_push( $all_blocks, $parse['blockName'] );
-						};
+						}
 					};
 				};
 
@@ -316,7 +318,7 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
 											array(
 												'id'      => 'preview',
 												'type'    => 'content',
-												'content' => '<iframe id="ctl_preview" name="my_iframe" src="' . CTL_PLUGIN_URL . 'includes/shortcodes/class-ctl-shortcode-preview.php' . '" title="preview iframe" scrolling="auto" frameborder="0" data-preloader="' . CTL_PLUGIN_URL . 'assets/images/clt-preloader.gif"></iframe>',
+												'content' => '<iframe id="ctl_preview" name="my_iframe" src="' . esc_url( CTL_PLUGIN_URL . 'includes/shortcodes/class-ctl-shortcode-preview.php' ) . '" title="preview iframe" scrolling="auto" frameborder="0" data-preloader="' . esc_url( CTL_PLUGIN_URL . 'assets/images/clt-preloader.gif' ) . '"></iframe>',
 											),
 										),
 									),

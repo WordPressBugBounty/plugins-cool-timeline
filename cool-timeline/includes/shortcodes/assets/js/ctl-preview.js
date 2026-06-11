@@ -151,7 +151,7 @@ class CtlPreview {
             initLayout: false
         });
 
-        /* 🔥 CRITICAL FIX:
+        /*  CRITICAL FIX:
          * Ensure layout runs AFTER images load
          */
         if ($.fn.imagesLoaded) {

@@ -19,6 +19,10 @@ class CTL_free_migrations {
 	
 	function ctl_postmeta_migration() {
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		
 		if ( get_option( 'ctl-postmeta-migration' ) ) {
 			return;
@@ -51,40 +55,57 @@ class CTL_free_migrations {
 			foreach ( $posts as $post ) {
 				
 				$post_id = intval( $post->ID );
+				$array_icon_type  = array(
+					'story_icon_type' => 'fontawesome',
+				);
+				$array_story_type = array(
+					'story_based_on' => 'default',
+				);
+				$array_story_media = array(
+					'story_format' => 'default',
+				);
 
 				foreach ( $story_icon_key as $item ) {
-					$item_value                         = get_post_meta( $post_id, $item, true );
-					$array_icon_type[ $item ]           = $item_value;
-					$array_icon_type['story_icon_type'] = 'fontawesome';
+					$item_value               = sanitize_text_field( get_post_meta( $post_id, $item, true ) );
+					$array_icon_type[ $item ] = $item_value;
 				}
 
 				foreach ( $story_type_key as $item ) {
-					$item_value                         = get_post_meta( $post_id, $item, true );
-					$array_story_type[ $item ]          = $item_value;
-					$array_story_type['story_based_on'] = 'default';
+					$item_value                = sanitize_text_field( get_post_meta( $post_id, $item, true ) );
+					$array_story_type[ $item ] = $item_value;
 				}
 
 				foreach ( $story_media_key as $item ) {
-					$item_value                        = get_post_meta( $post_id, $item, true );
-					$array_story_media[ $item ]        = $item_value;
-					$array_story_media['story_format'] = 'default';
+					$item_value                 = sanitize_text_field( get_post_meta( $post_id, $item, true ) );
+					$array_story_media[ $item ] = $item_value;
 				}
 
 				update_post_meta( $post_id, 'story_type', $array_story_type );
 				update_post_meta( $post_id, 'story_media', $array_story_media );
 				update_post_meta( $post_id, 'story_icon', $array_icon_type );
-				update_option( 'ctl-postmeta-migration', 'done' );
 			}
+
+			update_option( 'ctl-postmeta-migration', 'done' );
 		}
 	}
 
 
 	function ctl_settings_migration() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		if ( ! get_option( 'cool_timeline_options' ) ) {
 			return;
 		}
 
 		$old_settings = get_option( 'cool_timeline_options' );
+
+		if ( ! is_array( $old_settings ) ) {
+			return;
+		}
+
+		$old_settings = map_deep( $old_settings, 'sanitize_text_field' );
 
 		$new_settings = $this->ctl_save_settings(
 			$old_settings,
@@ -95,6 +116,8 @@ class CTL_free_migrations {
 				'src'    => 'url',
 			)
 		);
+
+		$new_settings = map_deep( $new_settings, 'sanitize_text_field' );
 
 		update_option( 'cool_timeline_settings', $new_settings );
 		update_option( 'ctl_settings_migration_status', 'done' );
@@ -107,7 +130,7 @@ class CTL_free_migrations {
 			foreach ( $arr as $k => $v ) {
 				$key            = array_key_exists( $k, $set ) ? $set[ $k ] : $k;
 				$newArr[ $key ] = is_array( $v ) ? $this->ctl_recursive_change_key( $v, $set ) : $v;
-				if ( $key == 'font-size' ) {
+				if ( 'font-size' === $key ) {
 					$newArr[ $key ] = str_replace( 'px', '', $v );
 				}
 			}
@@ -130,8 +153,8 @@ class CTL_free_migrations {
 			$story_content_settings_key = array( 'content_length', 'display_readmore' );
 			$arr                        = $this->ctl_recursive_change_key( $arr, $set );
 			foreach ( $arr as $key => $value ) {
-				if ( in_array( $key, $timeline_header_key ) ) {
-					if ( $key == 'user_avatar' ) {
+				if ( in_array( $key, $timeline_header_key, true ) ) {
+					if ( $key === 'user_avatar' ) {
 						if ( ! empty( $value ) ) {
 							$value            = $this->ctl_recursive_change_key( $value, array( 'src' => 'url' ) );
 							$thumbnail_img    = wp_get_attachment_image_src( $value['id'], 'thumbnail' );
@@ -145,34 +168,34 @@ class CTL_free_migrations {
 					} else {
 						$timeline_header += array( $key => $value );
 					}
-				} elseif ( in_array( $key, $story_date_settings_key ) ) {
+				} elseif ( in_array( $key, $story_date_settings_key, true ) ) {
 					$story_date_settings += array( $key => $value );
-				} elseif ( in_array( $key, $story_content_settings_key ) ) {
+				} elseif ( in_array( $key, $story_content_settings_key, true ) ) {
 					$story_content_settings += array( $key => $value );
-				} elseif ( $key == 'main_title_typo' ) {
+				} elseif ( $key === 'main_title_typo' ) {
 					$title_alignment           = isset( $arr['title_alignment'] ) ? $arr['title_alignment'] : 'center';
 					$value                    += array(
 						'text-align' => $title_alignment,
 						'type'       => 'google',
 					);
 					$newArr['main_title_typo'] = $value;
-				} elseif ( $key == 'post_title_text_style' ) {
+				} elseif ( $key === 'post_title_text_style' ) {
 					$newArr['post_title_typo']['text-transform'] = $value;
-				} elseif ( $key == 'background' ) {
+				} elseif ( $key === 'background' ) {
 					if ( isset( $value['enabled'] ) ) {
 						$newArr['timeline_background'] = '1';
 						$newArr['timeline_bg_color']   = $value['bg_color'];
 					} else {
 						$newArr['timeline_background'] = '0';
 					}
-				} elseif ( $key == 'post_title_typo' ) {
+				} elseif ( $key === 'post_title_typo' ) {
 					$value                                 += array( 'type' => 'google' );
 					$newArr['ctl_date_typo']['font-family'] = $value['font-family'];
 					$newArr['ctl_date_typo']['font-weight'] = $value['font-weight'];
 					$newArr['ctl_date_typo']['font-size']   = '21';
 					$newArr['ctl_date_typo']['type']        = 'google';
 					$newArr['post_title_typo']              = $value;
-				} elseif ( $key == 'post_content_typo' ) {
+				} elseif ( $key === 'post_content_typo' ) {
 					$value                      += array( 'type' => 'google' );
 					$newArr['post_content_typo'] = $value;
 				} else {
@@ -192,6 +215,10 @@ class CTL_free_migrations {
 	 * Migrate data from Timeline Express to Cool Timeline
 	 */
 	public function migrate_timeline_express_to_cool_timeline() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
 		if ( get_option( 'timeline_express_migrated' ) ) {
 			return;
@@ -240,16 +267,25 @@ class CTL_free_migrations {
 			$cooltimeline_settings['story_content_settings']['display_readmore'] = $timeline_settings['read-more-visibility'] === '1' ? 'yes' : 'no';
 		}
 
-		if (isset($timeline_settings['default-announcement-color'])) {
-			$cooltimeline_settings['first_post'] = $timeline_settings['default-announcement-color'];
+		if ( isset( $timeline_settings['default-announcement-color'] ) ) {
+			$default_announcement_color = sanitize_hex_color( $timeline_settings['default-announcement-color'] );
+			if ( $default_announcement_color ) {
+				$cooltimeline_settings['first_post'] = $default_announcement_color;
+			}
 		}
 
-		if (isset($timeline_settings['announcement-bg-color'])) {
-			$cooltimeline_settings['content_bg_color'] = $timeline_settings['announcement-bg-color'];
+		if ( isset( $timeline_settings['announcement-bg-color'] ) ) {
+			$announcement_bg_color = sanitize_hex_color( $timeline_settings['announcement-bg-color'] );
+			if ( $announcement_bg_color ) {
+				$cooltimeline_settings['content_bg_color'] = $announcement_bg_color;
+			}
 		}
 		
-		if (isset($timeline_settings['announcement-background-line-color'])) {
-			$cooltimeline_settings['line_color'] = $timeline_settings['announcement-background-line-color'];
+		if ( isset( $timeline_settings['announcement-background-line-color'] ) ) {
+			$announcement_line_color = sanitize_hex_color( $timeline_settings['announcement-background-line-color'] );
+			if ( $announcement_line_color ) {
+				$cooltimeline_settings['line_color'] = $announcement_line_color;
+			}
 		}
        	
 		foreach ( $timeline_express_posts as $old_post ) {
@@ -266,7 +302,7 @@ class CTL_free_migrations {
 			$excerpt         = wp_kses_post(get_post_meta($old_post->ID,'announcement_custom_excerpt',true));
 			
 			$formatted_for_meta = $event_timestamp ? gmdate( 'm/d/Y h:i A', $event_timestamp ) : '';
-			$color = sanitize_text_field( $color_raw );
+			$color = sanitize_hex_color( $color_raw );
 
 			if (strpos($icon_raw, 'fa-') === false) {
 				$icon_class = 'fa fa-' . sanitize_html_class($icon_raw);
@@ -286,7 +322,7 @@ class CTL_free_migrations {
 
 			$new_post_id = wp_insert_post( $new_post );
 			
-			if ( ! is_wp_error( $new_post_id ) ) {
+			if ( ! is_wp_error( $new_post_id ) && $new_post_id > 0 ) {
 
 				clean_post_cache( $new_post_id );
 				
@@ -338,16 +374,18 @@ class CTL_free_migrations {
 		check_ajax_referer( 'ctl_migrate_nonce', 'nonce' );
 	
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Unauthorized', 'cool-timeline' ) ] );
-			wp_die();
+			return wp_send_json_error( array(
+				'message' => __( 'Unauthorized', 'cool-timeline' ),
+			) );
+			
 		}
 	
 		$total_stories = $this->migrate_timeline_express_to_cool_timeline();
 	
 		if ( empty( $total_stories ) || $total_stories === 0 ) {
 		
-			wp_send_json_error( [ 'message' => __( 'No Attachemnt Found To Migrate.', 'cool-timeline' ) ] );
-			wp_die();
+			return wp_send_json_error( [ 'message' => __( 'No Attachemnt Found To Migrate.', 'cool-timeline' ) ] );
+			
 		}
 	
 		wp_send_json_success([

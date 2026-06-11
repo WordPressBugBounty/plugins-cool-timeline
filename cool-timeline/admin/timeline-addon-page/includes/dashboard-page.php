@@ -18,22 +18,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 if ( ! isset( $prefix ) ) {
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$prefix = 'ctl';
 }
 
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $prefix = sanitize_key( $prefix );
 
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $activated_addons = isset( $activated_addons ) && is_array( $activated_addons ) ? $activated_addons : array();
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 $available_addons = isset( $available_addons ) && is_array( $available_addons ) ? $available_addons : array();
-// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 $pro_addons = isset( $pro_addons ) && is_array( $pro_addons ) ? $pro_addons : array();
 
 $dashboard_instance = isset( $dashboard_instance ) ? $dashboard_instance : null;
+
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div class="<?php echo esc_attr( $prefix ); ?>-content">
 

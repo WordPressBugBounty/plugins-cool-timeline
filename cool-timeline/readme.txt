@@ -1,10 +1,10 @@
-=== Cool Timeline (Horizontal & Vertical Timeline) ===
+﻿=== Cool Timeline (Horizontal & Vertical Timeline) ===
 Contributors: narinder-singh,satindersingh,coolplugins
 Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.0
-Tested up to: 6.9
-Stable tag:3.3.1
+Tested up to: 7.0
+Stable tag:3.3.2
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -195,6 +195,11 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 7. Create any type of timeline using Cool Timeline PRO.
 
 == Changelog ==
+
+= Version 3.3.2 | 11 June 2026 =
+
+* **Improvements:** Code Improvements & Optimization
+
 = Version 3.3.1 | 22 April 2026 =
 
 * **Fixed:** Deprecated issues in the latest PHP version.
@@ -452,5 +457,6 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 <strong>More:- check <a target="_blank" href="https://bitbucket.org/!api/2.0/snippets/CoolHappy/7XXdBp/91a4ecee991e51318af6635e383e96f7b125dbc5/files/changelog">changelog.txt</a> file here.</strong>
 == Upgrade Notice ==
 
-= 1.1.8 =
-A new look of cool timeline after changing a lot of CSS styles. Upgrade Now!
+= Version 3.3.2 | 11 June 2026 =
+
+* **Improvements:** Code Improvements & Optimization

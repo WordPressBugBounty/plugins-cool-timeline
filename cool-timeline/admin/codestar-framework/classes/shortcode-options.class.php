@@ -215,8 +215,8 @@ if ( ! class_exists( 'CSF_Shortcoder' ) ) {
       // Check user capabilities
       if ( ! current_user_can( 'manage_options' ) ) {
         // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-        wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
-        wp_die();
+        return wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
+        
       }
 
       ob_start();

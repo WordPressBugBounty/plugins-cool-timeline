@@ -3,7 +3,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.3.1
+  Version:3.3.2
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Configuration */
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.3.1' );
+	define( 'CTL_V', '3.3.2' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -110,7 +110,15 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			require_once __DIR__ . '/includes/cron/class-cron.php';
 		}
 		public function ctl_add_new_item() {
-			add_submenu_page( 'cool-plugins-timeline-addon', 'Add New Story', '<strong>Add New Story</strong>', 'manage_options', 'post-new.php?post_type=cool_timeline', false, 15 );
+						add_submenu_page(
+				'cool-plugins-timeline-addon',
+				__( 'Add New Story', 'cool-timeline' ),
+				'<strong>' . esc_html__( 'Add New Story', 'cool-timeline' ) . '</strong>',
+				'manage_options',
+				'post-new.php?post_type=cool_timeline',
+				false,
+				15
+			);
 		}
 
 		public function ctl_plugin_settings_saved(){
@@ -147,6 +155,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		public function ctl_hide_unrelated_notices() {
 			// Always register dispatcher once, on all admin pages (Events-style).
 			if ( ! defined( 'CTL_ADMIN_NOTICE_HOOKED' ) ) {
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 				define( 'CTL_ADMIN_NOTICE_HOOKED', true );
 				add_action(
 					'admin_notices',
@@ -233,17 +242,18 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		 * Dispatcher for admin notices (fired once at PHP_INT_MAX on admin_notices).
 		 * Ensures CTL notices can be rendered after pruning on timeline addon pages.
 		 */
+		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 		public function ctl_dash_admin_notices() {
-			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 			if ( defined( 'CTL_ADMIN_NOTICE_RENDERED' ) ) {
 				return;
 			}
 
 			define( 'CTL_ADMIN_NOTICE_RENDERED', true );
-			// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+			
 
 			do_action( 'ctl_display_admin_notices' );
 		}
+		// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 
 		/**
 		 * On timeline addon pages, inject self-hosted Inter @font-face with absolute URLs
@@ -307,7 +317,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 					'cool-plugins-inter-font',
 					'https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap',
 					array(),
-					null
+					CTL_V
 				);
 			}
 		}
@@ -518,10 +528,10 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			if ( is_admin() ) {
 				global $post;
 				$screen = get_current_screen();
-				if ( $screen->base == 'toplevel_page_cool_timeline_page' ) {
+				if ( $screen && 'toplevel_page_cool_timeline_page' === $screen->base ) {
 					wp_deregister_script( 'default' );
 				}
-				if ( isset( $post ) && isset( $post->post_type ) && $post->post_type == 'cool_timeline' ) {
+				if ( isset( $post ) && isset( $post->post_type ) && $post->post_type === 'cool_timeline' ) {
 					wp_deregister_script( 'acf-timepicker' );
 					// wp_deregister_script( 'acf-input' ); // datepicker translaton issue
 					// wp_deregister_script( 'acf' ); // datepicker translaton issue
@@ -537,7 +547,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 		public static function is_theme_activate( $target ) {
 			$theme = wp_get_theme();
-			if ( $theme->name == $target || stripos( $theme->parent_theme, $target ) !== false ) {
+			if ( $theme->name === $target || stripos( $theme->parent_theme, $target ) !== false ) {
 				return true;
 			}
 			return false;
@@ -591,7 +601,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 		'server_software'        => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'N/A',
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			'mysql_version'          => $wpdb ? sanitize_text_field($wpdb->get_var("SELECT VERSION()")) : 'N/A',
+			'mysql_version'          => $wpdb ? sanitize_text_field( $wpdb->get_var( 'SELECT VERSION()' ) ) : 'N/A',
 			'php_version'            => sanitize_text_field(phpversion() ?: 'N/A'),
 			'wp_version'             => sanitize_text_field(get_bloginfo('version') ?: 'N/A'),
 			'wp_debug'               => (defined('WP_DEBUG') && WP_DEBUG) ? 'Enabled' : 'Disabled',

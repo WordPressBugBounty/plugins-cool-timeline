@@ -95,25 +95,28 @@ add_action(
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function ctl_block_callback( $attr ) {
-	// Sanitize attributes
-	$layout = isset( $attr['layout'] ) ? sanitize_text_field( $attr['layout'] ) : 'default'; // Sanitize layout
-
-	extract( $attr );
-	if ( isset( $layout ) ) {
-		$shortcode_string = '[cool-timeline layout="%s" skin="%s"
+	$layout        = isset( $attr['layout'] ) ? sanitize_text_field( $attr['layout'] ) : 'default';
+	$skin          = isset( $attr['skin'] ) ? sanitize_text_field( $attr['skin'] ) : 'default';
+	$dateformat    = isset( $attr['dateformat'] ) ? sanitize_text_field( $attr['dateformat'] ) : 'F j';
+	$postperpage   = isset( $attr['postperpage'] ) && '-1' === trim( (string) $attr['postperpage'] ) ? '-1' : (string) max( 1, absint( isset( $attr['postperpage'] ) ? $attr['postperpage'] : 10 ) );
+	$slide_to_show   = isset( $attr['slideToShow'] ) && '' !== $attr['slideToShow'] ? (string) max( 1, absint( $attr['slideToShow'] ) ) : '';
+	$animation     = isset( $attr['animation'] ) ? sanitize_text_field( $attr['animation'] ) : 'none';
+	$icons         = isset( $attr['icons'] ) ? sanitize_text_field( $attr['icons'] ) : 'NO';
+	$order         = isset( $attr['order'] ) ? sanitize_text_field( $attr['order'] ) : 'DESC';
+	$storycontent  = isset( $attr['storycontent'] ) ? sanitize_text_field( $attr['storycontent'] ) : 'short';
+	$shortcode_string = '[cool-timeline layout="%s" skin="%s"
 		show-posts="%s" date-format="%s" icons="%s" animation="%s" order="%s" story-content="%s" items="%s"]';
-		$shortcode        = sprintf(
-			$shortcode_string,
-			$layout,
-			$skin,
-			$postperpage,
-			$dateformat,
-			$icons,
-			$animation,
-			$order,
-			$storycontent,
-			$slideToShow
-		);
-		return $shortcode;
-	}
+
+	return sprintf(
+		$shortcode_string,
+		esc_attr( $layout ),
+		esc_attr( $skin ),
+		esc_attr( $postperpage ),
+		esc_attr( $dateformat ),
+		esc_attr( $icons ),
+		esc_attr( $animation ),
+		esc_attr( $order ),
+		esc_attr( $storycontent ),
+		esc_attr( $slide_to_show )
+	);
 }

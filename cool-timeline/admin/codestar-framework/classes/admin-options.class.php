@@ -230,15 +230,15 @@ if ( ! class_exists( 'CSF_Options' ) ) {
       // Check user capabilities
       if ( ! current_user_can( 'manage_options' ) ) {
         // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-        wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
-        wp_die();
+        return wp_send_json_error( array( 'error' => esc_html__( 'Unauthorized access.', 'csf' ) ) );
+        
       }
 
       $result = $this->set_options( true );
 
       if ( ! $result ) {
         // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-        wp_send_json_error( array( 'error' => esc_html__( 'Error while saving the changes.', 'csf' ) ) );
+        return wp_send_json_error( array( 'error' => esc_html__( 'Error while saving the changes.', 'csf' ) ) );
       } else {
         wp_send_json_success( array( 'notice' => $this->notice, 'errors' => $this->errors ) );
       }

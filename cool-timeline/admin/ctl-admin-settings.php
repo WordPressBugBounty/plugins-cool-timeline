@@ -8,11 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function ctl_admin_notice_for_migration() {
 
-	 // Check if we're on the Cool Timeline settings page and Get Started tab
+	// Check if we're on the Cool Timeline settings page (read-only screen detection).
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if (!isset($_GET['page']) || sanitize_text_field( wp_unslash( $_GET['page'] ) ) !== 'cool_timeline_settings') {
-        return;
-    }
+	if ( ! isset( $_GET['page'] ) || 'cool_timeline_settings' !== sanitize_key( wp_unslash( $_GET['page'] ) ) ) {
+		return;
+	}
     // Check if timeline express is installed and migration is not completed
     if (file_exists(WP_PLUGIN_DIR . '/timeline-express/timeline-express.php')) {
         $migration_completed = get_option('timeline_express_migrated');
@@ -36,12 +36,6 @@ add_action('admin_notices', 'ctl_admin_notice_for_migration');
 
 // Control core classes for avoid errors
 if ( class_exists( 'CSF' ) ) {
-
-
-
-	
-
-
 	
 	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$prefix = 'cool_timeline_settings';
@@ -376,8 +370,8 @@ if ( class_exists( 'CSF' ) ) {
 				array(
 					'id'      => 'advanced-features',
 					'type'    => 'content',
-					'content' => '<div class="advance_options" style="text-align:center"><a target="_blank" href="' . CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=settings">
-          <img src="' . CTL_PLUGIN_URL . 'assets/images/pro-features-list.png" ></a></div>',
+					'content' => '<div class="advance_options" style="text-align:center"><a target="_blank" href="' . esc_url( CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=settings' ) . '">
+          <img src="' . esc_url( CTL_PLUGIN_URL . 'assets/images/pro-features-list.png' ) . '" alt=""></a></div>',
 
 				),
 

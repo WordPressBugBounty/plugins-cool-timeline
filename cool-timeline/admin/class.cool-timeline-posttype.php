@@ -124,16 +124,36 @@ class CoolTimelinePosttypeFree {
 	}
 
 	public function ctl_submitbox_metabox() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_REQUEST['post'] ) && get_post_type( intval( $_REQUEST['post'] ) ) == 'cool_timeline' ||
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		isset( $_REQUEST['post_type'] ) && sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) == 'cool_timeline' ) {
-			$html  = '<div class="misc-pub-section ctl-notice">';
-			$html .= '<span style="font-weight:bold;">*Please select story Date / Year from settings below the story content.';
-			$html .= ' <a href="#ctl_post_meta"><br/>- Timeline Story Settings (Date/Year)</a>';
-			$html .= '</span>';
-			$html .= '</div>';
-			echo wp_kses_post( $html );
+
+		$is_cool_timeline = false;
+	
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended	 
+		if ( isset( $_GET['post'] ) ) {		
+			$post_id = intval( wp_unslash( $_GET['post'] ) );
+	
+			if ( 'cool_timeline' === get_post_type( $post_id ) ) {
+				$is_cool_timeline = true;
+			}
+		}
+		
+		if ( isset( $_GET['post_type'] ) ) {
+			$post_type = sanitize_text_field( wp_unslash( $_GET['post_type'] ) );
+	
+			if ( 'cool_timeline' === $post_type ) {
+				$is_cool_timeline = true;
+			}
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+	
+		if ( $is_cool_timeline ) {
+			?>
+			<div class="misc-pub-section ctl-notice">
+				<span style="font-weight:bold;">
+					<?php esc_html_e( '*Please select story Date / Year from settings below the story content.', 'cool-timeline' ); ?>
+					<a href="#ctl_post_meta"><br/>- <?php esc_html_e( 'Timeline Story Settings (Date/Year)', 'cool-timeline' ); ?></a>
+				</span>
+			</div>
+			<?php
 		}
 	}
 

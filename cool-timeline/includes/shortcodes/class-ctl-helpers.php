@@ -59,6 +59,7 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 		 * Get post type from url
 		 */
 		public static function ctl_get_ctp() {
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
 			global $post, $typenow, $current_screen;
 			if ( $post && $post->post_type ) {
 				return $post->post_type;
@@ -66,12 +67,14 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 				return $typenow;
 			} elseif ( $current_screen && $current_screen->post_type ) {
 				return $current_screen->post_type;
-					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					} elseif ( isset( $_REQUEST['post_type'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) );
+			} elseif ( isset( $_REQUEST['post_type'] ) ) {
+				
+				// Acceptable: read-only post-type detection; no nonce required.
+				
+				return sanitize_key( wp_unslash( $_REQUEST['post_type'] ) );
 			}
 			return null;
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
 
 		/**
@@ -128,7 +131,7 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
                    $read_more_link
                );
  
-          // ✅ Run embed + shortcode filters
+          // Run embed + shortcode filters.
               // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
               $excerpt = apply_filters( 'the_content', $excerpt );
 
@@ -146,27 +149,19 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 		 * @param object $settings Timeline settings object.
 		 */
 		public static function timeline_before_content( $settings ) {
-			$output         = '';
-			$title_text     = $settings['timeline_title'];
-			$timeline_image = $settings['timeline_image'];
-			$title_tag      = $settings['timeline_title_tag'];
+			$output     = '';
+			$title_text = isset( $settings['timeline_title'] ) ? $settings['timeline_title'] : '';
+			$title_tag  = isset( $settings['timeline_title_tag'] ) ? $settings['timeline_title_tag'] : 'h2';
+			$title_tag  = strtolower( $title_tag );
+			$title_tag  = in_array( $title_tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $title_tag : 'h2';
 
 			// if ( ! empty( $timeline_image['id'] ) || ( 'yes' === $title_enable && ! empty( $title_text ) ) ) {
 			if ( ! empty( $title_text ) ) {
 				$output .= '<div class="ctl-before-content">';
 
-				// if ( ! empty( $timeline_image['id'] ) ) {
-				// $user_avatar = wp_get_attachment_image_src( $timeline_image['id'], 'ctl_avatar' );
-				// $output     .= sprintf(
-				// '<div class="ctl-avatar"><span title="%s"><img src="%s" alt="%s"></span></div>',
-				// esc_attr( $title_text ),
-				// esc_url( $user_avatar[0] ),
-				// esc_attr( $title_text )
-				// );
-				// }
-
+				
 				if ( ! empty( $title_text ) ) {
-					$output .= '<div class="timeline-main-title"><' . $title_tag . '>' . esc_html( $title_text ) . '</' . $title_tag . '></div>';
+					$output .= '<div class="timeline-main-title"><' . esc_attr( $title_tag ) . '>' . esc_html( $title_text ) . '</' . esc_attr( $title_tag ) . '></div>';
 				}
 
 				$output .= '</div>';

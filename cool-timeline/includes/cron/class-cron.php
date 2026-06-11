@@ -1,12 +1,13 @@
 <?php
-if (!defined('ABSPATH')) {
-    exit();
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-if (!class_exists('CTL_CRONJOB')) {
+if ( ! class_exists( 'CTL_CRONJOB' ) ) {
+
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
-    class CTL_CRONJOB
-    {
+    class CTL_CRONJOB{
     
 
         public function __construct() {
@@ -28,12 +29,12 @@ if (!class_exists('CTL_CRONJOB')) {
        static public function ctl_send_data() {
                    
             $feedback_url = CTL_FEEDBACK_API.'wp-json/coolplugins-feedback/v1/site';
-            require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
-            
-            if (!defined('CTL_PLUGIN_DIR')  ) {
-                
+
+            if ( ! defined( 'CTL_PLUGIN_DIR' ) ) {
                 return;
             }
+
+            require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
            
             $extra_data_details = CoolTimeline::ctl_get_user_info();
        
