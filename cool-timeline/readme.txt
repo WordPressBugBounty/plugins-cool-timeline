@@ -4,7 +4,7 @@ Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.0
 Tested up to: 7.0
-Stable tag:3.3.2
+Stable tag:3.3.3
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -195,6 +195,10 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 7. Create any type of timeline using Cool Timeline PRO.
 
 == Changelog ==
+
+= Version 3.3.3 | 12 June 2026 =
+
+* **Fixed:** Fixed PHP undefined get_current_screen() function error.
 
 = Version 3.3.2 | 11 June 2026 =
 
@@ -457,6 +461,6 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 <strong>More:- check <a target="_blank" href="https://bitbucket.org/!api/2.0/snippets/CoolHappy/7XXdBp/91a4ecee991e51318af6635e383e96f7b125dbc5/files/changelog">changelog.txt</a> file here.</strong>
 == Upgrade Notice ==
 
-= Version 3.3.2 | 11 June 2026 =
+= Version 3.3.3 | 12 June 2026 =
 
-* **Improvements:** Code Improvements & Optimization
+* **Fixed:** Fixed PHP undefined get_current_screen() function error

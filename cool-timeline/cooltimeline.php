@@ -3,7 +3,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.3.2
+  Version:3.3.3
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Configuration */
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.3.2' );
+	define( 'CTL_V', '3.3.3' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -527,10 +527,19 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		public function ctl_deregister_javascript() {
 			if ( is_admin() ) {
 				global $post;
-				$screen = get_current_screen();
-				if ( $screen && 'toplevel_page_cool_timeline_page' === $screen->base ) {
+
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing
+				$current_page  = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+				$allowed_pages = array(
+					'cool_timeline_settings',
+					'cool-plugins-timeline-addon',
+					'timeline-addons-license',
+				);
+				
+				if ( !empty( $current_page ) && in_array( $current_page, $allowed_pages, true ) && function_exists( 'wp_deregister_script' ) ) {
 					wp_deregister_script( 'default' );
 				}
+
 				if ( isset( $post ) && isset( $post->post_type ) && $post->post_type === 'cool_timeline' ) {
 					wp_deregister_script( 'acf-timepicker' );
 					// wp_deregister_script( 'acf-input' ); // datepicker translaton issue
