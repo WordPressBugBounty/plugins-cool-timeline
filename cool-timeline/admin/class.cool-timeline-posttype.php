@@ -83,7 +83,9 @@ class CoolTimelinePosttypeFree {
 	// clt column handlers
 	public function ctl_custom_columns( $column, $post_id ) {
 		$ctl_story_type = get_post_meta( $post_id, 'story_type', true );
-		$ctl_story_date = isset( $ctl_story_type['ctl_story_date'] ) ? sanitize_text_field( $ctl_story_type['ctl_story_date'] ) : ''; // Sanitize input
+		$ctl_story_date = ( is_array( $ctl_story_type ) && isset( $ctl_story_type['ctl_story_date'] ) )
+        ? sanitize_text_field( $ctl_story_type['ctl_story_date'] )
+        : '';
 		switch ( $column ) {
 			case 'story_year':
 				$story_timestamp = strtotime( $ctl_story_date );

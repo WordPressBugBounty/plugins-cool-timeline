@@ -213,7 +213,13 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 		 */
 		public function ctl_get_date( $post_id, $date_formats ) {
 			$ctl_story_type = get_post_meta( $post_id, 'story_type', true );
-			$ctl_story_date = $ctl_story_type['ctl_story_date'];
+
+			$ctl_story_date = '';
+
+			if ( is_array( $ctl_story_type ) && isset( $ctl_story_type['ctl_story_date'] ) ) {
+				$ctl_story_date = $ctl_story_type['ctl_story_date'];
+			}
+			
 			$layout         = $this->attributes['layout'];
 			$re_more        = ( ( isset( $this->settings['display_readmore'] ) && 'yes' === $this->settings['display_readmore'] ) && 'horizontal' === $layout );
 			$output         = '';
@@ -398,7 +404,11 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 
 			// Get story date.
 			$ctl_story_type = get_post_meta( $post_id, 'story_type', true );
-			$ctl_story_date = isset( $ctl_story_type['ctl_story_date'] ) ? $ctl_story_type['ctl_story_date'] : '';
+
+			$ctl_story_date = ( is_array( $ctl_story_type ) && isset( $ctl_story_type['ctl_story_date'] ) )
+			? sanitize_text_field( $ctl_story_type['ctl_story_date'] )
+			: '';
+
 			$pattern        = "/\b\d{4}\b/"; // Regular expression pattern to match a four-digit number.
 			preg_match( $pattern, $ctl_story_date, $matches );
 
