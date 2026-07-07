@@ -180,7 +180,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 			wp_register_style( 'ctl_horizontal_style', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-horizontal-timeline$minified_file.css", null, CTL_V, 'all' );
 			wp_register_script( 'ctl_common_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-scripts$minified_file.js", array( 'jquery' ), CTL_V, true );
 			wp_register_script( 'ctl_compact_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-compact$minified_file.js", array( 'jquery', 'jquery-masonry' ), CTL_V, true );
-			wp_register_script( 'ctl_hr_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-horizontal$minified_file.js", array( 'jquery' ), CTL_V, true );
+			wp_register_script( 'ctl_hr_script', CTL_PLUGIN_URL . "includes/shortcodes/assets/js/ctl-horizontal$minified_file.js", array( 'jquery', 'ctl_swiper_script' ), CTL_V, true );
 
 			// Compact layout uses WordPress core Masonry (jquery-masonry).
 			wp_register_style( 'ctl_compact_style', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-compact-style$minified_file.css", null, CTL_V, 'all' );

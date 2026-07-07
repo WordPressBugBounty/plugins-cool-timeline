@@ -2,11 +2,11 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/block.js":
+/***/ "./src/block.js"
 /*!**********************!*\
   !*** ./src/block.js ***!
   \**********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -15,6 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./icons */ "./src/icons.js");
 /* harmony import */ var _layout_type__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./layout-type */ "./src/layout-type.js");
 /* harmony import */ var _images_timeline_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./images/timeline.png */ "./src/images/timeline.png");
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
  * Block dependencies
  */
@@ -34,7 +35,8 @@ var _wp = wp,
 var _wp$blockEditor = wp.blockEditor,
   RichText = _wp$blockEditor.RichText,
   InspectorControls = _wp$blockEditor.InspectorControls,
-  BlockControls = _wp$blockEditor.BlockControls;
+  BlockControls = _wp$blockEditor.BlockControls,
+  useBlockProps = _wp$blockEditor.useBlockProps;
 var _wp$element = wp.element,
   Fragment = _wp$element.Fragment,
   useEffect = _wp$element.useEffect;
@@ -60,6 +62,7 @@ var _wp$components = wp.components,
 
  */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerBlockType('cool-timleine/shortcode-block', {
+  apiVersion: 3,
   // Block Title
   title: __('Cool Timeline Shortcode'),
   // Block Description
@@ -114,6 +117,7 @@ var _wp$components = wp.components,
   },
   // Defining the edit interface
   edit: function edit(props) {
+    var blockProps = useBlockProps();
     useEffect(function () {
       '' === props.attributes.slideToShow && props.setAttributes({
         slideToShow: '4'
@@ -238,7 +242,8 @@ var _wp$components = wp.components,
       },
       min: 1,
       max: 50,
-      step: 1
+      step: 1,
+      __next40pxDefaultSize: true
     }), 'horizontal' === props.attributes.layout && React.createElement(RangeControl, {
       label: __('Slide To Show?'),
       value: parseInt(props.attributes.slideToShow),
@@ -249,7 +254,8 @@ var _wp$components = wp.components,
       },
       min: 1,
       max: 10,
-      step: 1
+      step: 1,
+      __next40pxDefaultSize: true
     })));
     var advanced_settings = React.createElement(PanelBody, {
       title: __('Timeline Advanced Settings')
@@ -344,10 +350,9 @@ var _wp$components = wp.components,
       href: "https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=ctl_shortcode"
     }, "Buy Pro"))), props.attributes.isPreview ? React.createElement("img", {
       src: _images_timeline_png__WEBPACK_IMPORTED_MODULE_2__["default"]
-    }) : React.createElement("div", {
-      className: props.className,
+    }) : React.createElement("div", _extends({
       key: props.clientId
-    }, React.createElement(_layout_type__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, blockProps), React.createElement(_layout_type__WEBPACK_IMPORTED_MODULE_1__["default"], {
       LayoutImgPath: LayoutImgPath,
       attributes: props.attributes
     }), React.createElement("div", {
@@ -366,13 +371,13 @@ var _wp$components = wp.components,
   }
 }));
 
-/***/ }),
+/***/ },
 
-/***/ "./src/icons.js":
+/***/ "./src/icons.js"
 /*!**********************!*\
   !*** ./src/icons.js ***!
   \**********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -454,27 +459,13 @@ var CtlIcon = function CtlIcon() {
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CtlIcon);
 
-/***/ }),
+/***/ },
 
-/***/ "./src/images/timeline.png":
-/*!*********************************!*\
-  !*** ./src/images/timeline.png ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__webpack_require__.p + "images/27d3f3c782dabdb08d424daa7396b72e.png");
-
-/***/ }),
-
-/***/ "./src/layout-type.js":
+/***/ "./src/layout-type.js"
 /*!****************************!*\
   !*** ./src/layout-type.js ***!
   \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -518,19 +509,33 @@ var CtlLayoutType = function CtlLayoutType(props) {
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CtlLayoutType);
 
-/***/ }),
+/***/ },
 
-/***/ "./src/style.scss":
+/***/ "./src/images/timeline.png"
+/*!*********************************!*\
+  !*** ./src/images/timeline.png ***!
+  \*********************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__webpack_require__.p + "images/27d3f3c782dabdb08d424daa7396b72e.png");
+
+/***/ },
+
+/***/ "./src/style.scss"
 /*!************************!*\
   !*** ./src/style.scss ***!
   \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
 
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -552,6 +557,12 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module

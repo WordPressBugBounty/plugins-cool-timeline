@@ -14,14 +14,25 @@ function timeline_block_editor_assets() {
 	$id = get_the_ID();
 
 	if ( has_block( 'cp-timeline/content-timeline', $id ) ) {
+		if ( ! is_admin() ) {
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style(
+				'cp_timeline-cgb-style', // Handle.
+				plugins_url( 'dist/blocks.style.build.css', dirname( __FILE__ ) ),
+				null,
+				null // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			);
+			wp_enqueue_script( 'ctl_block_common_script' );
+			return;
+		}
+
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_enqueue_style(
 			'cp_timeline-cgb-style', // Handle.
 			plugins_url( 'dist/blocks.style.build.css', dirname( __FILE__ ) ),
-			is_admin() ? array( 'wp-editor' ) : null,
+			array( 'wp-block-editor' ),
 			null // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		);
-		wp_enqueue_script( 'ctl_block_common_script' );
 	} else {
 		if ( ! is_admin() ) {
 			wp_dequeue_style( 'cp_timeline-cgb-style' );
@@ -29,19 +40,19 @@ function timeline_block_editor_assets() {
 	}
 }
 
-add_action( 'enqueue_block_editor_assets', 'editor_side_css' );
+add_action( 'enqueue_block_assets', 'editor_side_css' );
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function editor_side_css() {
-		// Common Editor style.
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_enqueue_style(
-			'timeline-block
-		-block-common-editor-css', // Handle.
-			plugin_dir_url( __FILE__ ) . '../assets/common-block-editor.css', // Block editor CSS.
-			array( 'wp-edit-blocks' )// Dependency to include the CSS after it.
-		);
-		wp_enqueue_style( 'ctl_block_swiper_style' );
-		wp_enqueue_script( 'ctl_block_swiper_script' );
+	if ( ! is_admin() ) {
+		return;
+	}
+	// Common Editor style.
+	// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+	wp_enqueue_style(
+		'timeline-block-common-editor-css', // Handle.
+		plugin_dir_url( __FILE__ ) . '../assets/common-block-editor.css', // Block editor CSS.
+		array( 'wp-block-editor' )// Dependency to include the CSS after it.
+	);
 }
 
 add_action( 'wp_head', 'timeline_block_load_post_assets' );
@@ -66,6 +77,15 @@ function timeline_block_load_post_assets() {
 
 		$blocks      = parse_blocks( $this_post->post_content );
 		$page_blocks = $blocks;
+
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['blockName'] ) && 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
+				$reusable_post = get_post( (int) $block['attrs']['ref'] );
+				if ( $reusable_post && 'wp_block' === $reusable_post->post_type && ! empty( $reusable_post->post_content ) ) {
+					$page_blocks = array_merge( $page_blocks, parse_blocks( $reusable_post->post_content ) );
+				}
+			}
+		}
 
 		if ( ! is_array( $page_blocks ) || empty( $page_blocks ) ) {
 			return;
@@ -152,7 +172,7 @@ function cp_timeline_cgb_block_assets() {
 	wp_register_style(
 		'cp_timeline-cgb-style', // Handle.
 		plugins_url( 'dist/blocks.style.build.css', dirname( __FILE__ ) ),
-		is_admin() ? array( 'wp-editor' ) : null,
+		is_admin() ? array( 'wp-block-editor' ) : null,
 		null // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 	);
 
@@ -160,7 +180,7 @@ function cp_timeline_cgb_block_assets() {
 	wp_register_script(
 		'cp_timeline-cgb-block-js', // Handle.
 		plugins_url( 'dist/blocks.build.js', dirname( __FILE__ ) ),
-		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ),
+		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor' ),
 		null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		true
 	);
@@ -169,7 +189,7 @@ function cp_timeline_cgb_block_assets() {
 	wp_register_style(
 		'cp_timeline-cgb-block-editor-css', // Handle.
 		plugins_url( 'dist/blocks.editor.build.css', dirname( __FILE__ ) ),
-		array( 'wp-edit-blocks' ),
+		array( 'wp-block-editor' ),
 		null // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 	);
 
@@ -188,7 +208,7 @@ function cp_timeline_cgb_block_assets() {
 		register_block_type(
 			'cp-timeline/content-timeline',
 			array(
-				'api_version'   => 2,
+				'api_version'   => 3,
 				// Enqueue blocks.style.build.css on both frontend & backend.
 				'style'         => 'cp_timeline-cgb-style',
 				// Enqueue blocks.build.js in the editor only.
@@ -200,7 +220,7 @@ function cp_timeline_cgb_block_assets() {
 		register_block_type(
 			'cp-timeline/content-timeline-child',
 			array(
-				'api_version' => 2,
+				'api_version' => 3,
 			)
 		);
 	}

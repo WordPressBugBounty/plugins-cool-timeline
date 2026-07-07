@@ -24,6 +24,7 @@
     let ctl_class=block.gutenberg.block_name=='ctl_timeline_shortcode'?'csf-shortcode':'ctl-shortcode';
 
     registerBlockType(ctl_blockName, {
+      apiVersion: 3,
       title: block.gutenberg.title,
       description: block.gutenberg.description,
       icon: block.gutenberg.icon || 'screenoptions',

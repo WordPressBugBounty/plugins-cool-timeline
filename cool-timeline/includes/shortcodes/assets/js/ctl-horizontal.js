@@ -18,6 +18,9 @@ class CtlHorizontal {
 
 	// Initialize main slider
 	initializeMainSlider = (element) => {
+		if ( ! element ) {
+			return;
+		}
 		const swiperAttr = this.ctlSlideAttribute(element);
 		const swiperObj = new Swiper(element, swiperAttr);
 	};
@@ -37,10 +40,6 @@ class CtlHorizontal {
 		const attribute = {
 			slidesPerGroup: 1,
 			slidesPerView: 1,
-			navigation: {
-				nextEl: nextButton,
-				prevEl: prevButton,
-			},
 			breakpoints: {
 				640: {
 					slidesPerView: 1,
@@ -53,6 +52,14 @@ class CtlHorizontal {
 				},
 			},
 		};
+
+		if ( nextButton && prevButton ) {
+			attribute.navigation = {
+				nextEl: nextButton,
+				prevEl: prevButton,
+				addIcons: false,
+			};
+		}
 
 		return attribute;
 	};

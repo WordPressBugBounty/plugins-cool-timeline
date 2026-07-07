@@ -5,11 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-// Hook scripts function into block editor hook
-add_action( 'enqueue_block_editor_assets', 'ctl_gutenberg_scripts' );
+// Hook scripts function into block assets hook (iframe editor canvas).
+add_action( 'enqueue_block_assets', 'ctl_gutenberg_scripts' );
 
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function ctl_gutenberg_scripts() {
+	if ( ! is_admin() ) {
+		return;
+	}
+
 	$blockPath = '/dist/block.js';
 	$stylePath = '/dist/block.css';
 
@@ -18,7 +22,7 @@ function ctl_gutenberg_scripts() {
 	wp_enqueue_script(
 		'ctl-block-js',
 		plugins_url( $blockPath, __FILE__ ),
-		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor', 'wp-data', 'wp-api' ),
+		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-data', 'wp-api' ),
 		filemtime( plugin_dir_path( __FILE__ ) . $blockPath )
 	);
 
@@ -26,7 +30,7 @@ function ctl_gutenberg_scripts() {
 	wp_enqueue_style(
 		'ctl-block-css',
 		plugins_url( $stylePath, __FILE__ ),
-		'',
+		array( 'wp-block-editor' ),
 		filemtime( plugin_dir_path( __FILE__ ) . $stylePath )
 	);
 
@@ -45,6 +49,7 @@ add_action(
 			register_block_type(
 				'cool-timleine/shortcode-block',
 				array(
+					'api_version'     => 3,
 					'render_callback' => 'ctl_block_callback',
 					'attributes'      => array(
 						'layout'       => array(

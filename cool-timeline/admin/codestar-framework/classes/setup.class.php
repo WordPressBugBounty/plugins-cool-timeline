@@ -594,12 +594,17 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
       // Check for developer mode
       $min = ( self::$premium && SCRIPT_DEBUG ) ? '' : '.min';
 
-      // Main style
-      wp_enqueue_style( 'csf', self::include_plugin_url( 'assets/css/style'. $min .'.css' ), array(), self::$version, 'all' );
+      $block_editor_screen = function_exists( 'wp_should_load_block_editor_scripts_and_styles' )
+        && wp_should_load_block_editor_scripts_and_styles();
 
-      // Main RTL styles
-      if ( is_rtl() ) {
-        wp_enqueue_style( 'csf-rtl', self::include_plugin_url( 'assets/css/style-rtl'. $min .'.css' ), array(), self::$version, 'all' );
+      // Main style
+      if ( ! $block_editor_screen ) {
+        wp_enqueue_style( 'csf', self::include_plugin_url( 'assets/css/style'. $min .'.css' ), array(), self::$version, 'all' );
+
+        // Main RTL styles
+        if ( is_rtl() ) {
+          wp_enqueue_style( 'csf-rtl', self::include_plugin_url( 'assets/css/style-rtl'. $min .'.css' ), array(), self::$version, 'all' );
+        }
       }
 
       // Main scripts
