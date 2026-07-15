@@ -49,14 +49,14 @@ if ( ! class_exists( 'CTL_Ajax_Handler' ) ) {
 		 */
 		public function __construct() {
 			if ( is_admin() ) {
-				add_action( 'wp_ajax_get_shortcode_preview', array( $this, 'ctp_shortocde_preview' ) );
+				add_action( 'wp_ajax_get_shortcode_preview', array( $this, 'ctl_shortcode_preview' ) );
 			}
 		}
 
 		/**
 		 * Cool Timeline story shortcode preview.
 		 */
-		public function ctp_shortocde_preview() {
+		public function ctl_shortcode_preview() {
 			if ( ! check_ajax_referer( 'ctl_preview', 'nonce', false ) ) {
 				return wp_send_json_error( __( 'Invalid security token sent.', 'cool-timeline' ), 403 );
 				
@@ -128,7 +128,7 @@ if ( ! class_exists( 'CTL_Ajax_Handler' ) ) {
 
 			require_once CTL_PLUGIN_DIR . 'includes/shortcodes/class-ctl-shortcode-preview.php';
 
-			$assets_data = new CTL_Shortcode_Preivew( $ctl_shortcode );
+			$assets_data = new CTL_Shortcode_Preview( $ctl_shortcode );
 			$shortcode   = $assets_data->ctl_preview_shortcode();
 			$assets_obj  = $assets_data->assets_obj();
 
@@ -152,7 +152,6 @@ if ( ! class_exists( 'CTL_Ajax_Handler' ) ) {
 					: '',
 			);
 			wp_send_json_success( $data );
-			wp_die(); // Important for AJAX in WordPress.
 		}
 	}
 }

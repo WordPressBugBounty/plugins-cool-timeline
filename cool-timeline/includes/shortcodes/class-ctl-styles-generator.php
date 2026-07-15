@@ -28,7 +28,7 @@ if ( ! class_exists( 'CTL_Styles_Generator' ) ) {
 			$style_vars = self::styles_settings_vars( $ctl_options_arr );
 
 			$style  = self::render_global_style( $style_vars );
-			$style .= self::ctl_global_typography();
+			$style .= self::ctl_global_typography( $ctl_options_arr );
 
 			$custom_css = isset( $ctl_options_arr['custom_styles'] ) ? self::sanitize_custom_css( $ctl_options_arr['custom_styles'] ) : '';
 			$custom_css = preg_replace( '/\\\\/', '', $custom_css );
@@ -81,8 +81,8 @@ if ( ! class_exists( 'CTL_Styles_Generator' ) ) {
 		/**
 		 * Global typography settings
 		 */
-		public static function ctl_global_typography() {
-			$ctl_options_arr           = get_option( 'cool_timeline_settings' );
+		public static function ctl_global_typography( $ctl_options_arr = null ) {
+			$ctl_options_arr           = is_array( $ctl_options_arr ) ? $ctl_options_arr : get_option( 'cool_timeline_settings' );
 			$ctl_main_title_typo_all   = isset( $ctl_options_arr['main_title_typo'] ) ? self::ctl_typo_output( $ctl_options_arr['main_title_typo'] ) : '';
 			$ctl_post_title_typo_all   = isset( $ctl_options_arr['post_title_typo'] ) ? self::ctl_typo_output( $ctl_options_arr['post_title_typo'] ) : '';
 			$ctl_post_content_typo_all = isset( $ctl_options_arr['post_content_typo'] ) ? self::ctl_typo_output( $ctl_options_arr['post_content_typo'] ) : '';
@@ -235,16 +235,6 @@ if ( ! class_exists( 'CTL_Styles_Generator' ) ) {
 			$buffer = preg_replace( '/\s{2,}/', ' ', $buffer );
 			// Write everything out.
 			return $buffer;
-		}
-
-		/**
-		 * Add inline CSS
-		 *
-		 * @param string $styles timeline css.
-		 */
-		public static function ctl_inline_css( $styles ) {
-			$final_css = self::clt_minify_css( $styles );
-			wp_add_inline_style( 'ctl_styles', $final_css );
 		}
 
 		/**

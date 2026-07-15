@@ -56,11 +56,6 @@
 }
 
 
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper.ctl-start-fill .ctl-start,
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper.ctl-end-fill .ctl-end {
-    border-color: var(--ctw-line-filling-color);
-}
-
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story {
     --ctw-arw-bg: var(--ctw-first-story-color, var(--ctw-second-story-color, var(--ctw-cbx-title-color)));
     margin-bottom: 0px;
@@ -149,17 +144,6 @@
     order: 3;
 }
 
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-main-title .ctl-title {
-    background-color: var(--ctw-second-story-color, var(--ctw-first-story-color));
-}
-
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-main-title .ctl-title {
-    order: 0;
-}
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right.ctl-main-title .ctl-title {
-    background-color: var(--ctw-first-story-color, var(--ctw-second-story-color));
-}
-
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper:not(.ctl-clean-skin) .ctl-content .ctl-description {
     background-color: var(--ctw-cbx-des-background);
 }
@@ -173,6 +157,7 @@
     position: static;
     padding: 15px;
     width: 100%;
+    top: calc(0px - var(--ctw-lbl-big-size) - var(--ctw-lbl-small-size) - var(--ctw-lbl-gap) - 26px - var(--lbl-bd-width)*2);
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper:not(.ctl-clean-skin) .ctl-story.ctl-story-left .ctl-labels {
@@ -220,6 +205,7 @@
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-icondot {
     right: calc(0px - var(--ctw-ibx-size) / 4);
+    background-color: var(--ctw-second-story-color, var(--ctw-first-story-color));
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-icondot {
@@ -230,16 +216,13 @@
     background-color: var(--ctw-second-story-color, var(--ctw-first-story-color));
 }
 
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-icondot {
-    background-color: var(--ctw-second-story-color, var(--ctw-first-story-color));
-}
-
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left.ctl-left-even .ctl-icondot {
     background-color: var(--ctw-first-story-color, var(--ctw-second-story-color));
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow {
     --ctw-arw-bg: var( --ctw-first-story-color, var(--ctw-second-story-color, var(--ctw-cbx-title-color)));
+    left: calc(var(--ctw-ibx-size) + var(--ctw-ibx-size) / 7 - var(--ctw-ibx-size) / 2.5 + var(--ctw-cbx-bd-left-width) / 3 + 11px);
 }
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right.ctl-right-even .ctl-arrow {
     --ctw-arw-bg: var( --ctw-second-story-color, var(--ctw-first-story-color, var(--ctw-cbx-title-color)));
@@ -247,6 +230,7 @@
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow {
     --ctw-arw-bg: var( --ctw-second-story-color, var(--ctw-first-story-color, var(--ctw-cbx-title-color)));
+    right: calc(var(--ctw-ibx-size) + var(--ctw-ibx-size) / 7 - var(--ctw-ibx-size) / 2.5 + var(--ctw-cbx-bd-left-width) / 3 + 10px);
 }
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left.ctl-left-even .ctl-arrow {
@@ -259,19 +243,8 @@
 
 /* ------------------------------ Arrow - START ----------------------------- */
 
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow {
-    right: calc(var(--ctw-ibx-size) + var(--ctw-ibx-size) / 7 - var(--ctw-ibx-size) / 2.5 + var(--ctw-cbx-bd-left-width) / 3 + 10px);
-}
-
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow {
-    left: calc(var(--ctw-ibx-size) + var(--ctw-ibx-size) / 7 - var(--ctw-ibx-size) / 2.5 + var(--ctw-cbx-bd-left-width) / 3 + 11px);
-}
 /* ------------------------------- Arrow - END ------------------------------ */
 
-
-.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-labels {
-    top: calc(0px - var(--ctw-lbl-big-size) - var(--ctw-lbl-small-size) - var(--ctw-lbl-gap) - 26px - var(--lbl-bd-width)*2);
-}
 
 .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:not(:nth-child(2), :nth-child(3)).ctl-compact-down .ctl-icon {
     top: calc(27px + var(--ctw-compact-top-spacing, 0px));

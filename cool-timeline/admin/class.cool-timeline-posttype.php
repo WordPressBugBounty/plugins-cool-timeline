@@ -19,13 +19,6 @@ class CoolTimelinePosttypeFree {
 		add_action( 'post_submitbox_misc_actions', array( $postTypeCls, 'ctl_submitbox_metabox' ) );
 	}
 
-	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-		 // Setup your plugin object here
-	}
-
 	// Register Cool Timeline Post Type
 	public function cooltimeline_custom_post_type() {
 		$labels = array(
@@ -70,7 +63,9 @@ class CoolTimelinePosttypeFree {
 	}
 
 	// custom columns for all stories
-	public function add_new_cool_timeline_columns( $gallery_columns ) {
+	public function add_new_cool_timeline_columns( $columns ) {
+		unset( $columns );
+
 		$new_columns['cb']         = '<input type="checkbox" />';
 		$new_columns['title']      = _x( 'Story Title', 'column name', 'cool-timeline' );
 		$new_columns['story_year'] = __( 'Story Year', 'cool-timeline' );

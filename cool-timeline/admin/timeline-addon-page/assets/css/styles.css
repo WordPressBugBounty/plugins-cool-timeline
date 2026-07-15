@@ -4,10 +4,6 @@
 .plugin-not-required {
   opacity: 0.4;
 }
-li#toplevel_page_cool-plugins-timeline-addon img {
-  width: 18px;
-  height: 18px;
-}
 .ctl_row-rev{
     display: flex;
     flex-direction: row-reverse;

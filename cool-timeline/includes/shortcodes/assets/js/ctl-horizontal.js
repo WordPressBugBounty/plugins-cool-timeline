@@ -22,7 +22,7 @@ class CtlHorizontal {
 			return;
 		}
 		const swiperAttr = this.ctlSlideAttribute(element);
-		const swiperObj = new Swiper(element, swiperAttr);
+		new Swiper(element, swiperAttr);
 	};
 
 	// Render Horizontal Default Slider attribute
