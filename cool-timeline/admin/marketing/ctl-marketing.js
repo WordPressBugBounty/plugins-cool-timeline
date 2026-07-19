@@ -5,7 +5,6 @@
          button = $(button);
         const plugin = button.data('plugin');
         const slug = getPluginSlug(pluginKey || plugin);
-        const $notice = jQuery('.ctl-divi-notice');
         // Client-side validation for UX only.
         // Matching validation is enforced server-side.
         const allowedSlugs = [
@@ -29,20 +28,29 @@
 
             function(response) {
 
-                if (response && response.success) {
+                const pluginSlug = slug;            
+                const responseString = JSON.stringify(response);   
+                const responseContainsPlugin = responseString.includes(pluginSlug);     
+                if (responseContainsPlugin) {
 
                     button.text('Activated')
                         .prop('disabled', true);
 
-                    let successMessage = 'Save & reload the page to start using the feature.';
+                    let successMessage = 'Save & reload the page to start using the feature.';                      
                     if (slug === 'timeline-module-for-divi') {
+
                         successMessage = 'Timeline Module for Divi is now active! Design your Timeline with Divi to access powerful new features.';
-                    }
-                    $notice.text(successMessage);
-                } else {
-                    const responseData = response && response.data ? response.data : {};
-                    const errorMessage = responseData.errorMessage || responseData.message || 'Plugin activation failed! Please try again or install manually.';
-                    $notice.text(errorMessage);
+                        jQuery('.ctl-divi-notice').text(successMessage);
+
+                    } 
+                   else {
+                          successMessage = 'Plugin not found!';
+                          jQuery('.ctl-divi-notice').text(successMessage);
+                   } 
+
+                } else if (!responseContainsPlugin) {
+                    let errorMessage = 'Plugin activation failed! Please try again or install manually.';
+                           jQuery('.ctl-divi-notice').text(errorMessage);
                 } 
             });
     }
@@ -60,6 +68,7 @@
                 if (ctlControlDone) return;
             if (!elementor.addControlView || !elementor.modules || !elementor.modules.controls) return;
             ctlControlDone = true;
+            console.log('ctl:init');
             var callbackfunction = elementor.modules.controls.BaseData.extend({
                 onRender: function (data) {
                     if (!data.el) return;

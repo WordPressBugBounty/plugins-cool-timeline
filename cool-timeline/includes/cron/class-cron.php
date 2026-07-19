@@ -20,7 +20,9 @@ if ( ! class_exists( 'CTL_CRONJOB' ) ) {
         
         function ctl_cron_extra_data_autoupdater() {
        
-                CTL_CRONJOB::ctl_send_data();
+                if (class_exists('CTL_CRONJOB')) {
+                    CTL_CRONJOB::ctl_send_data();
+                }
 
         }
            
@@ -75,6 +77,8 @@ if ( ! class_exists( 'CTL_CRONJOB' ) ) {
                 return;
             }
             
+            $response_body  = wp_remote_retrieve_body($response);
+            $decoded        = json_decode($response_body, true);
             if (!wp_next_scheduled('ctl_extra_data_update')) {
 
                 wp_schedule_event(time(), 'every_30_days', 'ctl_extra_data_update');

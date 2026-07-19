@@ -84,8 +84,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 			$attributes = $this->attributes;
 			$layout     = $attributes['layout'];
 			$animation  = 'horizontal' === $layout ? 'none' : $attributes['config']['animation'];
-			$icons_disabled = isset( $attributes['icons'] ) && 'no' === strtolower( $attributes['icons'] );
-			if ( $icons_disabled ) {
+			if ( 'NO' === $attributes['icons'] || 'no' === $attributes['icons'] ) {
 				$classes[] = 'ctl-story-dot-icon';
 			} else {
 				$classes[] = 'ctl-story-icon';
@@ -120,7 +119,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 					$output .= $this->ctl_get_date( $post_id, $attributes['date-format'] );
 			}
 
-			if ( $icons_disabled ) {
+			if ( 'NO' === $attributes['icons'] || 'no' === $attributes['icons'] ) {
 				$output .= '<!-- ' . esc_html( $this->tm_type ) . ' IconDot --><div class="ctl-icondot"></div>';
 			} else {
 				$output .= '<!-- ' . esc_html( $this->tm_type ) . ' Icon -->' . $this->ctl_get_icon( $post_id );
@@ -310,11 +309,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 		public function ctl_get_featured_image( $post_id ) {
 			$attributes = $this->attributes;
 			global $post;
-			$post_id = ! empty( $post_id ) ? absint( $post_id ) : ( isset( $post->ID ) ? absint( $post->ID ) : 0 );
-
-			if ( ! $post_id ) {
-				return;
-			}
+			$post_id = $post->ID;
 
 			if ( ! get_the_post_thumbnail_url( $post_id ) ) {
 				return;
@@ -444,6 +439,43 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 			}
 
 			return $output;
+		}
+
+		/**
+		 * Returns the timezone string for a site, even if it's set to a UTC offset
+		 * Adapted from http : // www.php.net/manual/en/function.timezone-name-from-abbr.php#89155
+		 *
+		 * @return string valid PHP timezone string
+		 */
+		public function ctl_wp_get_timezone_string() {
+			// if site timezone string exists, return it.
+			$timezone = get_option( 'timezone_string' );
+			if ( $timezone ) {
+				return $timezone;
+			}
+				// get UTC offset, if it isn't set then return UTC.
+			$utc_offset = get_option( 'gmt_offset', 0 );
+			if ( 0 === $utc_offset ) {
+				return 'UTC';
+			}
+				// adjust UTC offset from hours to seconds.
+				$utc_offset *= 3600;
+				// attempt to guess the timezone string from the UTC offset.
+			$timezone = timezone_name_from_abbr( '', $utc_offset, 0 );
+			if ( $timezone ) {
+				return $timezone;
+			}
+				// last try, guess timezone string manually.
+				$is_dst = gmdate( 'I' );
+			foreach ( timezone_abbreviations_list() as $abbr ) {
+				foreach ( $abbr as $city ) {
+					if ( $city['dst'] === $is_dst && $city['offset'] === $utc_offset ) {
+						return  $city['timezone_id'];
+					}
+				}
+			}
+				// fallback to UTC.
+				return 'UTC';
 		}
 
 		/**

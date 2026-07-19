@@ -70,13 +70,21 @@ jQuery(document).ready(function ($) {
 
         if (response.success) {
           const totalStories = parseInt(response.data.total_stories) || 0;
+          const message = (response.data.message || "").trim().toLowerCase();
 
-          $status
-            .hide()
-            .html(
-              `Migration completed successfully! ${totalStories} announcements have been migrated.`
-            )
-            .fadeIn(600);
+          if (totalStories === 0) {
+            showStatus($status, response.data.message);
+            if (message === "no attachment found to migrate.") {
+              hideAndResetProgress($progressBar, $progressInner);
+            }
+          } else {
+            $status
+              .hide()
+              .html(
+                `Migration completed successfully! ${totalStories} announcements have been migrated.`
+              )
+              .fadeIn(600);
+          }
 
           if (ctl_migration && ctl_migration.redirect_url) {
             createRedirectButton(ctl_migration.redirect_url, $status);
@@ -90,12 +98,8 @@ jQuery(document).ready(function ($) {
             response.data && response.data.message
               ? response.data.message
               : "Migration failed. Please try again.";
-          if (response.data && response.data.status === "no_attachments") {
-            showStatus($status, errorMessage);
-          } else {
-            $status.hide();
-            showError($error, errorMessage);
-          }
+          showError($error, errorMessage);
+          $status.hide();
           $button.prop("disabled", false).text("Migrate Content");
           hideAndResetProgress($progressBar, $progressInner);
         }

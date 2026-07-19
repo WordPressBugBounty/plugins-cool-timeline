@@ -37,7 +37,7 @@ $prefix = sanitize_key( $prefix );
 $dashboard_instance = isset( $dashboard_instance ) ? $dashboard_instance : null;
 $docs_url           = 'https://cooltimeline.com/docs/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard';
 $demos_url          = 'https://cooltimeline.com/demo/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard';
-$heading            = ( $dashboard_instance && method_exists( $dashboard_instance, 'get_dashboard_heading' ) && $dashboard_instance->get_dashboard_heading() ) ? $dashboard_instance->get_dashboard_heading() : __( 'Timeline Addons', 'cool-timeline' );
+$heading            = ( $dashboard_instance && isset( $dashboard_instance->dashboar_page_heading ) ) ? $dashboard_instance->dashboar_page_heading : __( 'Timeline Addons', 'cool-timeline' );
 $header_icon_url    = plugin_dir_url( __FILE__ ) . '../../../assets/images/timeline-icon.svg';
 
 // phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound

@@ -215,6 +215,7 @@ class CTL_free_migrations {
 	 * Migrate data from Timeline Express to Cool Timeline
 	 */
 	public function migrate_timeline_express_to_cool_timeline() {
+
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
@@ -222,76 +223,47 @@ class CTL_free_migrations {
 		if ( get_option( 'timeline_express_migrated' ) ) {
 			return;
 		}
-
-		$timeline_express_posts = $this->fetch_timeline_express_stories();
-		if ( empty( $timeline_express_posts ) ) {
-			return;
-		}
-
-		$migrate_stories       = 0;
-		$cooltimeline_settings = $this->prepare_timeline_express_settings();
-
-		foreach ( $timeline_express_posts as $old_post ) {
-			if ( empty( $old_post->ID ) ) {
-				continue;
-			}
-
-			$migrate_stories++;
-			$this->migrate_timeline_express_story( $old_post );
-		}
-
-		update_option( 'timeline_express_migrated', 1 );
-		update_option( 'cool_timeline_settings', $cooltimeline_settings );
-		return $migrate_stories;
-	}
-
-	/**
-	 * Fetch published Timeline Express stories.
-	 *
-	 * @return array
-	 */
-	private function fetch_timeline_express_stories() {
+	
 		$args = array(
 			'post_type'      => 'te_announcements',
 			'posts_per_page' => -1,
 			'post_status'    => 'publish',
 		);
+		
+		$timeline_express_posts = get_posts( $args );
+        if ( empty( $timeline_express_posts ) ) {
+			return ;
+		}
 
-		return get_posts( $args );
-	}
+		$migrate_stories = 0;
 
-	/**
-	 * Map Timeline Express settings into Cool Timeline settings.
-	 *
-	 * @return array
-	 */
-	private function prepare_timeline_express_settings() {
-		$timeline_settings     = get_option( 'timeline_express_storage' );
-		$cooltimeline_settings = (array) get_option( 'cool_timeline_settings', [] );
-
-		if ( ! is_array( $timeline_settings ) ) {
+		$timeline_settings     = get_option('timeline_express_storage');
+		$cooltimeline_settings = get_option('cool_timeline_settings', []);
+	
+		if (!is_array($timeline_settings)) {
 			$timeline_settings = array();
 		}
-
-		if ( ! isset( $cooltimeline_settings['story_content_settings'] ) || ! is_array( $cooltimeline_settings['story_content_settings'] ) ) {
+		
+		$cooltimeline_settings = (array) get_option('cool_timeline_settings', []);
+		
+		// Initialize all required array keys
+		if (!isset($cooltimeline_settings['story_content_settings']) || !is_array($cooltimeline_settings['story_content_settings'])) {
 			$cooltimeline_settings['story_content_settings'] = array();
 		}
-
-		$cooltimeline_settings = array_merge(
-			array(
-				'story_content_settings' => array(),
-				'first_post'             => '',
-				'content_bg_color'       => '',
-				'line_color'             => '',
-			),
-			$cooltimeline_settings
-		);
-
+		
+		// Ensure all settings are properly initialized
+		$cooltimeline_settings = array_merge(array(
+			'story_content_settings' => array(),
+			'first_post' => '',
+			'content_bg_color' => '',
+			'line_color' => ''
+		), $cooltimeline_settings);
+		
 		if ( ! empty( $timeline_settings['excerpt-trim-length'] ) ) {
 			$cooltimeline_settings['story_content_settings']['content_length'] = (string) (int) $timeline_settings['excerpt-trim-length'];
 		}
-
-		if ( isset( $timeline_settings['read-more-visibility'] ) ) {
+		
+		if (isset($timeline_settings['read-more-visibility'])) {
 			$cooltimeline_settings['story_content_settings']['display_readmore'] = $timeline_settings['read-more-visibility'] === '1' ? 'yes' : 'no';
 		}
 
@@ -315,107 +287,88 @@ class CTL_free_migrations {
 				$cooltimeline_settings['line_color'] = $announcement_line_color;
 			}
 		}
+       	
+		foreach ( $timeline_express_posts as $old_post ) {
 
-		return $cooltimeline_settings;
-	}
+			if ( empty( $old_post->ID ) ) {
+				continue;
+			}
 
-	/**
-	 * Migrate one Timeline Express story into a Cool Timeline story.
-	 *
-	 * @param WP_Post $old_post Timeline Express post.
-	 */
-	private function migrate_timeline_express_story( $old_post ) {
-		$story_meta = $this->map_timeline_express_story_meta( $old_post );
-		$new_post   = array(
-			'post_title'   => sanitize_text_field( $old_post->post_title ),
-			'post_content' => wp_kses_post( $old_post->post_content ),
-			'post_excerpt' => $story_meta['excerpt'],
-			'post_type'    => 'cool_timeline',
-			'post_status'  => $old_post->post_status,
-			'post_date'    => $old_post->post_date,
-			'post_name'    => sanitize_title( $old_post->post_title ),
-		);
+			$migrate_stories++;
+			$event_timestamp = intval( get_post_meta( $old_post->ID, 'announcement_date', true ) );
+			$icon_raw        = get_post_meta( $old_post->ID, 'announcement_icon', true );
+			$color_raw       = get_post_meta( $old_post->ID, 'announcement_color', true );
+			$attachment_id   = intval( get_post_meta( $old_post->ID, 'announcement_image_id', true ) );
+			$excerpt         = wp_kses_post(get_post_meta($old_post->ID,'announcement_custom_excerpt',true));
+			
+			$formatted_for_meta = $event_timestamp ? gmdate( 'm/d/Y h:i A', $event_timestamp ) : '';
+			$color = sanitize_hex_color( $color_raw );
 
-		$new_post_id = wp_insert_post( $new_post );
-
-		if ( is_wp_error( $new_post_id ) || $new_post_id <= 0 ) {
-			return;
-		}
-
-		$this->save_timeline_express_story_meta( $new_post_id, $story_meta );
-	}
-
-	/**
-	 * Map Timeline Express post meta to sanitized Cool Timeline meta values.
-	 *
-	 * @param WP_Post $old_post Timeline Express post.
-	 * @return array
-	 */
-	private function map_timeline_express_story_meta( $old_post ) {
-		$event_timestamp = intval( get_post_meta( $old_post->ID, 'announcement_date', true ) );
-		$icon_raw        = get_post_meta( $old_post->ID, 'announcement_icon', true );
-		$color_raw       = get_post_meta( $old_post->ID, 'announcement_color', true );
-
-		if ( strpos( $icon_raw, 'fa-' ) === false ) {
-			$icon_class = 'fa fa-' . sanitize_html_class( $icon_raw );
-		} else {
-			$icon_class = 'fa ' . sanitize_html_class( $icon_raw );
-		}
-
-		return array(
-			'attachment_id'      => intval( get_post_meta( $old_post->ID, 'announcement_image_id', true ) ),
-			'color'              => sanitize_hex_color( $color_raw ),
-			'event_timestamp'    => $event_timestamp,
-			'excerpt'            => wp_kses_post( get_post_meta( $old_post->ID, 'announcement_custom_excerpt', true ) ),
-			'formatted_for_meta' => $event_timestamp ? gmdate( 'm/d/Y h:i A', $event_timestamp ) : '',
-			'icon_class'         => $icon_class,
-		);
-	}
-
-	/**
-	 * Save migrated story metadata on the new Cool Timeline post.
-	 *
-	 * @param int   $new_post_id New Cool Timeline post ID.
-	 * @param array $story_meta  Mapped Timeline Express story meta.
-	 */
-	private function save_timeline_express_story_meta( $new_post_id, $story_meta ) {
-		clean_post_cache( $new_post_id );
-
-		if ( $story_meta['attachment_id'] && get_post_type( $story_meta['attachment_id'] ) === 'attachment' ) {
-			set_post_thumbnail( $new_post_id, $story_meta['attachment_id'] );
-		}
-
-		wp_update_post(
-			array(
-				'ID'          => $new_post_id,
-				'post_status' => 'publish',
-			)
-		);
-
-		update_post_meta( $new_post_id, '_ctl_visible', 'yes' );
-
-		if ( ! empty( $story_meta['formatted_for_meta'] ) ) {
-			$story_type_serialized = array(
-				'ctl_story_date' => $story_meta['formatted_for_meta'],
+			if (strpos($icon_raw, 'fa-') === false) {
+				$icon_class = 'fa fa-' . sanitize_html_class($icon_raw);
+			} else {
+				$icon_class = 'fa ' . sanitize_html_class($icon_raw);
+			}
+			
+			$new_post = array(
+				'post_title'   => sanitize_text_field( $old_post->post_title ),
+				'post_content' => wp_kses_post( $old_post->post_content ),
+				'post_excerpt' =>$excerpt,
+				'post_type'    => 'cool_timeline',
+				'post_status'  => $old_post->post_status,
+				'post_date'    => $old_post->post_date,
+				'post_name'    => sanitize_title( $old_post->post_title ),
 			);
 
-			update_post_meta( $new_post_id, 'ctl_story_timestamp', $story_meta['event_timestamp'] );
-			update_post_meta( $new_post_id, 'story_date', $story_meta['formatted_for_meta'] );
-			update_post_meta( $new_post_id, 'story_type', $story_type_serialized );
-		}
+			$new_post_id = wp_insert_post( $new_post );
+			
+			if ( ! is_wp_error( $new_post_id ) && $new_post_id > 0 ) {
 
-		if ( ! empty( $story_meta['color'] ) ) {
-			update_post_meta( $new_post_id, 'story_color', $story_meta['color'] );
-		}
+				clean_post_cache( $new_post_id );
+				
+				if ( $attachment_id && get_post_type( $attachment_id ) === 'attachment' ) {
+					set_post_thumbnail( $new_post_id, $attachment_id );
+				}
 
-		if ( ! empty( $story_meta['icon_class'] ) ) {
-			$story_icon_serialized = array(
-				'fa_field_icon' => $story_meta['icon_class'],
-			);
-			update_post_meta( $new_post_id, 'story_icon', $story_icon_serialized );
+				wp_update_post([
+					'ID' => $new_post_id,
+					'post_status' => 'publish',
+				]);
+			
+				update_post_meta( $new_post_id, '_ctl_visible', 'yes' );
+				
+				if ( ! empty( $formatted_for_meta ) ) {
+
+					$story_type_serialized = [
+						'ctl_story_date' => $formatted_for_meta,
+					];
+
+					update_post_meta( $new_post_id, 'ctl_story_timestamp', $event_timestamp );
+					update_post_meta( $new_post_id, 'story_date', $formatted_for_meta );
+					update_post_meta( $new_post_id, 'story_type', $story_type_serialized );
+				}
+
+				if ( ! empty( $color ) ) {
+
+					update_post_meta( $new_post_id, 'story_color', $color );
+				}
+
+				if ( ! empty( $icon_class ) ) {
+
+					$story_icon_serialized = [
+						'fa_field_icon' => $icon_class,
+					];
+					update_post_meta( $new_post_id, 'story_icon', $story_icon_serialized );
+				}
+			}
 		}
+		
+		update_option( 'timeline_express_migrated', 1 );
+		update_option('cool_timeline_settings', $cooltimeline_settings);
+		return $migrate_stories;
+		
 	}
-
+	
 	public function ctl_migrate_stories() {
 
 		check_ajax_referer( 'ctl_migrate_nonce', 'nonce' );
@@ -431,10 +384,7 @@ class CTL_free_migrations {
 	
 		if ( empty( $total_stories ) || $total_stories === 0 ) {
 		
-			return wp_send_json_error( array(
-				'status'  => 'no_attachments',
-				'message' => __( 'No Attachment Found To Migrate.', 'cool-timeline' ),
-			) );
+			return wp_send_json_error( [ 'message' => __( 'No Attachemnt Found To Migrate.', 'cool-timeline' ) ] );
 			
 		}
 	

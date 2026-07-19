@@ -28,37 +28,6 @@ class UsersFeedback {
 	public function onInit() {
 		add_action( 'admin_head', array( $this, 'show_deactivate_feedback_popup' ) );
 	}
-
-	/**
-	 * Get deactivation feedback reasons shared by the popup and AJAX handler.
-	 *
-	 * @return array
-	 */
-	private function get_deactivate_reasons() {
-		return array(
-			'didnt_work_as_expected'         => array(
-				'title'             => esc_html__( "The plugin didn't work as expected", 'cool-timeline' ),
-				'input_placeholder' => 'What did you expect?',
-			),
-			'found_a_better_plugin'          => array(
-				'title'             => esc_html( __( 'I found a better plugin', 'cool-timeline' ) ),
-				'input_placeholder' => esc_html( __( 'Please share which plugin', 'cool-timeline' ) ),
-			),
-			'couldnt_get_the_plugin_to_work' => array(
-				'title'             => esc_html( __( 'The plugin is not working', 'cool-timeline' ) ),
-				'input_placeholder' => 'Please share your issue. So we can fix that for other users.',
-			),
-			'temporary_deactivation'         => array(
-				'title'             => esc_html__( "It's a temporary deactivation", 'cool-timeline' ),
-				'input_placeholder' => '',
-			),
-			'other'                          => array(
-				'title'             => esc_html( __( 'Other', 'cool-timeline' ) ),
-				'input_placeholder' => esc_html( __( 'Please share the reason', 'cool-timeline' ) ),
-			),
-		);
-	}
-
 	/*
 	|-----------------------------------------------------------------|
 	|   Enqueue all scripts and styles to required page only          |
@@ -83,7 +52,28 @@ class UsersFeedback {
 		if ( ! isset( $screen ) || $screen->id !== 'plugins' ) {
 			return;
 		}
-		$deactivate_reasons = $this->get_deactivate_reasons();
+		$deactivate_reasons = array(
+			'didnt_work_as_expected'         => array(
+				'title'             => esc_html__( "The plugin didn't work as expected", 'cool-timeline' ),
+				'input_placeholder' => 'What did you expect?',
+			),
+			'found_a_better_plugin'          => array(
+				'title'             => esc_html( __( 'I found a better plugin', 'cool-timeline' ) ),
+				'input_placeholder' => esc_html( __( 'Please share which plugin', 'cool-timeline' ) ),
+			),
+			'couldnt_get_the_plugin_to_work' => array(
+				'title'             => esc_html( __( 'The plugin is not working', 'cool-timeline' ) ),
+				'input_placeholder' => 'Please share your issue. So we can fix that for other users.',
+			),
+			'temporary_deactivation'         => array(
+				'title'             => esc_html__( "It's a temporary deactivation", 'cool-timeline' ),
+				'input_placeholder' => '',
+			),
+			'other'                          => array(
+				'title'             => esc_html( __( 'Other', 'cool-timeline' ) ),
+				'input_placeholder' => esc_html( __( 'Please share the reason', 'cool-timeline' ) ),
+			),
+		);
 
 		?>
 		<div id="cool-plugins-deactivate-feedback-dialog-wrapper" class="hide-feedback-popup" data-slug="<?php echo esc_attr( $this->plugin_slug ); ?>">
@@ -163,38 +153,60 @@ class UsersFeedback {
 		}
 
 		$reason             = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : '';
-		$deactivate_reasons = $this->get_deactivate_reasons();
-
-		$deativation_reason = array_key_exists( $reason, $deactivate_reasons ) ? $reason : 'other';
-		
-		$sanitized_message = isset( $_POST['message'] ) && sanitize_text_field( wp_unslash( $_POST['message'] ) ) != '' ? sanitize_text_field( wp_unslash( $_POST['message'] ) ) : 'N/A';
-		$admin_email       = sanitize_email( get_option( 'admin_email' ) );
-		$site_url          = esc_url( site_url() );
-		$feedback_url      = CTL_FEEDBACK_API.'wp-json/coolplugins-feedback/v1/feedback' ;
-		$initial_version = get_option('ctl_initial_save_version');
-		$initial_version = is_string($initial_version) ? sanitize_text_field($initial_version) : 'N/A';
-		$install_date      = get_option('ctl-install-date') ?: 'N/A';
-		$unique_key        = '31';
-		$site_id        	= $site_url . '-' . $install_date . '-' . $unique_key;
-		$user_info          = \CoolTimeline::ctl_get_user_info();
-		$response          = wp_remote_post(
-			$feedback_url,
-			array(
-				'timeout' => 30,
-				'body'    => array(
-					'server_info'    => wp_json_encode( $user_info['server_info'] ),
-					'extra_details'  => wp_json_encode( $user_info['extra_details'] ),
-					'plugin_version' => $this->plugin_version,
-					'plugin_name'    => $this->plugin_name,
-					'plugin_initial' => $initial_version,
-					'reason'         => $deativation_reason,
-					'review'         => $sanitized_message,
-					'email'          => $admin_email,
-					'domain'         => $site_url,
-					'site_id'    	 => md5($site_id), 
+		$message            = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+			$deactivate_reasons = array(
+				'didnt_work_as_expected'         => array(
+					'title'             => esc_html__( "The plugin didn't work as expected", 'cool-timeline' ),
+					'input_placeholder' => 'What did you expect?',
 				),
-			)
-		);
+				'found_a_better_plugin'          => array(
+					'title'             => esc_html( __( 'I found a better plugin', 'cool-timeline' ) ),
+					'input_placeholder' => esc_html( __( 'Please share which plugin', 'cool-timeline' ) ),
+				),
+				'couldnt_get_the_plugin_to_work' => array(
+					'title'             => esc_html( __( 'The plugin is not working', 'cool-timeline' ) ),
+					'input_placeholder' => 'Please share your issue. So we can fix that for other users.',
+				),
+				'temporary_deactivation'         => array(
+					'title'             => esc_html__( "It's a temporary deactivation", 'cool-timeline' ),
+					'input_placeholder' => '',
+				),
+				'other'                          => array(
+					'title'             => esc_html( __( 'Other', 'cool-timeline' ) ),
+					'input_placeholder' => esc_html( __( 'Please share the reason', 'cool-timeline' ) ),
+				),
+			);
+
+			$deativation_reason = array_key_exists( $reason, $deactivate_reasons ) ? $reason : 'other';
+		
+			$sanitized_message = isset( $_POST['message'] ) && sanitize_text_field( wp_unslash( $_POST['message'] ) ) != '' ? sanitize_text_field( wp_unslash( $_POST['message'] ) ) : 'N/A';
+			$admin_email       = sanitize_email( get_option( 'admin_email' ) );
+			$site_url          = esc_url( site_url() );
+			$feedback_url      = CTL_FEEDBACK_API.'wp-json/coolplugins-feedback/v1/feedback' ;
+			$initial_version = get_option('ctl_initial_save_version');
+			$initial_version = is_string($initial_version) ? sanitize_text_field($initial_version) : 'N/A';
+			$install_date      = get_option('ctl-install-date') ?: 'N/A';
+			$unique_key        = '31';
+			$site_id        	= $site_url . '-' . $install_date . '-' . $unique_key;
+			$user_info          = \CoolTimeline::ctl_get_user_info();
+			$response          = wp_remote_post(
+				$feedback_url,
+				array(
+					'timeout' => 30,
+					'body'    => array(
+						'server_info'    => wp_json_encode( $user_info['server_info'] ),
+						'extra_details'  => wp_json_encode( $user_info['extra_details'] ),
+						'plugin_version' => $this->plugin_version,
+						'plugin_name'    => $this->plugin_name,
+						'plugin_initial' => $initial_version,
+						'reason'         => $deativation_reason,
+						'review'         => $sanitized_message,
+						'email'          => $admin_email,
+						'domain'         => $site_url,
+						'site_id'    	 => md5($site_id), 
+					),
+				)
+			);
 
 		wp_send_json_success( array( 'response' => $response ) );
 	}

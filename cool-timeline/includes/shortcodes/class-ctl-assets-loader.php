@@ -28,6 +28,13 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 		public $ctl_attr = array();
 
 		/**
+		 * Timeline setting option array
+		 *
+		 * @var ctl_options
+		 */
+		public $ctl_options = array();
+
+		/**
 		 * CTL_Assets_Loader Constructor Function
 		 */
 		public function __construct() {
@@ -43,6 +50,9 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 		 * @param object $attr timeline attributes.
 		 */
 		public function ctl_global_assets( $attr ) {
+			// Load common assets required for all cases.
+			$this->ctl_common_assets();
+
 			// Fontawesome not equeued if icons dot or none.
 			$icons = isset( $attr['icons'] ) && ( 'yes' === $attr['icons'] || 'YES' === $attr['icons'] ) ? true : false;
 
@@ -126,7 +136,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 					if ( isset( $post_content_typo['type'] )
 					&& 'google' === $post_content_typo['type'] ) {
 						$fonts = $post_content_typo['font-family'];
-						if ( $fonts && 'inherit' !== $fonts ) {
+						if ( $fonts && 'inhert' !== $fonts ) {
 							if ( 'Raleway' === $fonts ) {
 								$fonts = 'Raleway:100';
 							}

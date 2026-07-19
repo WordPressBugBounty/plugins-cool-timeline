@@ -34,26 +34,8 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 			if ( ! in_array( $current_page_id, $ctl_shortcode_page_ids ) ) {
 				$ctl_shortcode_page_ids[] = $current_page_id;
 				update_option( 'ctl_shortcode_page_ids', $ctl_shortcode_page_ids );
-
-				$ctl_used_layout = get_option( 'ctl_layout_used', array() );
-				if ( ! is_array( $ctl_used_layout ) ) {
-					$ctl_used_layout = array();
-				}
-				$ctl_used_layout[ $current_page_id ][] = $layout == 'default' ? 'vertical' : sanitize_text_field($layout);
+				$ctl_used_layout[ $current_page_id ][] = $layout == 'default' ? 'vertical' : $layout;
 				update_option( 'ctl_layout_used', $ctl_used_layout );
-			}else{
-				$ctl_used_layout = get_option( 'ctl_layout_used', array() );
-				if ( ! is_array( $ctl_used_layout ) ) {
-					$ctl_used_layout = array();
-				}
-
-				if ( ! isset( $ctl_used_layout[ $current_page_id ] ) ) {
-					$ctl_used_layout[ $current_page_id ][] = $layout == 'default' ? 'vertical' : sanitize_text_field($layout);
-					update_option( 'ctl_layout_used', $ctl_used_layout );
-				}else if(!in_array($layout, $ctl_used_layout[ $current_page_id ])){
-					$ctl_used_layout[ $current_page_id ][] = $layout == 'default' ? 'vertical' : sanitize_text_field($layout);
-					update_option( 'ctl_layout_used', $ctl_used_layout );
-				}
 			}
 		}
 
@@ -63,16 +45,36 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 		 * @param string $story_date get story date.
 		 */
 		public static function ctlfree_generate_custom_timestamp( $story_date ) {
-			$story_timestamp = 0;
 
 			if ( ! empty( $story_date ) ) {
 				$ctl_story_date = strtotime( $story_date );
 				if ( $ctl_story_date !== false ) {
 					$story_timestamp = gmdate( 'YmdHi', $ctl_story_date );
 				}
+				return $story_timestamp;
 			}
+		}
 
-			return $story_timestamp;
+		/**
+		 * Get post type from url
+		 */
+		public static function ctl_get_ctp() {
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			global $post, $typenow, $current_screen;
+			if ( $post && $post->post_type ) {
+				return $post->post_type;
+			} elseif ( $typenow ) {
+				return $typenow;
+			} elseif ( $current_screen && $current_screen->post_type ) {
+				return $current_screen->post_type;
+			} elseif ( isset( $_REQUEST['post_type'] ) ) {
+				
+				// Acceptable: read-only post-type detection; no nonce required.
+				
+				return sanitize_key( wp_unslash( $_REQUEST['post_type'] ) );
+			}
+			return null;
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
 
 		/**
@@ -153,9 +155,14 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 			$title_tag  = strtolower( $title_tag );
 			$title_tag  = in_array( $title_tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $title_tag : 'h2';
 
+			// if ( ! empty( $timeline_image['id'] ) || ( 'yes' === $title_enable && ! empty( $title_text ) ) ) {
 			if ( ! empty( $title_text ) ) {
 				$output .= '<div class="ctl-before-content">';
-				$output .= '<div class="timeline-main-title"><' . esc_attr( $title_tag ) . '>' . esc_html( $title_text ) . '</' . esc_attr( $title_tag ) . '></div>';
+
+				
+				if ( ! empty( $title_text ) ) {
+					$output .= '<div class="timeline-main-title"><' . esc_attr( $title_tag ) . '>' . esc_html( $title_text ) . '</' . esc_attr( $title_tag ) . '></div>';
+				}
 
 				$output .= '</div>';
 			}

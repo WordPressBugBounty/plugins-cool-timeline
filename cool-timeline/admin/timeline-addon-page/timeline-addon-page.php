@@ -67,7 +67,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		private $pro_plugins = array();
 
 		/** @var array */
-		private $plugin_demo_docs_urls = array();
+		private $pages = array();
 
 		/** @var string|null */
 		private $main_menu_slug = null;
@@ -76,7 +76,10 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		private $plugin_tag = null;
 
 		/** @var string|null */
-		private $dashboard_page_heading = null;
+		private $dashboar_page_heading = null;
+
+		/** @var array */
+		private $disable_plugins = array();
 
 		/** @var string */
 		private $addon_dir = '';
@@ -162,7 +165,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			}
 			$this->plugin_tag            = sanitize_text_field( $plugin_tag );
 			$this->main_menu_slug        = sanitize_text_field( $menu_slug );
-			$this->dashboard_page_heading = sanitize_text_field( $dashboard_heading );
+			$this->dashboar_page_heading = sanitize_text_field( $dashboard_heading );
 			$this->menu_title            = sanitize_text_field( $main_menu_title );
 			$this->menu_icon             = sanitize_text_field( $icon );
 
@@ -172,15 +175,6 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			add_action( 'admin_notices', array( $this, 'maybe_render_global_header' ), 1 );
 
 			return true;
-		}
-
-		/**
-		 * Get the dashboard heading.
-		 *
-		 * @return string|null
-		 */
-		public function get_dashboard_heading() {
-			return $this->dashboard_page_heading;
 		}
 
 		/**
@@ -241,10 +235,9 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 				'slug'    => $slug,
 			);
 
-			require_once __DIR__ . '/../class-ctl-plugin-installer.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
-			$installer = new CTL_Plugin_Installer();
 
 			// Pro plugins: only activate if already installed (no download from WP.org).
 			if ( in_array( $slug, self::$pro_plugin_slugs, true ) ) {
@@ -292,21 +285,114 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 					) );
 					
 				}
-
-				$result = $installer->activate_plugin_file( $plugin_file, $slug );
-				if ( $result['success'] ) {
-					wp_send_json_success( $result['data'] );
+				if ( ! current_user_can( 'activate_plugin', $plugin_file ) ) {
+					return wp_send_json_error( array( 'message' => __( 'Permission denied', 'cool-timeline' ) ) );
+					
 				}
-
-				return wp_send_json_error( $result['data'] );
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked above
+				$pagenow       = isset( $_POST['pagenow'] ) ? sanitize_key( wp_unslash( $_POST['pagenow'] ) ) : '';
+				$network_wide  = is_multisite() && 'import' !== $pagenow;
+				$result        = activate_plugin( $plugin_file, '', $network_wide );
+				if ( is_wp_error( $result ) ) {
+					return wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+					
+				}
+				wp_send_json_success( array(
+					'message'      => __( 'Plugin activated successfully', 'cool-timeline' ),
+					'activated'    => true,
+					'plugin_slug' => $slug,
+				) );
 			}
 
-			$result = $installer->install_and_activate( $slug, $status );
-			if ( $result['success'] ) {
-				wp_send_json_success( $result['data'] );
+			// Free plugins: install via WordPress.org API, then activate.
+			$api = plugins_api(
+				'plugin_information',
+				array(
+					'slug'   => $slug,
+					'fields' => array( 'sections' => false ),
+				)
+			);
+
+			if ( is_wp_error( $api ) ) {
+				$status['errorMessage'] = $api->get_error_message();
+				return wp_send_json_error( $status );
+				
 			}
 
-			return wp_send_json_error( $result['data'] );
+			$status['pluginName'] = $api->name;
+
+			$skin     = new \WP_Ajax_Upgrader_Skin();
+			$upgrader = new \Plugin_Upgrader( $skin );
+			$result   = $upgrader->install( $api->download_link );
+
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				$status['debug'] = $skin->get_upgrade_messages();
+			}
+
+			if ( is_wp_error( $result ) ) {
+				$status['errorCode']    = $result->get_error_code();
+				$status['errorMessage'] = $result->get_error_message();
+				return wp_send_json_error( $status );
+				
+			}
+
+			if ( is_wp_error( $skin->result ) ) {
+				$msg = $skin->result->get_error_message();
+				if ( 'Destination folder already exists.' === $msg ) {
+					$install_status = install_plugin_install_status( $api );
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked above
+					$pagenow = isset( $_POST['pagenow'] ) ? sanitize_key( wp_unslash( $_POST['pagenow'] ) ) : '';
+					$network_wide = is_multisite() && 'import' !== $pagenow;
+					if ( current_user_can( 'activate_plugin', $install_status['file'] ) ) {
+						$activation_result = activate_plugin( $install_status['file'], '', $network_wide );
+						if ( is_wp_error( $activation_result ) ) {
+							$status['errorCode']    = $activation_result->get_error_code();
+							$status['errorMessage'] = $activation_result->get_error_message();
+							return wp_send_json_error( $status );
+							
+						}
+						$status['activated'] = true;
+					}
+					wp_send_json_success( $status );
+				}
+				$status['errorCode']    = $skin->result->get_error_code();
+				$status['errorMessage'] = $skin->result->get_error_message();
+				return wp_send_json_error( $status );
+				
+			}
+
+			if ( $skin->get_errors()->has_errors() ) {
+				$status['errorMessage'] = $skin->get_error_messages();
+				return wp_send_json_error( $status );
+				
+			}
+
+			if ( is_null( $result ) ) {
+				global $wp_filesystem;
+				$status['errorCode']    = 'unable_to_connect_to_filesystem';
+				$status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'cool-timeline' );
+				if ( $wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
+					$status['errorMessage'] = esc_html( $wp_filesystem->errors->get_error_message() );
+				}
+				return wp_send_json_error( $status );
+				
+			}
+
+			$install_status = install_plugin_install_status( $api );
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked above
+			$pagenow      = isset( $_POST['pagenow'] ) ? sanitize_key( wp_unslash( $_POST['pagenow'] ) ) : '';
+			$network_wide = is_multisite() && 'import' !== $pagenow;
+
+			if ( current_user_can( 'activate_plugin', $install_status['file'] ) && is_plugin_inactive( $install_status['file'] ) ) {
+				$activation_result = activate_plugin( $install_status['file'], '', $network_wide );
+				if ( is_wp_error( $activation_result ) ) {
+					$status['errorCode']    = $activation_result->get_error_code();
+					$status['errorMessage'] = $activation_result->get_error_message();
+					return wp_send_json_error( $status );
+				}
+				$status['activated'] = true;
+			}
+			wp_send_json_success( $status );
 		}
 
 		/**
@@ -344,6 +430,7 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 			$tag     = $this->plugin_tag;
 			$plugins = $this->request_wp_plugins_data( $tag );
 			$pro_plugins = $this->request_pro_plugins_data( $tag );
+			$this->disable_free_plugins();
 
 			$pro_plugin_slugs = array_keys( $pro_plugins );
 			$free_to_pro_mapping = array();
@@ -650,58 +737,35 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		 * @return array{ demo: string, docs: string }
 		 */
 		public function get_plugin_demo_docs_urls( $plugin_slug, $is_pro_plugin = false ) {
-			$url_map = $this->get_plugin_demo_docs_url_map( $is_pro_plugin );
+			$demo_url = 'https://cooltimeline.com/demo/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard';
+			$docs_url = 'https://cooltimeline.com/docs/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard';
 
-			if ( isset( $url_map[ $plugin_slug ] ) ) {
-				return $url_map[ $plugin_slug ];
-			}
-
-			return $this->get_default_plugin_demo_docs_urls();
-		}
-
-		/**
-		 * Get cached demo/docs URLs indexed by plugin slug.
-		 *
-		 * @param bool $is_pro_plugin Whether to load pro plugin URLs.
-		 * @return array
-		 */
-		private function get_plugin_demo_docs_url_map( $is_pro_plugin = false ) {
-			$type = $is_pro_plugin ? 'pro' : 'free';
-
-			if ( isset( $this->plugin_demo_docs_urls[ $type ] ) ) {
-				return $this->plugin_demo_docs_urls[ $type ];
-			}
-
-			$plugins = $is_pro_plugin ? $this->request_pro_plugins_data() : $this->request_wp_plugins_data();
-			$urls    = array();
-			$defaults = $this->get_default_plugin_demo_docs_urls();
-
-			foreach ( $plugins as $slug => $plugin ) {
-				$plugin_slug = ! empty( $plugin['slug'] ) ? sanitize_key( $plugin['slug'] ) : sanitize_key( $slug );
-				if ( empty( $plugin_slug ) ) {
-					continue;
+			if ( $is_pro_plugin ) {
+				$pro = $this->request_pro_plugins_data();
+				if ( isset( $pro[ $plugin_slug ] ) ) {
+					$p = $pro[ $plugin_slug ];
+					if ( ! empty( $p['demo_url'] ) ) {
+						$demo_url = $p['demo_url'];
+					}
+					if ( ! empty( $p['docs_url'] ) ) {
+						$docs_url = $p['docs_url'];
+					}
 				}
-
-				$urls[ $plugin_slug ] = array(
-					'demo' => ! empty( $plugin['demo_url'] ) ? esc_url( $plugin['demo_url'] ) : $defaults['demo'],
-					'docs' => ! empty( $plugin['docs_url'] ) ? esc_url( $plugin['docs_url'] ) : $defaults['docs'],
-				);
+			} else {
+				$free = $this->request_wp_plugins_data();
+				if ( isset( $free[ $plugin_slug ] ) ) {
+					$f = $free[ $plugin_slug ];
+					if ( ! empty( $f['demo_url'] ) ) {
+						$demo_url = $f['demo_url'];
+					}
+					if ( ! empty( $f['docs_url'] ) ) {
+						$docs_url = $f['docs_url'];
+					}
+				}
 			}
-
-			$this->plugin_demo_docs_urls[ $type ] = $urls;
-
-			return $this->plugin_demo_docs_urls[ $type ];
-		}
-
-		/**
-		 * Get default demo/docs URLs.
-		 *
-		 * @return array{ demo: string, docs: string }
-		 */
-		private function get_default_plugin_demo_docs_urls() {
 			return array(
-				'demo' => esc_url( 'https://cooltimeline.com/demo/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard' ),
-				'docs' => esc_url( 'https://cooltimeline.com/docs/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard' ),
+				'demo' => esc_url( $demo_url ),
+				'docs' => esc_url( $docs_url ),
 			);
 		}
 
@@ -714,8 +778,8 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		 */
 		private function render_plugin_card_demo_docs_links( $prefix, $plugin_slug, $is_pro_plugin ) {
 			$urls = $this->get_plugin_demo_docs_urls( $plugin_slug, $is_pro_plugin );
-			$demo = $urls['demo'];
-			$docs = $urls['docs'];
+			$demo = empty( $urls['demo'] ) ? 'https://cooltimeline.com/demo/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard' : $urls['demo'];
+			$docs = empty( $urls['docs'] ) ? 'https://cooltimeline.com/docs/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard' : $urls['docs'];
 			?>
 			<div class="<?php echo esc_attr( $prefix ); ?>-card-links">
 				<a href="<?php echo esc_url( $demo ); ?>" target="_blank" rel="noopener" title="<?php esc_attr_e( 'View Demo', 'cool-timeline' ); ?>">
@@ -811,17 +875,15 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 
 		/**
 		 * Enqueue dashboard CSS/JS and localize script.
-		 * The menu icon style is global; dashboard assets are loaded only on timeline addon pages.
+		 * CSS is enqueued on all admin pages so the Timeline Addons menu icon stays 18×18 in the sidebar;
+		 * JS and migration script only on timeline addon pages.
 		 */
 		public function enqueue_required_scripts() {
-			$this->enqueue_menu_icon_style();
-
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( 'cool-plugins-timeline-addon', plugin_dir_url( __FILE__ ) . 'assets/css/styles.css', null, null, 'all' );
 			if ( ! function_exists( 'ctl_is_timeline_addon_page' ) || ! ctl_is_timeline_addon_page() ) {
 				return;
 			}
-
-			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-			wp_enqueue_style( 'cool-plugins-timeline-addon', plugin_dir_url( __FILE__ ) . 'assets/css/styles.css', array(), null, 'all' );
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 			if ( $page === $this->main_menu_slug ) {
@@ -860,15 +922,16 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		}
 
 		/**
-		 * Enqueue the small global style required for the wp-admin menu icon.
+		 * Populate disable_plugins from pro list (free_version => pro slug).
 		 */
-		private function enqueue_menu_icon_style() {
-			wp_register_style( 'cool-plugins-timeline-addon-menu-icon', false, array(), null );
-			wp_enqueue_style( 'cool-plugins-timeline-addon-menu-icon' );
-			wp_add_inline_style(
-				'cool-plugins-timeline-addon-menu-icon',
-				'li#toplevel_page_cool-plugins-timeline-addon img{width:18px;height:18px;}'
-			);
+		public function disable_free_plugins() {
+			if ( ! empty( $this->pro_plugins ) && is_array( $this->pro_plugins ) ) {
+				foreach ( $this->pro_plugins as $plugin ) {
+					if ( ! empty( $plugin['incompatible'] ) && 'false' !== $plugin['incompatible'] ) {
+						$this->disable_plugins[ $plugin['incompatible'] ] = array( 'pro' => $plugin['slug'] );
+					}
+				}
+			}
 		}
 
 		/**
@@ -929,6 +992,9 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 					$data['download_link'] = null;
 					$data['incompatible']  = isset( $plugin['free_version'] ) ? $plugin['free_version'] : null;
 					$data['main_file']    = isset( $plugin['main_file'] ) ? $plugin['main_file'] : '';
+					if ( ! empty( $plugin['free_version'] ) && 'false' !== $plugin['free_version'] ) {
+						$this->disable_plugins[ $plugin['free_version'] ] = array( 'pro' => $plugin['slug'] );
+					}
 				} else {
 					$data['tags']           = isset( $plugin['tag'] ) ? $plugin['tag'] : '';
 					$data['download_link']  = isset( $plugin['download_url'] ) ? $plugin['download_url'] : '';
@@ -945,13 +1011,39 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		 * @return array
 		 */
 		public function request_pro_plugins_data( $tag = null ) {
-			$this->pro_plugins = $this->request_plugins_data(
-				'pro',
-				$this->main_menu_slug . '_pro_api_cache' . $this->plugin_tag,
-				$this->main_menu_slug . '-' . $this->plugin_tag . '-pro',
-				$this->main_menu_slug . '_' . $this->plugin_tag . '_pro_json_sig'
-			);
+			$trans_name  = $this->main_menu_slug . '_pro_api_cache' . $this->plugin_tag;
+			$option_name = $this->main_menu_slug . '-' . $this->plugin_tag . '-pro';
+			$ver_option  = $this->main_menu_slug . '_' . $this->plugin_tag . '_pro_json_sig';
 
+			$json_file  = $this->addon_dir . '/data/pro-plugins.json';
+			$json_sig   = file_exists( $json_file ) ? (string) filemtime( $json_file ) : '';
+			$stored_sig = (string) get_option( $ver_option, '' );
+			// If JSON changed (or we haven't stored a signature yet), invalidate old cached data.
+			if ( $json_sig !== '' && $stored_sig !== $json_sig ) {
+				delete_transient( $trans_name );
+				delete_option( $option_name );
+			}
+
+			// Always prefer local JSON after update so name/logo/desc changes reflect immediately.
+			$this->pro_plugins = $this->filter_discontinued_pro_addons( $this->load_json_fallback( 'pro' ) );
+			if ( ! empty( $this->pro_plugins ) && is_array( $this->pro_plugins ) ) {
+				set_transient( $trans_name, $this->pro_plugins, DAY_IN_SECONDS );
+				update_option( $option_name, $this->pro_plugins );
+				if ( $json_sig !== '' ) {
+					update_option( $ver_option, $json_sig );
+				}
+				return $this->pro_plugins;
+			}
+
+			$cached = get_transient( $trans_name );
+			if ( false !== $cached && ! empty( $cached ) && is_array( $cached ) ) {
+				$this->pro_plugins = $this->filter_discontinued_pro_addons( $cached );
+				return $this->pro_plugins;
+			}
+			if ( get_option( $option_name, false ) ) {
+				$this->pro_plugins = $this->filter_discontinued_pro_addons( get_option( $option_name ) );
+				return $this->pro_plugins;
+			}
 			return $this->pro_plugins;
 		}
 
@@ -962,52 +1054,37 @@ if ( ! class_exists( 'cool_plugins_timeline_addons' ) ) {
 		 * @return array
 		 */
 		public function request_wp_plugins_data( $tag = null ) {
-			return $this->request_plugins_data(
-				'free',
-				$this->main_menu_slug . '_api_cache' . $this->plugin_tag,
-				$this->main_menu_slug . '-' . $this->plugin_tag,
-				$this->main_menu_slug . '_' . $this->plugin_tag . '_free_json_sig'
-			);
-		}
+			$trans_name  = $this->main_menu_slug . '_api_cache' . $this->plugin_tag;
+			$option_name = $this->main_menu_slug . '-' . $this->plugin_tag;
+			$ver_option  = $this->main_menu_slug . '_' . $this->plugin_tag . '_free_json_sig';
 
-		/**
-		 * Get plugin data from local JSON with transient/option fallback.
-		 *
-		 * @param string $type        Plugin data type: free or pro.
-		 * @param string $trans_name  Transient key.
-		 * @param string $option_name Option fallback key.
-		 * @param string $ver_option  JSON signature option key.
-		 * @return array
-		 */
-		private function request_plugins_data( $type, $trans_name, $option_name, $ver_option ) {
-			$json_file  = $this->addon_dir . '/data/' . $type . '-plugins.json';
+			$json_file  = $this->addon_dir . '/data/free-plugins.json';
 			$json_sig   = file_exists( $json_file ) ? (string) filemtime( $json_file ) : '';
 			$stored_sig = (string) get_option( $ver_option, '' );
-
+			// If JSON changed (or we haven't stored a signature yet), invalidate old cached data.
 			if ( $json_sig !== '' && $stored_sig !== $json_sig ) {
 				delete_transient( $trans_name );
 				delete_option( $option_name );
 			}
 
-			$plugins = $this->filter_discontinued_pro_addons( $this->load_json_fallback( $type ) );
-			if ( ! empty( $plugins ) && is_array( $plugins ) ) {
-				set_transient( $trans_name, $plugins, DAY_IN_SECONDS );
-				update_option( $option_name, $plugins );
+			// Always prefer local JSON after update so name/logo/desc changes reflect immediately.
+			$all_plugins = $this->filter_discontinued_pro_addons( $this->load_json_fallback( 'free' ) );
+			if ( ! empty( $all_plugins ) && is_array( $all_plugins ) ) {
+				set_transient( $trans_name, $all_plugins, DAY_IN_SECONDS );
+				update_option( $option_name, $all_plugins );
 				if ( $json_sig !== '' ) {
 					update_option( $ver_option, $json_sig );
 				}
-				return $plugins;
+				return $all_plugins;
 			}
 
 			$cached = get_transient( $trans_name );
 			if ( false !== $cached && ! empty( $cached ) && is_array( $cached ) ) {
 				return $this->filter_discontinued_pro_addons( $cached );
 			}
-
 			if ( get_option( $option_name, false ) ) {
 				return $this->filter_discontinued_pro_addons( get_option( $option_name ) );
 			}
-
 			return array();
 		}
 

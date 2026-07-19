@@ -17,6 +17,14 @@ class CTL_stories_migration {
 		add_action( 'init', array( $migration, 'ctl_migrate_old_stories' ) );
 	}
 
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		 // Setup your plugin object here
+	}
+
+
 	// run migration from old version since version 1.7
 	public function ctl_migrate_old_stories() {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -27,6 +35,7 @@ class CTL_stories_migration {
 			return;
 		}
 		$ctl_version = get_option( 'cool-timelne-v' );
+		$ctl_type    = get_option( 'cool-timelne-type' );
 		if ( version_compare( $ctl_version, '1.7', '<' ) ) {
 			self::ctl_run_migration();
 		}

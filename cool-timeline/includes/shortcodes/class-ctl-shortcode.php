@@ -24,6 +24,13 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 	class CTL_Shortcode {
 
 		/**
+		 * Member Variable
+		 *
+		 * @var instance
+		 */
+		private static $instance;
+
+		/**
 		 * Shortcode assets object variable
 		 *
 		 * @var object
@@ -38,12 +45,32 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 		public $settings = array();
 
 		/**
+		 * Configure config layout array
+		 *
+		 * @var config_layout
+		 */
+
+		public $config_layout = array();
+
+		/**
 		 * Shortcode attribute array configure
 		 *
 		 * @var attribute
 		 */
 		public $attributes = array();
 
+
+		/**
+		 * Gets an instance of our plugin.
+		 *
+		 * @param object $settings_obj timeline settings object.
+		 */
+		public static function get_instance( $settings_obj ) {
+			if ( null === self::$instance ) {
+				self::$instance = new self( $settings_obj );
+			}
+			return self::$instance;
+		}
 
 		/**
 		 * Constructor
@@ -88,7 +115,7 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 		 * @param array  $atts shortcode attributes.
 		 * @param string $content shortcode content.
 		 */
-		public function ctl_shortcode_handler( $atts ) {
+		public function ctl_shortcode_handler( $atts, $content = null ) {
 			/**
 			 * Demo shortcode attributes
 			 * [cool-timeline layout="default" skin="default" show-posts="10" date-format="F j" icons="NO" animation="none" story-content="short" order="DESC" ]
@@ -118,8 +145,6 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 			// Shortcode type define.
 			$this->attributes['ctl_type'] = 'story_timeline';
 
-			CTL_Helpers::has_shortcode_added( get_the_ID(), $this->attributes['layout'] );
-
 			// load timeline global assets.
 			$this->ctl_asset_obj->ctl_global_assets( $this->attributes );
 
@@ -132,7 +157,7 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 				$paged = get_query_var( 'page' );
 			}
 			$this->attributes['paged'] = $paged;
-			$wp_query                  = $this->ctl_query_object();
+			$wp_query                  = $this->ctl_query_object( $this->attributes, $this->settings );
 			// timeline html based on layout.
 			$layout_manager_object = new CTL_Layout_Manager( $this->attributes, $wp_query, $this->settings );
 			$output                = $layout_manager_object->render_layout();
@@ -144,14 +169,15 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 		 */
 		public function ctl_query_object() {
 			$attributes = $this->attributes;
-			$show_posts = ! empty( $attributes['show-posts'] ) ? $attributes['show-posts'] : $attributes['post_per_page'];
+			$settings   = $this->settings;
+			$show_posts = isset( $attributes['show-posts'] ) ? $attributes['show-posts'] : $settings['post_per_page'];
 			$show_posts = ( '-1' === trim( (string) $show_posts ) ) ? -1 : max( 1, absint( $show_posts ) );
-			$order      = ! empty( $attributes['order'] ) ? strtoupper( sanitize_key( $attributes['order'] ) ) : strtoupper( sanitize_key( $this->settings['story_orders'] ) );
+			$order      = isset( $attributes['order'] ) ? strtoupper( sanitize_key( $attributes['order'] ) ) : strtoupper( sanitize_key( $settings['story_orders'] ) );
 			$order      = in_array( $order, array( 'ASC', 'DESC' ), true ) ? $order : 'DESC';
 
 			$query_args               = array(
 				'post_type'      => 'cool_timeline',
-				'post_status'    => array( 'publish', 'future' ),
+				'post_status'    => array( 'publish', 'future', 'Scheduled' ),
 				'order'          => $order,
 				'meta_key'       => 'ctl_story_timestamp', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'orderby'        => 'meta_value_num',
@@ -227,7 +253,7 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 
 		public function attributes_migration( $attr, $shortcode_attr ) {
 			$shortcode_attr = empty( $shortcode_attr ) ? array() : $shortcode_attr;
-			if ( ( 'horizontal' === $attr['layout'] && ! array_key_exists( 'items', $shortcode_attr ) ) || ( array_key_exists( 'items', $shortcode_attr ) && empty( $shortcode_attr['items'] ) ) ) {
+			if ( 'horizontal' === $attr['layout'] && ! array_key_exists( 'items', $shortcode_attr ) || array_key_exists( 'items', $shortcode_attr ) && empty( $shortcode_attr['items'] ) ) {
 				$attr['items']      = isset( $attr['show-posts'] ) ? max( 1, absint( $attr['show-posts'] ) ) : absint( $this->settings['post_per_page'] );
 				$attr['show-posts'] = '-1';
 			}

@@ -49,7 +49,7 @@ if (!class_exists('ctl_admin_notices')):
 
         private static $instance = null;
         private $messages = array();
-        private $hooks_registered = false;
+        private $version = '1.0.0';
 
         /**
          * initialize the class with single instance
@@ -70,6 +70,10 @@ if (!class_exists('ctl_admin_notices')):
             if( !isset( $notice['id']) || empty($notice['id']) ){
                 $this->ctl_show_error('id is required for integrating admin notice.');
                 return;
+            }
+
+            if( array_key_exists( $notice['id'], $this->messages ) ){
+
             }
 
             if ( isset($notice['review']) && true != (bool)$notice['review'] && ( !isset($notice['message']) || empty($notice['message']) )) {
@@ -101,29 +105,16 @@ if (!class_exists('ctl_admin_notices')):
                                             'review_interval' => $review_interval
                                         );
 
-            if ( ! $this->hooks_registered ) {
-                if ( ! $this->has_renderable_notice() ) {
-                    return;
-                }
-                $this->register_notice_hook();
-                add_action( 'admin_enqueue_scripts', array($this, 'ctl_load_script' ) );
-                add_action('wp_ajax_ctl_admin_notice_dismiss', array($this, 'ctl_admin_notice_dismiss'));
-                add_action('wp_ajax_ctl_admin_review_notice_dismiss', array($this, 'ctl_admin_review_notice_dismiss'));
-                $this->hooks_registered = true;
-            }
-
-        }
-
-        /**
-         * Register the notice-render hook once per request.
-         */
-        private function register_notice_hook() {
             // On Timeline Addon pages, show notices after the timeline header (not above it).
             if ( function_exists( 'ctl_is_timeline_addon_page' ) && ctl_is_timeline_addon_page() ) {
                 add_action( 'ctl_after_timeline_header', array( $this, 'ctl_show_notice' ), 10 );
             } else {
                 add_action( 'admin_notices', array( $this, 'ctl_show_notice' ) );
             }
+            add_action( 'admin_enqueue_scripts', array($this, 'ctl_load_script' ) );
+            add_action('wp_ajax_ctl_admin_notice_dismiss', array($this, 'ctl_admin_notice_dismiss'));
+            add_action('wp_ajax_ctl_admin_review_notice_dismiss', array($this, 'ctl_admin_review_notice_dismiss'));
+
         }
 
         /**
@@ -131,11 +122,7 @@ if (!class_exists('ctl_admin_notices')):
     	 *
     	 * @return void
     	 */
-    	public function ctl_load_script() {
-            if ( ! $this->has_renderable_notice() ) {
-                return;
-            }
-
+    	public function ctl_load_script() {    	
             wp_register_style( 'ctl-feedback-notice-styles', CTL_PLUGIN_URL.'assets/css/ctl-admin-notices.css',array(),CTL_V,'all' );
             wp_register_script( 'admin-notices-js', CTL_PLUGIN_URL . 'admin/notices/admin-notices.js', array( 'jquery' ), CTL_V, true );
              wp_enqueue_style( 'ctl-feedback-notice-styles' );
@@ -144,10 +131,6 @@ if (!class_exists('ctl_admin_notices')):
             
                 if (!empty($this->messages)) {
                     foreach ($this->messages as $id => $message) {
-                        if ( ! $this->can_render_notice( $id, $message ) ) {
-                            continue;
-                        }
-
                         $nonce = $message['review']
                             ? wp_create_nonce($id . '_review_nonce')
                             : wp_create_nonce($id . '_notice_nonce');
@@ -169,71 +152,6 @@ if (!class_exists('ctl_admin_notices')):
             }
         
         
-        }
-
-        /**
-         * Check whether any registered notice can render on this request.
-         *
-         * @return bool
-         */
-        private function has_renderable_notice() {
-            if ( empty( $this->messages ) ) {
-                return false;
-            }
-
-            foreach ( $this->messages as $id => $message ) {
-                if ( $this->can_render_notice( $id, $message ) ) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * Check whether a notice is eligible to render.
-         *
-         * @param string $id      Notice ID.
-         * @param array  $message Notice config.
-         * @return bool
-         */
-        private function can_render_notice( $id, $message ) {
-            if ( ! empty( $message['review'] ) ) {
-                return $this->can_render_review_notice( $message );
-            }
-
-            return ! get_option( $id . '_remove_notice' );
-        }
-
-        /**
-         * Check whether a review notice is eligible to render.
-         *
-         * @param array $messageObj Notice config.
-         * @return bool
-         */
-        private function can_render_review_notice( $messageObj ) {
-            if ( ! current_user_can( 'update_plugins' ) ) {
-                return false;
-            }
-
-            if ( ! get_option( 'cool-timelne-installDate' ) ) {
-                return false;
-            }
-
-            $old_alreadyRated = get_option( 'cool-timelne-ratingDiv' ) !== false ? get_option( 'cool-timelne-ratingDiv' ) : 'no';
-            $alreadyRated     = get_option( 'cool-timeline-already-rated' ) !== false ? get_option( 'cool-timeline-already-rated' ) : 'no';
-
-            if ( $old_alreadyRated === 'yes' || $alreadyRated === 'yes' ) {
-                return false;
-            }
-
-            $installation_date = gmdate( 'Y-m-d h:i:s', strtotime( get_option( 'cool-timelne-installDate' ) ) );
-            $install_date      = new DateTime( $installation_date );
-            $current_date      = new DateTime( gmdate( 'Y-m-d h:i:s' ) );
-            $difference        = $install_date->diff( $current_date );
-            $days              = $messageObj['review_interval'];
-
-            return isset( $difference->days ) && $difference->days >= $days;
         }
 
         /**
@@ -294,11 +212,46 @@ if (!class_exists('ctl_admin_notices')):
          * Review notice will only be displayed if $slug_activation_time is greater or equals to the 3 days
          */
         private function ctl_admin_notice_for_review( $id, $messageObj ){
-            if ( ! $this->can_render_review_notice( $messageObj ) ) {
+            // Everyone should not be able see the review message
+            if( !current_user_can( 'update_plugins' ) ){
                 return;
             }
+            $slug = $messageObj['slug'];
+            $days = $messageObj['review_interval'];
+                       
+            if(get_option( 'cool-timelne-installDate' )){
+                // get installation dates and rated settings
+                $installation_date =gmdate( 'Y-m-d h:i:s', strtotime(get_option( 'cool-timelne-installDate' )) );
+            }else{
+              
+                return;
+            }
+                       
+               
+                $old_alreadyRated =get_option( 'cool-timelne-ratingDiv' )!=false?get_option( 'cool-timelne-ratingDiv'):"no";
 
-            echo wp_kses_post( $this->ctl_create_notice_content( $id, $messageObj ) );
+                $alreadyRated =get_option( 'cool-timeline-already-rated' )!=false?get_option( 'cool-timeline-already-rated'):"no";
+              
+                // check user already rated 
+                if( $old_alreadyRated == "yes") {
+                    return;
+                }
+                if( $alreadyRated ==="yes") {
+                    return;
+                 }
+                // grab plugin installation date and compare it with current date
+                $display_date = gmdate( 'Y-m-d h:i:s' );
+                $install_date= new DateTime( $installation_date );
+                $current_date = new DateTime( $display_date );
+                $difference = $install_date->diff($current_date);
+                $diff_days= $difference->days;
+              
+                // check if installation days is greator then week
+               if (isset($diff_days) && $diff_days>= $days ) {
+                   
+                    echo wp_kses_post( $this->ctl_create_notice_content( $id, $messageObj ) );
+                
+               }
         }
 
         /**
@@ -309,7 +262,7 @@ if (!class_exists('ctl_admin_notices')):
        function ctl_create_notice_content( $id, $messageObj ){
 
         $ajax_url=admin_url( 'admin-ajax.php' );
-        $ajax_callback = 'ctl_admin_review_notice_dismiss';
+        $ajax_callback = 'ctl_free_admin_review_notice_dismiss';
         $wrap_cls="notice notice-info is-dismissible";
         $slug = $messageObj['slug'];
         $plugin_name= $messageObj['plugin_name'];

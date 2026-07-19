@@ -16,6 +16,13 @@ class CoolTmVCAddon {
 		add_action( 'init', array( $vc_addon, 'ctl_vc_addon' ) );
 	}
 
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		 // Setup your plugin object here
+	}
+
 	public function ctl_vc_addon() {
 		if ( defined( 'WPB_VC_VERSION' ) ) {
 			$date_formats      = array(
