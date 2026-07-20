@@ -161,9 +161,9 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 		private function render_horizontal_layout( $response ) {
 			$attributes         = $this->attributes;
 			$wrapper_cls        = implode( ' ', $attributes['config']['wrapper_cls'] );
-			$svg_icon           = 'icon' === $attributes['icons'];
-			$swiper_left_arrow  = $svg_icon ? '<i class="fas fa-chevron-left"></i>' : CTL_Helpers::ctl_static_svg_icons( 'chevron_left' );
-			$swiper_right_arrow = $svg_icon ? '<i class="fas fa-chevron-right"></i>' : CTL_Helpers::ctl_static_svg_icons( 'chevron_right' );
+			$fontawesome_icons  = isset( $attributes['icons'] ) && 'yes' === strtolower( $attributes['icons'] );
+			$swiper_left_arrow  = $fontawesome_icons ? '<i class="fas fa-chevron-left"></i>' : CTL_Helpers::ctl_static_svg_icons( 'chevron_left' );
+			$swiper_right_arrow = $fontawesome_icons ? '<i class="fas fa-chevron-right"></i>' : CTL_Helpers::ctl_static_svg_icons( 'chevron_right' );
 			$allowed_nav_icon_tags = array(
 				'svg'  => array(
 					'xmlns'   => true,
@@ -217,7 +217,7 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 			$rtl         = is_rtl() ? 'rtl' : '';
 			$attributes  = $this->attributes;
 			$wrapper_cls = implode( ' ', $attributes['config']['wrapper_cls'] );
-			$svg_icon    = 'icon' === $attributes['icons'];
+			$fontawesome_icons = isset( $attributes['icons'] ) && 'yes' === strtolower( $attributes['icons'] );
 			?>
 			<!-- Cool Timeline Free V<?php echo esc_html( CTL_V ); ?> -->
 			<div class="<?php echo esc_attr( $attributes['config']['main_wrp_cls'] ) . ( $rtl ? ' ' . esc_attr( $rtl ) : '' ); ?>" role="region" aria-label="Timeline">
@@ -245,7 +245,7 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 							get_query_var( 'page' )
 						);
 						 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
-						echo CTL_Helpers::ctl_pagination( $this->wp_query, $paged, $svg_icon );
+						echo CTL_Helpers::ctl_pagination( $this->wp_query, $paged, $fontawesome_icons );
 					}
 					?>
 				</div>

@@ -1,4 +1,4 @@
-class ctlCommonScript {
+class CtlCommonScript {
 
 	// constructor
 	constructor(){
@@ -163,9 +163,7 @@ class ctlCommonScript {
 		const eachTimeline=jQuery('.ctl-wrapper .cool-timeline-wrapper');
 		eachTimeline.each((index,element) => {
 			const timeline=jQuery(element);
-			if(timeline.hasClass('ctl-horizontal-timeline')){
-				timeline.find('.ctl-story');
-			}else{
+			if(!timeline.hasClass('ctl-horizontal-timeline')){
 				const animation=timeline.find(".ctl-timeline-container").attr("data-animation");
 				if('none' !== animation){
 					AOS.init();
@@ -193,8 +191,12 @@ class ctlCommonScript {
 
 		this.ctlResponsiveDevice();
 
+		let resizeTimer;
         jQuery(window).on('resize', () => {
-            this.ctlResponsiveDevice();
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(() => {
+				this.ctlResponsiveDevice();
+			}, 100);
         });
 
 		// Button hover effect
@@ -202,4 +204,4 @@ class ctlCommonScript {
     };
 }
 
-new ctlCommonScript;
+new CtlCommonScript;

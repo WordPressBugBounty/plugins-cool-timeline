@@ -14,12 +14,12 @@ if ( ! check_ajax_referer( 'ctl_preview', 'nonce', false ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'CTL_Shortcode_Preivew' ) ) {
+if ( ! class_exists( 'CTL_Shortcode_Preview' ) ) {
 	/**
 	 * CTL Preview Assets Class.
 	 */
 	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
-	class CTL_Shortcode_Preivew {
+	class CTL_Shortcode_Preview {
 		/**
 		 * Member Variable
 		 *
@@ -136,7 +136,7 @@ if ( ! class_exists( 'CTL_Shortcode_Preivew' ) ) {
 			.ctl-wrapper .ctp-media-slider img{
 				width: 100% !important
 			}
-			.ctl-wrapper .ctl-slider-wrapper,.ctl-wrapper .ctl-story,ctl_load_more_pagination,.ctl-category-container,.ctl-navigation-bar{
+			.ctl-wrapper .ctl-slider-wrapper,.ctl-wrapper .ctl-story,.ctl_load_more_pagination,.ctl-category-container,.ctl-navigation-bar{
 				pointer-events: none
 			}';
 			return $style;

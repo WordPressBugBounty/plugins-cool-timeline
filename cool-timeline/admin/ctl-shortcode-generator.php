@@ -13,32 +13,15 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
 
 
 		/**
-		 * The unique instance of the plugin.
-		 */
-		private static $instance;
-
-		/**
-		 * Gets an instance of our plugin.
-		 */
-		public static function get_instance() {
-			if ( null === self::$instance ) {
-				self::$instance = new self();
-			}
-
-			return self::$instance;
-		}
-
-		/**
 		 * The Constructor
 		 */
 		public function __construct() {
 			 // register actions
 
-			$this->CSF_free_shortcode_generator();
+			$this->init_shortcode_generator();
 			add_action( 'admin_print_styles', array( $this, 'ctl_custom_shortcode_style' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'ctl_preview_script' ) );
 		}
-
 
 		public function ctl_custom_shortcode_style() {
 			echo '<style>
@@ -61,10 +44,6 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
         margin: 0px 1px -3px 0;
         width: 20px;
         }
-        #wp-content-wrap a[data-modal-id="ctl_timeline_shortcode"] {
-       // background: #000;
-       // border-color: #000;
-        }
         .csf-shortcode-single .csf-modal-content {
             height: 655px !important;
 
@@ -72,12 +51,9 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
         
         #csf-modal-ctl_timeline_shortcode .csf-modal-inner {
             height: 500px !important;
-            // overflow: auto;          
         }
         #csf-modal-ctl_timeline_shortcode .csf-modal-content {            
-            // overflow: hidden !important; 
             height:400px !important;        
-            // min-height: -webkit-fill-available;
         }   
                      
         #ctl_preview{
@@ -101,7 +77,7 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
 			);
 		}
 
-		public function CSF_free_shortcode_generator() {
+		public function init_shortcode_generator() {
 
 		
 			// Sanitize input data (read-only admin screen detection).

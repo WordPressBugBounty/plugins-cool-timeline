@@ -25,28 +25,22 @@
     --ctw-cbx-date-font-weight: 500;
     --ctw-cbx-title-font-size: 15px;
     --ctw-cbx-title-font-weight: 500;
+    display: block;
+    position: relative;
+    width: calc(100% - var(--nav-icon-width) * 2);
+    margin: 0 var(--nav-icon-width);
 }
 
 
 
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-story.odd .ctl-label-big {
     --ctw-lbl-big-color: var(--ctw-lbel-big-color, var(--ctw-first-story-color));
+    color: var(--ctw-lbl-big-color);
 }
 
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-story.even .ctl-label-big {
     --ctw-lbl-big-color: var(--ctw-lbel-big-color, var(--ctw-second-story-color));
-}
-
-.ctl-wrapper .ctl-horizontal-timeline {
-    width: 100%;
-    display: block;
-    position: relative;
-}
-
-
-.ctl-wrapper .ctl-horizontal-timeline {
-    width: calc(100% - var(--nav-icon-width) * 2);
-    margin: 0 var(--nav-icon-width);
+    color: var(--ctw-lbl-big-color);
 }
 
 .ctl-wrapper-inside {
@@ -162,19 +156,6 @@
 
 /* ---------------------------- Horizontal Line ---------------------------- */
 
-.ctl-wrapper .ctl-horizontal-timeline .ctl-story-line {
-    position: absolute;
-    top: calc(0px - var(--ctw-ibx-size) - var(--ctw-line-width) / 2);
-    left: calc(0px - var(--ctw-cbx-space) * 0.5px);
-    display: block;
-    width: calc(100% + var(--ctw-cbx-space) * 1px);
-    height: var(--ctw-line-width);
-    background-color: var(--ctw-line-bg);
-    border-width: calc(var(--ctw-line-bd-width) * 1px) 0px calc(var(--ctw-line-bd-width) * 1px) 0px;
-    border-style: var(--ctw-line-bd-style);
-    border-color: var(--ctw-line-bd-color);
-}
-
 /* -------------------------- Horizontal Line - END ------------------------ */
 
 
@@ -182,7 +163,7 @@
 
 .ctl-wrapper .ctl-horizontal-timeline .ctl-h-line {
     position: absolute;
-    top: calc(0px + var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap) + 20px + var(--ctw-ibx-size) - var(--ctw-line-width) * 0.5);
+    top: calc(0px + var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap) + 20px + var(--ctw-ibx-size) - var(--ctw-line-width) * .5 + var(--lbl-bd-width)*2) !important;
     left: 0;
     display: block;
     width: 100%;
@@ -222,12 +203,9 @@
 
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-year-label.ctl-year-text {
     position: absolute;
-    left: calc(100% - var(--ctw-ybx-size) * 2);
-    box-shadow: 0 0 0 2px white, inset 0 0 0 2px rgba(0, 0, 0, 0.05), 0 0 0 5px var(--ctw-line-bg);
-}
-
-.ctl-wrapper .ctl-horizontal-wrapper .ctl-year-label.ctl-year-text {
     left: calc(100% - var(--ctw-ybx-size) * 1.5);
+    top: -20px;
+    box-shadow: 0 0 0 2px white, inset 0 0 0 2px rgba(0, 0, 0, 0.05), 0 0 0 5px var(--ctw-line-bg);
 }
 
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-year-text {
@@ -259,15 +237,6 @@
     display: flex;
     justify-content: center;
 }
-
-/* ----------------------horizontal-line css style - start  ----------------------*/
-
-.ctl-wrapper .ctl-horizontal-timeline .ctl-h-line{
-    top: calc(0px + var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap) + 20px + var(--ctw-ibx-size) - var(--ctw-line-width) * .5 + var(--lbl-bd-width)*2) !important;
-}
-
-/* ----------------------horizontal-line css style - end  ----------------------*/
-
 
 /* ------------------------- Labels Horizontal - END ------------------------ */
 
@@ -365,14 +334,11 @@
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-title {
     background-color: #ffffff00 !important;
     padding-top: 110px;
+    text-align: center;
 }
 
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-story.even .ctl-title {
     padding-top: 60px;
-}
-
-.ctl-wrapper .ctl-horizontal-wrapper .ctl-title {
-    text-align: center;
 }
 
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-story:nth-child(odd) .ctl-title :where(a, a:hover) {
@@ -383,7 +349,7 @@
     color: var(--ctw-second-story-color);
 }
 
-.ctl-wrapper .ctl-horizontal-wrapper :where(.ctl-media, .full-width, .ctl-description) {
+.ctl-wrapper .ctl-horizontal-wrapper :where(.ctl-media, .ctl-description) {
     display: none !important;
 }
 
@@ -426,44 +392,12 @@
     padding-top: 100px;
 }
 
-.ctl-wrapper .ctl-horizontal-wrapper .ctl-story.odd .ctl-label-big {
-    color: var(--ctw-lbl-big-color);
-}
-
-.ctl-wrapper .ctl-horizontal-wrapper .ctl-story.even .ctl-label-big {
-    color: var(--ctw-lbl-big-color);
-}
-
-.ctl-wrapper .ctl-horizontal-wrapper .ctl-story.even .ctl-labels {
-    padding-top: 40px;
-}
-
-.ctl-wrapper .ctl-horizontal-wrapper .ctl-year-label.ctl-year-text {
-    top: -20px;
-}
-
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-icon {
     z-index: 2;
     border-radius: 50%;
     left: calc(var(--ctw-ibx-position) * 1% - var(--ctw-ibx-size) * var(--ctw-ibx-position) / 115);
 }
 
-
-
-.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-button-prev,
-.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-button-next,
-.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-h-line {
-    display: none;
-}
-
-.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-slider-wrapper {
-    display: flex;
-    justify-content: center;
-}
-
-.ctl-wrapper .ctl-horizontal-timeline.ctl-content-empty .ctl-slider-container {
-    margin-top: 0px;
-}
 
 
 @media screen and (max-width:768px) {

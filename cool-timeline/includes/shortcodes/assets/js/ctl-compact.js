@@ -7,20 +7,26 @@ class ctlCompact {
 	}
 
     init(){
-        const initializeCompactMasonry=()=> {
-            const wrapper = jQuery(
-                '.ctl-compact-wrapper .ctl-timeline-container'
-            );
-            const animation = wrapper.data('animation');
-            this.ctlCompactMasonry(wrapper, animation);
-        }
+        let resizeTimer;
+        const debounceCompactMasonry=()=> {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(this.initializeCompactMasonry, 20);
+        };
 
-        jQuery(document).ready(initializeCompactMasonry);
-        jQuery(window).on('load', function () {
-            setTimeout(initializeCompactMasonry, 200);
+        jQuery(document).ready(this.initializeCompactMasonry);
+        jQuery(window).on('load', () => {
+            setTimeout(this.initializeCompactMasonry, 20);
         });
-        jQuery(window).on('resize', initializeCompactMasonry);
+        jQuery(window).on('resize', debounceCompactMasonry);
     }
+
+    initializeCompactMasonry = () => {
+        const wrapper = jQuery(
+            '.ctl-compact-wrapper .ctl-timeline-container'
+        );
+        const animation = wrapper.data('animation');
+        this.ctlCompactMasonry(wrapper, animation);
+    };
 
     ctlCompactMasonry = (grids, animation)=> {
 		let grid = '';
@@ -30,11 +36,6 @@ class ctlCompact {
 			itemSelector: '.ctl-story',
 			initLayout: false,
 		});
-
-		// layout images after they are loaded
-		// grid.imagesLoaded().progress(() => {
-		// 	grid.masonry('layout');
-		// });
 
 		grid.one('layoutComplete', () => {
 			let leftPos = 0;
@@ -92,4 +93,5 @@ class ctlCompact {
 	};
 }
 
-new ctlCompact();
+const ctlCompactInstance = new ctlCompact();
+window.ctlCompactInit = ctlCompactInstance.initializeCompactMasonry;
