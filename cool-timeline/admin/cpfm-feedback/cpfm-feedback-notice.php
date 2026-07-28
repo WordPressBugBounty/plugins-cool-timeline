@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Legacy CPFM class/hook names are retained for backward compatibility.
 
 if ( ! defined( 'ABSPATH' )) exit;
 

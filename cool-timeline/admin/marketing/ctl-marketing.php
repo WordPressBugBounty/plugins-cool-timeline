@@ -181,6 +181,7 @@ if ( ! class_exists( 'Ctl_Marketing_Controllers' ) ) {
                 && $is_tec_settings
                 && ! $is_timeline_widget_pro_path
                 && ! defined( 'TWAE_PRO_VERSION' )
+                && ! defined( 'TWAE_VERSION' )
             );
         }
 

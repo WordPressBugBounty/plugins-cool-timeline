@@ -46,7 +46,7 @@ if ( ! class_exists( 'CTL_CRONJOB' ) ) {
             $initial_version = is_string($initial_version) ? sanitize_text_field($initial_version) : 'N/A';
             $plugin_version = defined('CTL_V') ? CTL_V : 'N/A';
             $admin_email    = sanitize_email(get_option('admin_email') ?: 'N/A');
-            
+
             $post_data = array(
 
                 'site_id'           => md5($site_id),

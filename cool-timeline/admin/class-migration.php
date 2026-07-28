@@ -14,7 +14,43 @@ class CTL_free_migrations {
 		
 		add_action( 'admin_init', array( $this, 'ctl_postmeta_migration' ) );
 		add_action( 'admin_init', array( $this, 'ctl_settings_migration' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'ctl_enqueue_migration_assets' ) );
 		add_action( 'wp_ajax_ctl_migrate_stories', array( $this, 'ctl_migrate_stories' ) );
+	}
+
+	/**
+	 * Enqueue Timeline Express migration UI script on plugin settings.
+	 *
+	 * @return void
+	 */
+	public function ctl_enqueue_migration_assets() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen detection.
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		if ( 'cool_timeline_settings' !== $page ) {
+			return;
+		}
+
+		if ( ! defined( 'CTL_PLUGIN_URL' ) ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'ctl-migration-js',
+			CTL_PLUGIN_URL . 'admin/assets/js/migration.js',
+			array( 'jquery' ),
+			defined( 'CTL_V' ) ? CTL_V : '1.0',
+			true
+		);
+
+		wp_localize_script(
+			'ctl-migration-js',
+			'ctl_migration',
+			array(
+				'nonce'        => wp_create_nonce( 'ctl_migrate_nonce' ),
+				'redirect_url' => esc_url( admin_url( 'edit.php?post_type=cool_timeline' ) ),
+				'ajax_url'     => admin_url( 'admin-ajax.php' ),
+			)
+		);
 	}
 	
 	function ctl_postmeta_migration() {

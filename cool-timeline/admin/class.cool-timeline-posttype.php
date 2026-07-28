@@ -47,6 +47,7 @@ class CoolTimelinePosttypeFree {
 			'hierarchical'        => false,
 			'public'              => true,
 			'show_ui'             => true,
+			// Show as a submenu under the shared "Timeline Addons" top-level menu.
 			'show_in_menu'        => 'cool-plugins-timeline-addon',
 			'menu_position'       => 5,
 			'show_in_admin_bar'   => true,

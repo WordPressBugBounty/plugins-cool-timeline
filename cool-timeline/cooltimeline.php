@@ -1,9 +1,10 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Legacy constants/hooks are retained for backward compatibility.
 /*
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.3.6
+  Version:3.4.0
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -18,9 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 /** Configuration */
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.3.6' );
+	define( 'CTL_V', '3.4.0' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -32,7 +32,9 @@ define( 'CTL_FEEDBACK_API', 'https://feedback.coolplugins.net/' );
 if ( ! defined( 'CTL_BUY_PRO' ) ) {
 	define( 'CTL_BUY_PRO', 'https://cooltimeline.com/plugin/cool-timeline-pro/' );
 }
-// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+// Lightweight — only registers this copy as a version candidate.
+require_once CTL_PLUGIN_DIR . 'admin/cp-onboarding/loader.php';
+cpo_onboarding_register( '1.1.5', CTL_PLUGIN_DIR . 'admin/cp-onboarding' );
 
 
 if ( ! class_exists( 'CoolTimeline' ) ) {
@@ -107,12 +109,26 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		private static function register_admin_hooks( $plugin ) {
 			$pluginpath = plugin_basename( __FILE__ );
 
+			// Plugin settings links hook.
 			add_filter( "plugin_action_links_$pluginpath", array( $plugin, 'ctl_settings_link' ) );
+			add_filter( 'plugin_action_links_timeline-widget-addon-for-elementor/timeline-widget-addon-for-elementor.php', array( $plugin, 'ctl_addon_getting_started_link' ), 999 );
+			add_filter( 'plugin_action_links_timeline-module-for-divi/timeline-module-for-divi.php', array( $plugin, 'ctl_addon_getting_started_link' ), 999 );
+			// Save extra story meta for timeline sorting.
 			add_action( 'save_post', array( $plugin, 'ctl_save_story_meta' ), 10, 3 );
 			require_once plugin_dir_path( __FILE__ ) . 'admin/marketing/ctl-marketing.php';
-			add_action( 'admin_menu', array( $plugin, 'ctl_add_new_item' ) );
+			// Register the shared "Timeline Addons" top-level menu before WordPress
+			// attaches the post type submenu to it (admin_menu default priority 10).
+			add_action( 'admin_menu', array( $plugin, 'ctl_suppress_legacy_timeline_pro_addons_ui' ), 0 );
+			// Parent must register before legacy Pro License submenus (priority 2).
+			add_action( 'admin_menu', array( $plugin, 'ctl_register_timeline_addons_menu' ), 1 );
+			add_action( 'admin_menu', array( $plugin, 'ctl_register_add_new_story_menu' ) );
+			add_action( 'admin_menu', array( $plugin, 'ctl_remove_addons_duplicate_submenu' ), 999 );
+			// Keep the "Timeline Addons" menu highlighted on the Getting Started page.
+			add_filter( 'parent_file', array( $plugin, 'ctl_highlight_addons_menu' ) );
+			add_filter( 'submenu_file', array( $plugin, 'ctl_highlight_addons_submenu' ) );
+			add_action( 'admin_head', array( $plugin, 'ctl_timeline_addons_menu_style' ) );
 			add_action( 'admin_print_scripts', array( $plugin, 'ctl_hide_unrelated_notices' ), 999 );
-			add_action( 'admin_enqueue_scripts', array( $plugin, 'ctl_enqueue_addon_fonts' ), 20 );
+			add_action( 'enqueue_block_editor_assets', array( $plugin, 'ctl_enqueue_onboarding_script' ) );
 		}
 
 		/**
@@ -140,21 +156,161 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			 add_action('csf_cool_timeline_settings_save_after', array($this,'ctl_plugin_settings_saved'));
 		}
 		public function cpfm_load_file(){
+			require_once __DIR__ . '/admin/ctp-getting-started-url.php';
 			if(!class_exists('CPFM_Feedback_Notice')){
 					require_once __DIR__ . '/admin/cpfm-feedback/cpfm-feedback-notice.php';
 				}
 			require_once __DIR__ . '/includes/cron/class-cron.php';
 		}
-		public function ctl_add_new_item() {
-						add_submenu_page(
-				'cool-plugins-timeline-addon',
-				__( 'Add New Story', 'cool-timeline' ),
-				'<strong>' . esc_html__( 'Add New Story', 'cool-timeline' ) . '</strong>',
+
+		/**
+		 * Register the shared "Timeline Addons" top-level admin menu.
+		 *
+		 * The post type ("Timeline Stories") and the settings page are attached
+		 * under this menu as submenus. The menu itself opens the Getting Started page.
+		 */
+		public function ctl_register_timeline_addons_menu() {
+			$hook = add_menu_page(
+				__( 'Timeline Addons', 'cool-timeline' ),
+				__( 'Timeline Addons', 'cool-timeline' ),
 				'manage_options',
-				'post-new.php?post_type=cool_timeline',
-				false,
-				15
+				'cool-plugins-timeline-addon',
+				'__return_null',
+				CTL_PLUGIN_URL . 'assets/images/cool-timeline-icon.svg',
+				5
 			);
+
+			// Point the menu at the Getting Started onboarding page.
+			add_action( 'load-' . $hook, array( $this, 'ctl_redirect_addons_menu_to_getting_started' ) );
+		}
+
+		/**
+		 * Stop legacy Timeline Widget Pro (<= 2.5.4) / Timeline Block Pro (<= 3.2.1)
+		 * / Timeline Module Pro for Divi (<= 2.1.4) from registering Timeline Addons
+		 * menu + their global header.
+		 *
+		 * @return void
+		 */
+		public function ctl_suppress_legacy_timeline_pro_addons_ui() {
+			$legacy = ( defined( 'TWAE_PRO_VERSION' ) && version_compare( (string) TWAE_PRO_VERSION, '2.5.5', '<=' ) )
+				|| ( defined( 'CTLBV' ) && version_compare( (string) CTLBV, '3.2.1', '<=' ) )
+				|| ( defined( 'TM_DIVI_PRO_V' ) && version_compare( (string) TM_DIVI_PRO_V, '2.1.4', '<=' ) );
+
+			if ( ! $legacy || ! class_exists( 'cool_plugins_timeline_addons' ) ) {
+				return;
+			}
+
+			$page = cool_plugins_timeline_addons::init();
+			remove_action( 'admin_menu', array( $page, 'init_plugins_dasboard_page' ), 1 );
+			remove_action( 'admin_notices', array( $page, 'maybe_render_global_header' ), 1 );
+		}
+
+		/**
+		 * Remove the auto-generated duplicate submenu and keep Dashboard first
+		 * so the Timeline Addons top-level click opens Getting Started (not License).
+		 *
+		 * @return void
+		 */
+		public function ctl_remove_addons_duplicate_submenu() {
+			remove_submenu_page( 'cool-plugins-timeline-addon', 'cool-plugins-timeline-addon' );
+
+			global $submenu;
+			if ( empty( $submenu['cool-plugins-timeline-addon'] ) || ! is_array( $submenu['cool-plugins-timeline-addon'] ) ) {
+				return;
+			}
+
+			$dashboard = null;
+			$rest      = array();
+			foreach ( $submenu['cool-plugins-timeline-addon'] as $item ) {
+				if ( isset( $item[2] ) && 'ctl-getting-started' === $item[2] ) {
+					$dashboard = $item;
+				} else {
+					$rest[] = $item;
+				}
+			}
+
+			if ( null !== $dashboard ) {
+				$submenu['cool-plugins-timeline-addon'] = array_merge( array( $dashboard ), $rest );
+			}
+		}
+		
+		public function ctl_register_add_new_story_menu() {
+
+			add_submenu_page(
+				'cool-plugins-timeline-addon',
+				'Add New Story',
+				'Add New Story',
+				'manage_options',
+				'post-new.php?post_type=cool_timeline'
+			);
+		}
+
+		/**
+		 * Redirect the "Timeline Addons" menu landing page to Getting Started.
+		 */
+		public function ctl_redirect_addons_menu_to_getting_started() {
+			wp_safe_redirect( ctp_timeline_getting_started_url( 'ctl' ) );
+			exit;
+		}
+
+		/**
+		 * Sizes the "Timeline Addons" top-level menu icon in the admin sidebar.
+		 */
+		public function ctl_timeline_addons_menu_style() {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen detection.
+			$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+
+			// On Timeline Stories / Settings screens the menu becomes the current one,
+			// so target the active (current-submenu) state as well.
+			$is_timeline_page = (
+				false !== strpos( $request_uri, 'post_type=cool_timeline' )
+				|| false !== strpos( $request_uri, 'page=cool_timeline_settings' )
+			);
+
+			echo '<style>li#toplevel_page_cool-plugins-timeline-addon img {
+				width: 60%;
+			}';
+
+			echo '</style>';
+		}
+
+		/**
+		 * Force the "Timeline Addons" top-level menu to appear active on the
+		 * Getting Started onboarding page (which is registered as an orphan submenu).
+		 *
+		 * @param string $parent_file Current parent menu slug.
+		 * @return string
+		 */
+		public function ctl_highlight_addons_menu( $parent_file ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen detection.
+			$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+			if ( in_array( $page, array( 'ctl-getting-started', 'timeline-addons-license' ), true ) ) {
+				return 'cool-plugins-timeline-addon';
+			}
+
+			return $parent_file;
+		}
+
+		/**
+		 * Highlight the "Getting Started" submenu item under "Timeline Addons".
+		 *
+		 * @param string|null $submenu_file Current submenu slug.
+		 * @return string|null
+		 */
+		public function ctl_highlight_addons_submenu( $submenu_file ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen detection.
+			$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+			if ( 'ctl-getting-started' === $page ) {
+				return 'ctl-getting-started';
+			}
+
+			if ( 'timeline-addons-license' === $page ) {
+				return 'timeline-addons-license';
+			}
+
+			return $submenu_file;
 		}
 
 		public function ctl_plugin_settings_saved(){
@@ -259,13 +415,14 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 									false !== strpos( $class, 'ctl_admin' ) ||
 									false !== strpos( $class, 'ctp_' ) ||
 									false !== strpos( $class, 'license_helper' ) ||
-									false !== strpos( $class, 'twae' )
+									false !== strpos( $class, 'twae' ) ||
+									false !== strpos( $class, 'tmdivi' )
 								);
 							}
 
 							// Also keep callbacks whose function name clearly belongs to Cool Plugins stack.
 							if ( ! $keep && is_string( $fn ) ) {
-								$keep = ( 0 === strpos( $fn, 'ctl_' ) || 0 === strpos( $fn, 'cool_' ) || 0 === strpos( $fn, 'twae_' ) );
+								$keep = ( 0 === strpos( $fn, 'ctl_' ) || 0 === strpos( $fn, 'cool_' ) || 0 === strpos( $fn, 'twae_' ) || 0 === strpos( $fn, 'tmdivi_' ) );
 							}
 
 							if ( ! $keep ) {
@@ -295,70 +452,10 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			}
 
 			define( 'CTL_ADMIN_NOTICE_RENDERED', true );
-			
 
 			do_action( 'ctl_display_admin_notices' );
 		}
 		// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-
-		/**
-		 * On timeline addon pages, inject self-hosted Inter @font-face with absolute URLs
-		 * so fonts load on InstaWP/live (avoids relative-path and case-sensitivity issues).
-		 * Only injects if font files exist in admin/timeline-addon-page/assets/fonts/ to avoid 404s.
-		 */
-		public function ctl_enqueue_addon_fonts() {
-			if ( ! function_exists( 'ctl_is_timeline_addon_page' ) || ! ctl_is_timeline_addon_page() ) {
-				return;
-			}
-			$font_file    = 'Inter-Regular.woff2';
-			$style_handle = 'cool-plugins-timeline-addon';
-
-			// Ensure the main stylesheet is enqueued first.
-			if ( ! wp_style_is( $style_handle, 'enqueued' ) && ! wp_style_is( $style_handle, 'registered' ) ) {
-				wp_enqueue_style(
-					$style_handle,
-					CTL_PLUGIN_URL . 'admin/timeline-addon-page/assets/css/styles.css',
-					array(),
-					CTL_V
-				);
-			}
-
-			// Try self-hosted fonts: CTLB's directory first (confirmed present on InstaWP),
-			// then CTL's own directory.
-			$font_url = '';
-
-			if ( defined( 'CTLB_Pro_Dir' ) && defined( 'CTLB_Pro_Url' )
-				&& file_exists( CTLB_Pro_Dir . 'admin/timeline-addon-page/assets/fonts/' . $font_file )
-			) {
-				$font_url = CTLB_Pro_Url . 'admin/timeline-addon-page/assets/fonts/';
-			} elseif ( file_exists( CTL_PLUGIN_DIR . 'admin/timeline-addon-page/assets/fonts/' . $font_file ) ) {
-				$font_url = CTL_PLUGIN_URL . 'admin/timeline-addon-page/assets/fonts/';
-			}
-
-			if ( $font_url ) {
-				$safe_font_url = esc_url( $font_url );
-				$font_face     = sprintf(
-					"@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('%sInter-Regular.woff2') format('woff2');}\n" .
-					"@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('%sInter-Medium.woff2') format('woff2');}\n" .
-					"@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('%sInter-SemiBold.woff2') format('woff2');}\n" .
-					"@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('%sInter-Bold.woff2') format('woff2');}",
-					$safe_font_url,
-					$safe_font_url,
-					$safe_font_url,
-					$safe_font_url
-				);
-				wp_add_inline_style( $style_handle, $font_face );
-			} else {
-				// No self-hosted files found – fall back to bunny.net CDN (GDPR-friendly).
-				// This guarantees Inter loads on InstaWP / staging without needing font files on disk.
-				wp_enqueue_style(
-					'cool-plugins-inter-font',
-					'https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap',
-					array(),
-					CTL_V
-				);
-			}
-		}
 
 		/*
 		  Including required files
@@ -411,12 +508,19 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		private function include_admin_files() {
 			require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
 			require_once CTL_PLUGIN_DIR . 'admin/codestar-framework/codestar-framework.php';
-				
-			require_once __DIR__ . '/admin/timeline-addon-page/timeline-addon-page.php';
+
 			/*** Plugin review notice file */
 			require_once CTL_PLUGIN_DIR . '/admin/notices/admin-notices.php';
 
-			cool_plugins_timeline_addons_settings_page( 'timeline', 'cool-plugins-timeline-addon', 'Timeline Addons', ' Timeline Addons', CTL_PLUGIN_URL . 'assets/images/cool-timeline-icon.svg' );
+			// Including onboarding config file for timeline (after framework loads).
+			add_action(
+				'cpo_onboarding_loaded',
+				function () {
+					require CTL_PLUGIN_DIR . '/admin/cp-onboarding/onboarding-config.php';
+				}
+			);
+
+			require_once CTL_PLUGIN_DIR . 'admin/ctl-timeline-header.php';
 		}
 
 		/**
@@ -449,8 +553,8 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			'title' => __('Timeline Plugins by Cool Plugins', 'ctl'),
 			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
 			'message' => __('Help us make this plugin more compatible with your site by sharing non-sensitive site data.', 'cool-plugins-feedback'),
-			'pages' => ['cool_timeline_settings', 'cool-plugins-timeline-addon'],
-			'always_show_on' => ['cool_timeline_settings', 'cool-plugins-timeline-addon'],
+			'pages' => ['cool_timeline_settings', 'cool-plugins-timeline-addon', 'ctl-getting-started'],
+			'always_show_on' => ['cool_timeline_settings', 'cool-plugins-timeline-addon', 'ctl-getting-started'],
 			'plugin_name'=>'ctl'
 		];
 	
@@ -480,7 +584,36 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			});
 		}
 
+		function ctl_enqueue_onboarding_script() {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- verified below.
+			$legacy = isset( $_GET['action'] ) && 'filter-ctl-blocks' === $_GET['action'];
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- verified below.
+			$insert = isset( $_GET['ctl_insert_block'] ) && '1' === $_GET['ctl_insert_block'];
 
+			if ( ! $legacy && ! $insert ) {
+				return;
+			}
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- verified below.
+			$nonce = isset( $_GET['ctl_insert_nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['ctl_insert_nonce'] ) ) : '';
+			if ( ! wp_verify_nonce( $nonce, 'ctl_insert_block' ) ) {
+				return;
+			}
+
+			// Only load on the post/page edit screen.
+			$screen = get_current_screen();
+			if ( ! $screen || ! $screen->is_block_editor() ) {
+				return;
+			}
+
+			wp_enqueue_script(
+				'ctl-block-inserter',
+				plugin_dir_url( __FILE__ ) . 'admin/cp-onboarding/assets/inserter.js',
+				array( 'wp-dom-ready', 'wp-blocks', 'wp-data', 'wp-editor', 'wp-block-editor' ),
+				'1.0.0',
+				true
+			);
+		}
 
 		// flush rewrite rules after activation
 		public function ctl_flush_rules() {
@@ -518,15 +651,69 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		}
 
 		public function ctl_plugin_redirection( $plugin ) {
-			if ( plugin_basename( __FILE__ ) === $plugin ) {
-				wp_safe_redirect( admin_url( 'admin.php?page=cool_timeline_settings#tab=get-started' ) );
-				exit;
+			if ( plugin_basename( __FILE__ ) !== $plugin ) {
+				return;
 			}
+
+			// Only redirect on a fresh first-time activation. The transient
+			// is set in ctl_activate() and absent for upgrades/reactivations.
+			if ( ! get_transient( 'ctl_activation_redirect' ) ) {
+				return;
+			}
+			delete_transient( 'ctl_activation_redirect' );
+
+			// Skip the redirect during bulk plugin activations so we don't
+			// hijack a multi-plugin activate request.
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only check, no state change.
+			if ( isset( $_GET['activate-multi'] ) ) {
+				return;
+			}
+
+			wp_safe_redirect( ctp_timeline_getting_started_url( 'ctl' ) );
+			exit;
 		}
 
-		// Add the settings link to the plugins page
+		/**
+		 * Replace addon Getting Started links with the shared dashboard URL + method tab.
+		 *
+		 * @param array $links Plugin row action links.
+		 * @return array
+		 */
+		public function ctl_addon_getting_started_link( $links ) {
+			if ( ! is_array( $links ) ) {
+				return $links;
+			}
+
+			$plugin_keys = array(
+				'plugin_action_links_timeline-widget-addon-for-elementor/timeline-widget-addon-for-elementor.php' => 'twae',
+				'plugin_action_links_timeline-module-for-divi/timeline-module-for-divi.php'                    => 'tmdivi',
+			);
+
+			$plugin_key = isset( $plugin_keys[ current_filter() ] ) ? $plugin_keys[ current_filter() ] : '';
+			if ( '' === $plugin_key ) {
+				return $links;
+			}
+
+			$links = array_values(
+				array_filter(
+					$links,
+					static function ( $link ) {
+						return false === stripos( $link, 'Getting Started' )
+							&& false === stripos( $link, 'ctl-getting-started' )
+							&& false === stripos( $link, 'twae-getting-started' );
+					}
+				)
+			);
+
+			$links[] = '<a href="' . esc_url( ctp_timeline_getting_started_url( $plugin_key ) ) . '">' . esc_html__( 'Getting Started', 'cool-timeline' ) . '</a>';
+
+			return $links;
+		}
+
+		// Add the settings link to the plugins page.
 		public function ctl_settings_link( $links ) {
 			array_unshift( $links, '<a href="admin.php?page=cool_timeline_settings">Settings</a>' );
+			$links[] = '<a href="' . esc_url( ctp_timeline_getting_started_url( 'ctl' ) ) . '">' . esc_html__( 'Getting Started', 'cool-timeline' ) . '</a>';
 			$links[] = '<a style="font-weight:bold; color:#852636;" href="https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=plugins_list" target="_blank">Get Pro</a>';
 
 			return $links;
@@ -630,10 +817,39 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		/* Activating plugin and adding some info */
 		public function ctl_activate() {
 
+			/**
+			 * Detect if this is a new user.
+
+			 * This prevents the redirect from firing every time an existing user
+			 * deactivates/reactivates or updates the plugin.
+			 */
+			$is_new_user = ( false === get_option( 'cool-timelne-installDate' ) )
+						&& ( false === get_option( 'ctl-install-date' ) );
+					
+			// Only show welcome redirect for genuine first-time installs.
+			if ( $is_new_user ) {
+				update_option( 'ctl_is_new_user', 'yes' );
+				update_option( 'ctl_onboarding_method', 'default', false );
+				set_transient( 'ctl_activation_redirect', 1, 5 * MINUTE_IN_SECONDS );
+			}
+
+			// Always update version and plugin type — these reflect current state.
 			update_option( 'cool-free-timeline-v', CTL_V );
 			update_option( 'cool-timelne-plugin-type', 'FREE' );
-			update_option( 'cool-timelne-installDate', gmdate( 'Y-m-d h:i:s' ) );
-			update_option( 'cool-timeline-already-rated', 'no' );
+
+			/**
+			 * Preserve original install date for existing users.
+			 *
+			 */
+			if ( ! get_option( 'cool-timelne-installDate' ) ) {
+				update_option( 'cool-timelne-installDate', gmdate( 'Y-m-d H:i:s' ) );
+			}
+
+			// Initialize rating flag only if missing — preserves "rated" status for existing users.
+			add_option( 'cool-timeline-already-rated', 'no' );
+
+			// Flag for rewrite rules flush — actual flush happens later on admin_init
+			// (flushing inside activation hook is a WP best-practice violation).
 			update_option( 'ctl_flush_rewrite_rules_flag', true );
 
 
@@ -652,12 +868,16 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			}
 		}
 
+	/**
+	 * Retrieves server, theme, plugin, and onboarding information for telemetry.
+	 *
+	 */
 	public static function ctl_get_user_info() {
 
 		global $wpdb;
 	
 		// Server and WP environment details
-
+		  
 		$server_info = [
 
 		'server_software'        => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'N/A',
@@ -672,6 +892,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			'wp_multisite'           => is_multisite() ? 'Enabled' : 'Disabled',
 			'wp_language'            => sanitize_text_field(get_option('WPLANG') ?: get_locale()),
 			'wp_prefix'              => isset($wpdb->prefix) ? sanitize_key($wpdb->prefix) : 'N/A',
+
 		];
 	
 		// Theme details
@@ -708,12 +929,19 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 				];
 			}
 		}
-	
+		 $onboarding_data=[];
+		 $telemetry = get_option('ctl_onboarding_telemetry', array()); // cp-onboarding framework Telemetry store.
+			if (!empty($telemetry)) {
+				$onboarding_data = $telemetry;
+				$onboarding_data['install_date']=get_option('ctl-install-date', 'N/A');
+			}
+
 		return [
 			'server_info'   => $server_info,
 			'extra_details' => [
-				'wp_theme'       => $theme_data,
-				'active_plugins' => $plugin_data,
+				'wp_theme'        => $theme_data,
+				'active_plugins'  => $plugin_data,
+				'onboarding_data' => $onboarding_data
 			],
 		];
 	}

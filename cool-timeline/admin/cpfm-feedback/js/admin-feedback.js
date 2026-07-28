@@ -98,7 +98,7 @@
                 },
                 success: function(res) {
                     $('#cool-plugins-loader-wrapper').hide();
-                    window.location = plugin_deactivate_link;
+                   window.location = plugin_deactivate_link;
                     $('#deactivating-plugin').text('Deactivated');
                 }
             })

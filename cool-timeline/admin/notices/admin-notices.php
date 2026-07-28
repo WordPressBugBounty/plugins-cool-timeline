@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Legacy notice APIs/class names are preserved for backward compatibility.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -120,7 +121,7 @@ if (!class_exists('ctl_admin_notices')):
         private function register_notice_hook() {
             // On Timeline Addon pages, show notices after the timeline header (not above it).
             if ( function_exists( 'ctl_is_timeline_addon_page' ) && ctl_is_timeline_addon_page() ) {
-                add_action( 'ctl_after_timeline_header', array( $this, 'ctl_show_notice' ), 10 );
+                add_action( 'cph_after_timeline_header', array( $this, 'ctl_show_notice' ), 10 );
             } else {
                 add_action( 'admin_notices', array( $this, 'ctl_show_notice' ) );
             }
@@ -292,6 +293,9 @@ if (!class_exists('ctl_admin_notices')):
         /**
          * This function decides if its good to show the review notice or not
          * Review notice will only be displayed if $slug_activation_time is greater or equals to the 3 days
+      
+         * @param string $id          Notice ID for HTML output.
+         * @param array  $messageObj  Notice config including slug and review_interval (days).
          */
         private function ctl_admin_notice_for_review( $id, $messageObj ){
             if ( ! $this->can_render_review_notice( $messageObj ) ) {
@@ -300,7 +304,7 @@ if (!class_exists('ctl_admin_notices')):
 
             echo wp_kses_post( $this->ctl_create_notice_content( $id, $messageObj ) );
         }
-
+        
         /**
          * Generate review notice HTMl with all required css & js
          *

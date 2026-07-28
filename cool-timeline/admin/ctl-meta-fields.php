@@ -107,7 +107,7 @@ if ( class_exists( 'CSF' ) ) {
 	CSF::createMetabox(
 		$pro_list,
 		array(
-			'title'     => 'Cool Timeline Pro Features',
+			'title'     => '<span style="display:flex;gap:6px;align-items:flex-start;"><span aria-hidden="true">⭐</span><span>Cool Timeline Pro</span></span>',
 			'post_type' => 'cool_timeline',
 			'priority'  => 'low',
 			'data_type' => 'unserialize',
@@ -124,26 +124,22 @@ if ( class_exists( 'CSF' ) ) {
 				array(
 					'id'      => 'pro_feature_list_section',
 					'type'    => 'content',
-					'content' => ' <ul style="list-style:disc;margin: 2px 16px;">
-                       <li>40+ Timeline Designs</li>
-                       <li>Multiple Timelines</li>
-                       <li>Colors & Typography</li>
-                       <li>Custom Label / Text</li>
-                       <li>Video, Images & Slider</li>
-                       <li>Post Timeline</li>
-                       <li>Custom Story Color</li>
-                       <li>Shortcode Generator</li>
-                       <li>Gutenberg / Elementor / WPBakery</li>
-                       <li>ASC / DESC Order</li>
-                       <li>Category Filters</li>
-                       <li>Ajax Load More / Pagination</li>
-                       <li>Scrolling Navigation</li>
-                       <li>Icons In Timeline</li>
-                       <li>HTML / Links / Read More</li>
-                       <li>Date Format</li>
-                       <li>Animations</li>
-                       <li>Premium Support</li>
-                   </ul>',
+					'content' => '<p style="margin:0 0 10px;">' . esc_html__( 'Create timelines your visitors will love.', 'cool-timeline' ) . '</p>
+					<strong style="display:flex;gap:6px;align-items:flex-start;margin:0 0 8px;"><span aria-hidden="true">🔓</span><span>' . esc_html__( 'Unlock Premium Features', 'cool-timeline' ) . '</span></strong>
+					<ul style="list-style:none;margin:2px 0 0;padding:0;">
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( '25+ Beautiful Timeline Designs', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Add Image Galleries & Videos', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Timeline Filters', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'AJAX Load More & Pagination', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Multiple Timeline Layouts', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Customize Colors & Typography', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Advanced Animations', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Horizontal & Vertical Timelines', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Gutenberg / Shortcode Generator & WPBakery Support', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Custom Story Styling', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Flexible Date Formats & Sorting', 'cool-timeline' ) . '</span></li>
+						<li style="display:flex;gap:6px;align-items:flex-start;margin:0 0 4px;"><span aria-hidden="true">✓</span><span>' . esc_html__( 'Premium Support & Regular Updates', 'cool-timeline' ) . '</span></li>
+					</ul>',
 					'class'   => 'pro_features',
 				),
 				array(
