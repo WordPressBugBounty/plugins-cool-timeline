@@ -1,0 +1,1154 @@
+/* ==========================================================================
+   Cool Timeline Free - Design Refresh
+   Scoped under .ctl-new-design.ctl-wrapper (same element as .ctl-wrapper).
+
+   Ported from Cool Timeline Pro's ctl-design-refresh.css, limited to the
+   default design on the vertical, one-side and compact layouts, and limited
+   to spacing (padding / margin / gap and the card-to-line gap geometry).
+
+   PHP only adds .ctl-new-design when CTL_Helpers::ctl_is_new_install() is
+   true, so existing installs keep their current look until they opt in via
+   the welcome "Upgrade Design" CTA (ctl_migrate_new_design).
+
+   Pro-only settings are deliberately NOT ported: --ctw-story-pad-add
+   (story padding), --ctw-story-line-gap-delta (line gap), --ctw-arw-size
+   (connector size) and --ctw-arw-align-offset have no Free counterpart, so
+   every rule that measured itself against them is either resolved to its
+   Pro default here or left out.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. Spacing tokens
+   -------------------------------------------------------------------------- */
+
+.ctl-new-design.ctl-wrapper {
+    --ctw-story-line-gap: 10px;
+    --ctw-cbx-bottom-margin: 100px;
+    --ctw-cbx-padding: 20px;
+    --ctw-cbx-pad: 20px;
+    --ctw-cbx-title-padding: 17px 20px 17px 20px;
+    --ctw-cbx-des-padding: 0px 0px 0px 0px;
+    --ctw-cbx-img-padding: 0;
+    --ctw-cbx-img-margin: 0px 0px 20px 0px;
+    --ctw-cbx-radius: 20px;
+    --ctw-cbx-radius-left: 20px;
+
+    /* Hover has to track the radius, not the value it happened to have further
+       up the tree. Free declares --ctw-cbx-radius-hover: var(--ctw-cbx-radius)
+       on .ctl-wrapper, and a custom property resolves on the element that
+       DECLARES it - so a radius re-declared lower down (compact does, below)
+       never reached the hover token, and the card snapped from its own corner
+       to the wrapper's the moment you moused over it. Same trap as
+       --ctw-arw-bd-color in section 1. Re-declare the pair wherever the radius
+       is re-declared, and hover follows whatever that level sets. */
+    --ctw-cbx-radius-hover: var(--ctw-cbx-radius);
+    --ctw-cbx-radius-left-hover: var(--ctw-cbx-radius-left);
+    --ctw-cbx-img-radius: 0px;
+    --ctw-read-more-radius: 10px;
+    margin: 0px auto 30px;
+
+    /* Typography. Each one puts the user's own setting in front of the design
+       default, so a value the settings screen wrote still wins - the design
+       default only applies where the user never touched it. The settings
+       screen writes --ctl-set-* alongside --ctw-cbx-* (see
+       CTL_Styles_Generator::render_global_typo_style); without that
+       indirection these defaults, being higher-specificity, would silently
+       override the Typography panel on every new install. */
+    --ctw-cbx-title-font-size: var(--ctl-set-title-font-size, 20px);
+    --ctw-cbx-title-line-height: var(--ctl-set-title-line-height, 30px);
+    --ctw-cbx-desc-font-size: var(--ctl-set-desc-font-size, 17px);
+    --ctw-cbx-desc-line-height: var(--ctl-set-desc-line-height, 30px);
+    --ctw-cbx-date-font-size: var(--ctl-set-date-font-size, 18px);
+    --ctw-cbx-date-font-weight: var(--ctl-set-date-font-weight, 600);
+    --ctw-lbl-big-size: 20px;
+    --ctw-ybx-size: 70px;
+    --ctw-ybx-text-size: 20px;
+    --ctw-ybx-text-weight: 600;
+}
+
+/* Layout/skin blocks below reset some of the tokens above, so re-state the
+   ones the whole refresh depends on at wrapper level too. The border and
+   shadow are what turn the story box into a card: Free's legacy defaults are
+   0-width borders and no shadow, so without these the padding above just
+   moves the copy inwards on a flat, square box. */
+.ctl-new-design.ctl-wrapper .cool-timeline-wrapper {
+    --ctw-cbx-title-padding: 17px 20px 17px 20px;
+    --ctw-cbx-padding: 20px;
+    --ctw-cbx-pad: 20px;
+    --ctw-cbx-img-padding: 0;
+    --ctw-cbx-bd-top-width: 1px;
+    --ctw-cbx-bd-right-width: 1px;
+    --ctw-cbx-bd-bottom-width: 1px;
+    --ctw-cbx-bd-left-width: 1px;
+    --ctw-cbx-bd-style: solid;
+    --ctw-cbx-bd-color: color-mix(in oklch, var(--ctw-cbx-des-color) 20%, white);
+    --ctw-cbx-shadow: 0px 0px 30px #e9e9e9d6;
+    --ctw-cbx-shadow-left: 0px 0px 30px #e9e9e9d6;
+    --ctw-cbx-shadow-hover: none;
+    --ctw-cbx-shadow-left-hover: none;
+
+    /* The connector must carry the card's outline, not its own colour. The
+       legacy sheet declares --ctw-arw-bd-color: var(--ctw-cbx-bd-color) up on
+       .ctl-wrapper, where --ctw-cbx-bd-color is still var(--ctw-ibx-bg) - the
+       marker's fill. A custom property resolves on the element that declares
+       it, so overriding --ctw-cbx-bd-color here never reaches it: the card
+       took the mix below while the pointer kept the marker colour. Naming it
+       here puts both on the same outline, which is what Pro's pointer does
+       when it reads border-color: var(--ctw-cbx-bd-color, --ctw-arw-bd-color). */
+    --ctw-arw-bd-color: color-mix(in oklch, var(--ctw-cbx-des-color) 20%, white);
+
+    /* Layout sheets reset these two further down, so re-state them here. */
+    --ctw-cbx-date-font-weight: var(--ctl-set-date-font-weight, 600);
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper {
+    --ctw-cbx-title-padding: 19px 22px 19px 22px;
+    --ctw-cbx-padding: 22px;
+    --ctw-cbx-pad: 22px;
+    --ctw-cbx-img-margin: 0px 0px 20px 0px;
+}
+
+/* Compact: Pro's default recipe - card keeps side/bottom padding so title and
+   description sit inset, while the date band (and media) cancel that inset and
+   paint edge to edge. Free previously zeroed --ctw-cbx-pad, which made the
+   bleed calc a no-op and left the green date strip floating inside the card
+   with white gutters (especially obvious on mobile). */
+.ctl-new-design.ctl-wrapper .ctl-compact-wrapper {
+    /* No bottom padding on the title. Compact stacks the title straight above
+       the description; the description's own top padding is the separator. */
+    --ctw-cbx-title-padding: 0px 0px 20px 0px;
+    --ctw-compact-label-padding: 19px 22px 19px 22px;
+    --ctw-cbx-des-padding: 0px;
+    --ctw-cbx-padding: 22px;
+    --ctw-cbx-pad: 22px;
+    --ctw-cbx-img-padding: 0;
+    --ctw-cbx-radius-left: 15px;
+    --ctw-cbx-radius: 15px;
+    /* Keep hover on compact's own 15px - see the wrapper block above. */
+    --ctw-cbx-radius-hover: var(--ctw-cbx-radius);
+    --ctw-cbx-radius-left-hover: var(--ctw-cbx-radius-left);
+    --ctw-cbx-img-margin: 0px 0px 20px 0px;
+    /* Date-band geometry shared by desktop + mobile compact connectors. */
+    --ctw-compact-label-bar-height: calc(38px + var(--ctw-cbx-date-font-size, var(--ctw-lbl-big-size, 20px)));
+    --ctw-compact-label-bar-center: calc(var(--ctw-compact-label-bar-height) / 2);
+    /* Slightly larger than legacy ibx/2 so the tip reads on the tall date band. */
+    --ctw-compact-arw-size: calc(var(--ctw-ibx-size) * 0.62);
+    /* Desktop story gutter toward the line (matches legacy ibx + 10). */
+    --ctw-compact-story-line-pad: calc(var(--ctw-ibx-size) + 10px);
+}
+
+
+/* --------------------------------------------------------------------------
+   1b. Full-bleed title band and media
+
+   The card's padding insets the copy, and the title band and the story media
+   cancel that inset with a negative margin the width of --ctw-cbx-pad, so
+   both still read edge to edge. .ctl-content already has overflow: hidden and
+   border-radius in the legacy sheet, so the band's top corners get clipped to
+   the card radius without needing a radius of their own.
+
+   The bleed also covers the card's 1px border: without the border term the
+   band stops at the padding edge and a white fringe shows in the rounded
+   corners (the border ring peeks past the fill).
+
+   Excluded on the clean skin, which draws no title background - the same way
+   Pro excludes its light and dark skins from this treatment.
+   -------------------------------------------------------------------------- */
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-clean-skin, .ctl-compact-wrapper) .ctl-title,
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-clean-skin, .ctl-compact-wrapper) .ctl-content > .ctl-media:not(.small) {
+    width: calc(100% + (2 * var(--ctw-cbx-pad, 20px)) + (2 * var(--ctw-cbx-bd-left-width, 1px))) !important;
+    max-width: none !important;
+    margin-left: calc(-1 * var(--ctw-cbx-pad, 20px) - var(--ctw-cbx-bd-left-width, 1px)) !important;
+    margin-right: calc(-1 * var(--ctw-cbx-pad, 20px) - var(--ctw-cbx-bd-right-width, 1px)) !important;
+}
+
+/* Title band is the first thing in the card, so it also cancels the top pad
+   and the top border. */
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-clean-skin, .ctl-compact-wrapper) .ctl-title:first-child {
+    margin-top: calc(-1 * var(--ctw-cbx-pad, 20px) - var(--ctw-cbx-bd-top-width, 1px)) !important;
+}
+
+/* The mirror of the rule above, at the other end of the card. The bottom
+   padding is there to sit under the description; hide the description
+   (story-content="hide" emits no .ctl-description) and whatever is last has
+   to carry the card's bottom edge instead - and the two things that can be
+   last both run edge to edge, so the padding shows as a white strip under
+   them. Media last leaves a band below a full-bleed image; title last leaves
+   one under the coloured band. Zero it and both reach the card's bottom
+   border and take its rounded corners, the way the title band does at the top.
+
+   Not compact: its running order puts the plain-text title last, not a
+   bleeding block, so zeroing there would pull body text hard against the
+   border. Clean skin is out for the matching reason: it neither bleeds its
+   media nor paints a title band, so it has no strip to remove. */
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-clean-skin, .ctl-compact-wrapper) .ctl-content:not(:has(> .ctl-description)) {
+    padding-bottom: 0 !important;
+}
+
+/* The media itself fills the wrapper the rule above widened. */
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-clean-skin, .ctl-compact-wrapper) .ctl-content > .ctl-media:not(.small) img,
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-clean-skin, .ctl-compact-wrapper) .ctl-content > .ctl-media:not(.small) iframe {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+
+
+/* Both-side and one-side stack title band -> media -> description. The band
+   cancels the card's top padding, so with no featured image the description
+   starts flush against the coloured band with nothing between them. Same 17px
+   the compact title gets in section 5. */
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-content:not(:has(> .ctl-media)) .ctl-description {
+    padding-top: 17px !important;
+}
+
+
+/* Pointer: Pro's Timeline Widget recipe — half-fill gradient diamond centred
+   on the card edge. Free previously painted a SOLID diamond so the half under
+   the coloured title band disappeared green-on-green; with show-title=hide
+   that tucked half sat on the image and read as a full diamond stuck on the
+   corner. Pro keeps the inner half transparent, so only the outer triangle
+   shows whether the card starts with a title band or with media.
+
+   Span is arw-size / 1.5 (Pro default 34 → ~22.67px). Free has no arrow-size
+   setting, so the 34px fallback is the shipped size. Seat uses
+   --ctw-cbx-edge-inset (0 here — Free's legacy sheet has no 3px content
+   margin Pro accounts for) so the flat edge lands on the card border. */
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story {
+    --ctw-arw-span: calc(var(--ctw-arw-size, 34px) / 1.5);
+    --ctw-cbx-edge-inset: 0px;
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-arrow {
+    z-index: 4;
+    overflow: visible;
+    box-sizing: border-box;
+    box-shadow: none !important;
+    width: var(--ctw-arw-span) !important;
+    height: var(--ctw-arw-span) !important;
+    clip-path: none !important;
+    -webkit-clip-path: none !important;
+    transform: rotate(45deg) !important;
+    background: linear-gradient(to top right, var(--ctw-arw-bg) 52%, transparent 48%) !important;
+    border-style: var(--ctw-cbx-bd-style, solid) !important;
+    border-color: var(--ctw-cbx-bd-color, var(--ctw-arw-bd-color)) !important;
+    border-width: 0 0 var(--ctw-cbx-bd-left-width, 1px) var(--ctw-cbx-bd-left-width, 1px) !important;
+    left: calc(var(--ctw-cbx-edge-inset, 0px) - var(--ctw-arw-span) / 2 + var(--ctw-cbx-bd-left-width, 0px) / 3) !important;
+    right: auto !important;
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-arrow {
+    background: linear-gradient(to bottom left, var(--ctw-arw-bg) 52%, transparent 48%) !important;
+    border-width: var(--ctw-cbx-bd-right-width, 1px) var(--ctw-cbx-bd-right-width, 1px) 0 0 !important;
+    left: auto !important;
+    right: calc(var(--ctw-cbx-edge-inset, 0px) - var(--ctw-arw-span) / 2 + var(--ctw-cbx-bd-right-width, 0px) / 3) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. Copy, media and Read More spacing
+   -------------------------------------------------------------------------- */
+
+.ctl-new-design.ctl-wrapper .ctl-description p {
+    margin: 0px;
+    padding: 0px;
+}
+
+/* Beat the block editor theme's paragraph margin on the story description
+   (.editor-styles-wrapper .is-root-container p { margin-bottom: 1.6em }). */
+.editor-styles-wrapper .block-editor-block-list__layout.is-root-container .ctl-new-design.ctl-wrapper .ctl-description p {
+    margin: 0;
+    margin-bottom: 0;
+}
+
+.ctl-new-design.ctl-wrapper .ctl-media img,
+.ctl-new-design.ctl-wrapper .ctl-media iframe,
+.ctl-new-design.ctl-wrapper .ctl-content :where(img, iframe) {
+    padding: 0 !important;
+}
+
+/* No copy under the media - drop the gap the image would otherwise leave. */
+.ctl-new-design.ctl-wrapper .ctl-story .ctl-content:not(:has(> .ctl-description)) .ctl-media,
+.ctl-new-design.ctl-wrapper .ctl-story .ctl-content:not(:has(> .ctl-description)) .ctl-media img,
+.ctl-new-design.ctl-wrapper .ctl-story .ctl-content:not(:has(> .ctl-description)) .ctl-media iframe {
+    margin-bottom: 0 !important;
+}
+
+/* Description embeds must not stretch.
+
+   Themes wrap an oEmbed in an aspect-ratio box - Astra's .ast-oembed-container
+   is `position: relative; padding-bottom: 56.25%; height: 0` with the iframe
+   absolutely filling it - and Astra additionally writes an inline
+   `height: 100%` on it.
+
+   .ctl-content is a flex container and .ctl-description is a flex item, so it
+   stretches and therefore has a DEFINITE height. That is what makes the inline
+   `height: 100%` resolve instead of collapsing to auto: the box takes the
+   description's full height and then adds its own 56.25% aspect padding on top.
+   The surplus overflows the card, .ctl-content clips it at the border box with
+   overflow: hidden, and the card's bottom padding disappears with it - which is
+   why it only happens on stories whose description carries a video, and why it
+   happens in every layout.
+
+   Sizing the item from its content instead of stretching it leaves the height
+   indefinite, so `height: 100%` falls back to auto and the aspect padding alone
+   sizes the box. Theme-agnostic: nothing here names a theme's classes, and the
+   description is alone on its flex line at width 100%, so not stretching it
+   changes nothing else about the layout. */
+.ctl-new-design.ctl-wrapper .ctl-content > .ctl-description {
+    align-self: flex-start;
+}
+
+.ctl-new-design.ctl-wrapper a.ctl_read_more {
+    border: none;
+    padding: 12px 20px;
+    margin: 22px 0px 0px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: normal;
+    border-radius: var(--ctw-read-more-radius, 10px);
+    -webkit-border-radius: var(--ctw-read-more-radius, 10px);
+    -moz-border-radius: var(--ctw-read-more-radius, 10px);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* The rule above drops Free's 1px outline, which was the only thing making the
+   link visible - without a fill it reads as bare text in the middle of the
+   copy. Pro's Default design paints it with the story's own colour, alternating
+   first/second exactly as the title band does, so take the same pair.
+
+   The label is #fff rather than Pro's var(--ctw-cbx-title-color). That variable
+   is white at Free's wrapper level, but the compact sheet re-points it at the
+   story colour (ctl-compact-style.css:17-32, and #666 at :10) - the same colour
+   this button is filled with, so the text was painting itself invisible. The
+   fill is always a saturated story colour, so white is the one value that
+   works in every layout. */
+.ctl-new-design.ctl-wrapper .cool-timeline-wrapper:not(.ctl-clean-skin) .ctl-story.odd a.ctl_read_more {
+    background-color: var(--ctw-first-story-color);
+    color: #fff;
+}
+
+.ctl-new-design.ctl-wrapper .cool-timeline-wrapper:not(.ctl-clean-skin) .ctl-story.even a.ctl_read_more {
+    background-color: var(--ctw-second-story-color);
+    color: #fff;
+}
+
+.ctl-new-design.ctl-wrapper .cool-timeline-wrapper:not(.ctl-clean-skin) .ctl-story.odd a.ctl_read_more:hover {
+    background-color: color-mix(in srgb, var(--ctw-first-story-color) 90%, black);
+    color: #fff;
+}
+
+.ctl-new-design.ctl-wrapper .cool-timeline-wrapper:not(.ctl-clean-skin) .ctl-story.even a.ctl_read_more:hover {
+    background-color: color-mix(in srgb, var(--ctw-second-story-color) 90%, black);
+    color: #fff;
+}
+
+/* Free appends the link inside the excerpt's last paragraph, so it sits inline
+   after the trailing ellipsis. Pro's button is a block of its own. */
+.ctl-new-design.ctl-wrapper .ctl-description a.ctl_read_more {
+    display: table;
+    filter: none;
+    -webkit-filter: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   2b. Editor preview - no theme underline on Read More
+
+   Ported from Pro's section 42. The button is drawn as a filled chip and
+   ctl-common-styles.css already takes its underline off, at a weight that
+   holds on the front end. It does not hold inside the block editor: the
+   theme's editor stylesheet is loaded there too, and themes underline content
+   links from `.editor-styles-wrapper .is-root-container a` - same 0,2,1 as
+   the plugin's `.ctl-wrapper a.ctl_read_more` but later in source order. So
+   the chip came out underlined in the preview and nowhere else.
+
+   Both class names the loop can emit: class-ctl-helpers.php:177 writes
+   `class="read_more ctl_read_more"`. Plus the states a theme usually
+   decorates.
+
+   Two anchors, because only one of them is guaranteed: .ctl-editor-preview is
+   added by the shortcode itself and so depends on the render going through
+   the SSR path, while .editor-styles-wrapper is the canvas the block editor
+   always puts around its content. Neither exists on a published page, so the
+   front end keeps the rule it already had at its original weight and a site
+   that deliberately underlines its buttons is unaffected there.
+   -------------------------------------------------------------------------- */
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview a.ctl_read_more,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview a.read_more,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview a.ctl_read_more:hover,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview a.read_more:hover,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview a.ctl_read_more:focus,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview a.read_more:focus,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper a.ctl_read_more,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper a.read_more,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper a.ctl_read_more:hover,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper a.read_more:hover,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper a.ctl_read_more:focus,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper a.read_more:focus {
+    text-decoration: none !important;
+}
+
+/* No rule for .ctl-label-big here on purpose. Pro hard-codes font-weight: 600
+   on it, but Free's .ctl-label-big already reads font-weight from
+   var(--ctw-cbx-date-font-weight) (ctl-common-styles.css), and the token block
+   above points that at var(--ctl-set-date-font-weight, 600). So the weight is
+   600 by default and follows the Date typography setting when one is set -
+   restating 600 here would win on specificity and lock the setting out.
+
+   .ctl-label-small is not rendered by Free at all, so Pro's rules for it are
+   left out rather than shipped dead. */
+
+
+/* --------------------------------------------------------------------------
+   3. Vertical (both-sided) - card, marker and label gap against the line
+
+   Free's legacy sheet has no --ctw-story-line-gap term at all: the card sits
+   flush against the marker. These re-state Free's own geometry with the gap
+   folded in, so the card, the icon, the dot and the labels all move together.
+
+   Desktop only (min-width: 768px). Ungated, the higher-specificity 50% width
+   and absolute label offsets beat Free's mobile single-column rules and crush
+   both-sided cards to ~half of half the viewport - the same class of bug Pro
+   avoids by keeping its gap-aware 50% width at the same specificity as its
+   mobile 100% override. Gate here; section 7 restores mobile width explicitly.
+   -------------------------------------------------------------------------- */
+
+@media only screen and (min-width: 768px) {
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided, .ctl-compact-wrapper) .ctl-story {
+        width: calc(50% - var(--ctw-ibx-size) - var(--ctw-story-line-gap, 0px));
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided, .ctl-compact-wrapper) .ctl-icon {
+        left: calc(0px - var(--ctw-ibx-size) - (var(--ctw-ibx-size) - 5px) / 2 - var(--ctw-story-line-gap, 0px));
+    }
+
+    /* `left: auto` is load-bearing, not tidiness. The rule above sets `left` on
+       every .ctl-icon in the layout, left-hand stories included, and its :not()
+       carries two extra classes of specificity - so it outranks the legacy
+       `left: auto` that Free's own left-story rule relies on. With both `left` and
+       `right` resolved on an absolutely positioned box of known width, `left` wins
+       in LTR, and the marker was landing that far OUTSIDE the card's left edge
+       instead of on the rail at its right. Cancelling `left` here hands the box
+       back to `right`.
+
+       Mirror of the right-side formula above, so both markers land on the rail.
+       Free (and Pro) leave the left one on an older `ibx/2 - ibx*1.9` expression,
+       which is not the mirror of `-ibx - (ibx-5)/2`: it parks the left icon 1.5px
+       off centre at the default 40px marker, and further out as the marker grows.
+       Solving the same centring for a right-anchored box gives the offset below. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided, .ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-icon {
+        left: auto;
+        right: calc(0px - var(--ctw-ibx-size) - (var(--ctw-ibx-size) - 5px) / 2 - var(--ctw-story-line-gap, 0px));
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided, .ctl-compact-wrapper) .ctl-icondot {
+        left: calc(0px - var(--ctw-ibx-size) - var(--ctw-ibx-size) / 4 - var(--ctw-line-width) / 6 - var(--ctw-story-line-gap, 0px));
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided, .ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-icondot {
+        left: auto;
+        right: calc(0px - var(--ctw-ibx-size) - var(--ctw-ibx-size) / 4 + var(--ctw-line-width) / 4 - var(--ctw-story-line-gap, 0px));
+    }
+
+    /* Vertical placement of the labels is set by the title-bar centering in
+       section 6 below; these only move them out horizontally.
+
+       The gap is counted TWICE on purpose, which is what Pro does. One gap cancels
+       the card's own move - the label is positioned off the card's edge, and the
+       card has just stepped away from the rail - and the second opens the same gap
+       again between the marker and the label. With a single gap the label simply
+       travelled with the card and sat as tight to the marker as before.
+
+       No +/-10px nudge. Pro carries one, but dropping it is what makes the two
+       gaps either side of the marker equal, which is the point of the gap:
+
+         marker -> card  = (ibx + gap) - (ibx - 5)/2   = ibx/2 + 5/2 + gap
+         label -> marker = (ibx*2 + gap*2) - ibx - gap - (ibx - 5)/2
+
+       which reduce to the same length once the nudge is gone - and they stay equal
+       for the dot marker too, whose smaller width cancels out of both sides. With
+       Pro's +10px the label sat 10px further out than the card, so the marker read
+       as off-centre between them. Compact keeps its own label placement. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-labels {
+        right: calc(100% + var(--ctw-ibx-size) * 2 + (var(--ctw-story-line-gap, 0px) * 2));
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story.ctl-story-dot-icon .ctl-labels {
+        right: calc(100% + var(--ctw-ibx-size) * 2 + (var(--ctw-story-line-gap, 0px) * 2));
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-labels {
+        left: calc(100% + var(--ctw-ibx-size) * 2 + (var(--ctw-story-line-gap, 0px) * 2));
+        right: auto;
+    }
+
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper .ctl-year {
+    margin: 22px 0 50px 0px;
+}
+
+/* One-side hangs the year badge at left: -115px and joins it to the rail with
+   a fixed 37px stub (.ctl-year:after), a width that only reaches when the
+   badge is Free's original 80px. The refresh takes Pro's 70px badge, which
+   pulls the badge's right edge 10px further from the rail and leaves the stub
+   hanging in mid-air. Measure the stub from the badge instead of hard-coding
+   it, so it closes the distance at any badge size - the 2px is the overlap
+   Free's 37px already carried at 80px, keeping the join solid. */
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-year:after {
+    width: calc(115px - var(--ctw-ybx-size) + 2px);
+}
+
+
+        /* --------------------------------------------------------------------------
+   4. One-side layout
+
+   One-side is not the both-sided layout with one column hidden - it is its own
+   coordinate system. Free lays it out with a 300px left gutter on the wrapper
+   (.ctl-one-sided { padding-left: 300px }), pins the rail's ends at 297px,
+   caps the card at max-width: 600px and centres both markers on the rail with
+   transform: translateX(-50%) rather than by offset alone.
+
+   Pro's one-side numbers are written against a different base - no gutter, no
+   translate, no cap - so porting them lands the card, the rail and the markers
+   in three different places at once. Only the line gap is taken here, written
+   in Free's own terms: the card moves right by the gap and the markers move
+   left by the same amount, so the card clears the rail while the markers stay
+   on it. Everything else is left to Free's own rules.
+   -------------------------------------------------------------------------- */
+
+@media only screen and (min-width: 769px) {
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story {
+        left: calc(31px + var(--ctw-ibx-size) / 4 + var(--ctw-story-line-gap, 0px));
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-story.ctl-story-icon {
+        left: calc(31px + var(--ctw-ibx-size) / 2 + var(--ctw-story-line-gap, 0px));
+    }
+
+    /* Keep Free's translateX(-50%) centring - only take back the gap the card
+       just moved, so the marker stays on the rail. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-icon {
+        left: calc(-30px - var(--ctw-ibx-size) / 2 - var(--ctw-story-line-gap, 0px));
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-icondot {
+        left: calc(-30px - var(--ctw-ibx-size) / 4 - var(--ctw-story-line-gap, 0px));
+    }
+
+}
+
+
+/* --------------------------------------------------------------------------
+   5. Compact layout
+
+   Same recipe Pro gives compact default: content keeps side/bottom padding,
+   the date band cancels it (and the border) so the coloured strip is flush
+   with the card edge, title is a plain heading (not a second coloured band),
+   and media spans the card width.
+   -------------------------------------------------------------------------- */
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content {
+    padding: 0 var(--ctw-cbx-pad, 22px) var(--ctw-cbx-pad, 22px);
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-title {
+    background: transparent !important;
+    background-color: transparent !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    padding: var(--ctw-cbx-title-padding, 0px 0px 20px 0px) !important;
+}
+
+/* Compact stacks date band -> media -> title. The card carries no top padding
+   (the band bleeds into it), so with no featured image the title butts
+   straight against the coloured band. Give it the gap the media would have
+   provided. :has() is unsupported nowhere this sheet already targets, and an
+   engine without it simply drops the rule and keeps today's spacing. */
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content:not(:has(> .ctl-media)) .ctl-title {
+    padding-top: 17px !important;
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-labels {
+    width: calc(100% + (2 * var(--ctw-cbx-pad, 22px)) + (2 * var(--ctw-cbx-bd-left-width, 1px))) !important;
+    max-width: none;
+    margin-left: calc(-1 * var(--ctw-cbx-pad, 22px) - var(--ctw-cbx-bd-left-width, 1px)) !important;
+    margin-right: calc(-1 * var(--ctw-cbx-pad, 22px) - var(--ctw-cbx-bd-right-width, 1px)) !important;
+    margin-bottom: 0 !important;
+    padding: var(--ctw-compact-label-padding, 19px 22px 19px 22px);
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content > .ctl-media:not(.small),
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content > .full-width {
+    width: calc(100% + (2 * var(--ctw-cbx-pad, 22px))) !important;
+    max-width: none !important;
+    margin-left: calc(-1 * var(--ctw-cbx-pad, 22px)) !important;
+    margin-right: calc(-1 * var(--ctw-cbx-pad, 22px)) !important;
+    padding: 0 !important;
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content > .ctl-media:not(.small) img,
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content > .ctl-media:not(.small) iframe,
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content > .full-width img,
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-content > .full-width iframe {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+}
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-icon {
+    left: calc(0px - (var(--ctw-ibx-size) - 5px) / 2);
+}
+
+/* Compact desktop: solid diamond seated on the date band (legacy left a
+   15px square too high on the 72px band, so only a blunt tip showed). */
+@media only screen and (min-width: 768px) {
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-start,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-end {
+        /* Circle is 4*line wide; centre on the 50% line. Legacy used 2.1*line
+           and sat ~0.3px left of true centre. */
+        left: calc(50% - var(--ctw-line-width) * 2) !important;
+    }
+
+    /* The editor twins on every compact arrow rule below exist because
+       includes/shortcode-blocks/src/style.scss pins the compact pointer to
+       Free's LEGACY geometry with !important - seat, half-transparent
+       gradient, border rim and drop shadow - and the block assets are
+       enqueued after this sheet. Its heaviest compact arrow rule reaches
+       0,8,0, so a plain restatement here ties it and loses on source order:
+       the preview kept the old wedge while the front end moved. Naming
+       .cool-timeline-wrapper alongside .ctl-vertical-wrapper (the same
+       element) puts these at 0,9,0 and clear of it. They are appended to the
+       existing selector lists rather than restated so the two cannot drift
+       apart, and they sit inside the same media queries, so the preview
+       follows the canvas width exactly as the front end follows the
+       viewport. Every compact story carries a side class, so naming both
+       sides covers all of them. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-arrow,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+    .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+    .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow {
+        /* -10px matches legacy content margin-top on desktop compact. */
+        top: calc(var(--ctw-compact-label-bar-center) - var(--ctw-compact-arw-size) / 2 - 10px) !important;
+        width: var(--ctw-compact-arw-size) !important;
+        height: var(--ctw-compact-arw-size) !important;
+        z-index: 5 !important;
+        background: var(--ctw-arw-bg) !important;
+        background-image: none !important;
+        border-style: var(--ctw-cbx-bd-style, solid) !important;
+        border-color: var(--ctw-cbx-bd-color, var(--ctw-arw-bd-color)) !important;
+        /* Left-pointing pair by default; the left-hand rule below flips it. */
+        border-width: 0 0 var(--ctw-cbx-bd-left-width, 1px) var(--ctw-cbx-bd-left-width, 1px) !important;
+        box-shadow: none !important;
+        transform: rotate(45deg) !important;
+        clip-path: none !important;
+        -webkit-clip-path: none !important;
+        margin-top: 0 !important;
+    }
+
+    /* Centre the diamond on the content edge - the story's padding toward the
+       line is exactly --ctw-compact-story-line-pad, so half the square lands
+       inside the card and half outside.
+
+       No large tuck term: the old +3px drew ~4px of the arrow's border
+       diagonally across the card's face, which read as a notch cut into the
+       story. The right-hand side takes 1px, though, and the left-hand side
+       none. They are not arbitrary - seated at exactly 0 the two sides land a
+       hair either side of the edge (measured: left centre 0.015px inside the
+       card, right centre 0.015px outside), so at a device pixel ratio of 1 the
+       right-hand arrow can round one pixel clear of the card and show daylight
+       while the left one stays covered. 1px inward absorbs that. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+    .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+    .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow {
+        left: calc(var(--ctw-compact-story-line-pad) - var(--ctw-compact-arw-size) / 2 + 1px) !important;
+        right: auto !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow {
+        right: calc(var(--ctw-compact-story-line-pad) - var(--ctw-compact-arw-size) / 2) !important;
+        left: auto !important;
+        border-width: var(--ctw-cbx-bd-right-width, 1px) var(--ctw-cbx-bd-right-width, 1px) 0 0 !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-icondot {
+        top: calc(var(--ctw-compact-label-bar-center) - var(--ctw-ibx-size) / 4 - 10px) !important;
+        margin-top: 0 !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-icon {
+        top: calc(var(--ctw-compact-label-bar-center) - ((var(--ctw-ibx-size) - 5px) / 2) - 10px) !important;
+        transform: none !important;
+        margin-top: 0 !important;
+    }
+
+    /* Labels sit in the content box, which has a negative margin-top on
+       desktop compact - so a story-relative top misses the band. Anchor to
+       the date strip instead (same recipe as mobile). */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story {
+        anchor-scope: --ctl-compact-label;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-labels {
+        anchor-name: --ctl-compact-label;
+    }
+
+    @supports (anchor-name: --ctl-compact-label) {
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-arrow,
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+        .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+        .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+        .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+        .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow {
+            position-anchor: --ctl-compact-label;
+            top: anchor(center) !important;
+            translate: 0 -50%;
+            transform: rotate(45deg) !important;
+        }
+
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-icondot,
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-icon {
+            position-anchor: --ctl-compact-label;
+            top: anchor(center) !important;
+            transform: translateY(-50%) !important;
+        }
+    }
+
+}
+
+
+/* --------------------------------------------------------------------------
+   6. Centre the marker, connector and labels on the title bar
+
+   Free's legacy sheet anchors each of these separately off --ctw-ibx-position
+   (a fixed 0 on vertical - it is a Pro-only setting, so nothing is lost by
+   dropping it here), which leaves them sitting slightly high against the new
+   card. Pro measures the title band instead and centres all four on it, so
+   the icon, the dot, the connector and the date label line up with the middle
+   of the coloured band. Same formulas as Pro, with one substitution:
+
+     --ctw-arw-align-offset  dropped - Pro's arrow-size setting, absent here
+     (span itself is --ctw-arw-span from the pointer block: arw-size/1.5)
+
+   --ctw-cbx-title-line-height MUST be a length: Free's legacy default is
+   `normal`, and `calc()` with `normal` in it is invalid at computed-value
+   time, which would drop every `top` below to auto.
+
+   Skips compact, which keeps its own marker positions, exactly as Pro does.
+   -------------------------------------------------------------------------- */
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) {
+    --ctw-title-pad-y: 19px;
+    --ctw-title-bar-height: calc((var(--ctw-title-pad-y, 19px) * 2.5) + var(--ctw-cbx-title-line-height, 30px));
+    --ctw-title-bar-center: calc(var(--ctw-title-bar-height) / 2);
+}
+
+/* --------------------------------------------------------------------------
+   6a. Hide title — Pro parity
+
+   show-title=hide drops .ctl-title. Pro only zeroes the card's top pad so
+   media / copy start on the card edge; markers stay on --ctw-title-bar-center
+   (the half-fill wedge from the pointer block above still reads as a clean
+   triangle against media). Compact keeps its own seats.
+   -------------------------------------------------------------------------- */
+
+.ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-content:not(:has(> .ctl-title)) {
+    padding-top: 0;
+}
+
+@media only screen and (min-width: 768px) {
+
+    /* The icon box is ibx-size - 5, not ibx-size, so halve the box rather than
+       ibx-size or its centre parks 2.5px above the dot and the connector. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-icon {
+        top: calc(var(--ctw-title-bar-center) - ((var(--ctw-ibx-size) - 5px) / 2)) !important;
+        margin-top: 0 !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-icondot {
+        top: calc(var(--ctw-title-bar-center) - (var(--ctw-ibx-size) / 4)) !important;
+        margin-top: 0 !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-arrow {
+        top: calc(var(--ctw-title-bar-center) - (var(--ctw-arw-span) / 2)) !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-labels {
+        top: calc(var(--ctw-title-bar-center) - (var(--ctw-lbl-big-size) / 2)) !important;
+    }
+
+}
+
+
+/* --------------------------------------------------------------------------
+   6b. Editor preview - the same centring, without the width guard
+
+   Section 6 applies from 768px up, which is correct on the front end: below
+   that Free switches to its own single-column marker anchors. The block
+   editor's canvas is its own viewport though, and with the settings sidebar
+   open it is routinely narrower than 768px while still previewing the desktop
+   layout - so the guard left the markers on the mobile anchors and the preview
+   disagreed with the published page. Anchor on the editor rather than on width.
+
+   Two selectors because only one of them is guaranteed: .ctl-editor-preview is
+   added by the shortcode on the SSR pass (ctl_config_layouts), while
+   .editor-styles-wrapper is the canvas the block editor always wraps its
+   content in. Neither exists on a published page, so the front end is
+   untouched either way.
+
+   IMPORTANT: still gated at 768px. Ungated, these !important tops outrank
+   section 7's mobile seat (labels in flow + --ctw-mobile-labels-offset) in
+   the editor device preview, so the arrow stayed on the desktop title-bar
+   line while the stack had already moved — broken tip next to the rail.
+   Above 768 the canvas is wide enough for the desktop geometry these restore.
+   -------------------------------------------------------------------------- */
+
+@media only screen and (min-width: 768px) {
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-icon,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-icon {
+    top: calc(var(--ctw-title-bar-center) - ((var(--ctw-ibx-size) - 5px) / 2)) !important;
+    margin-top: 0 !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-icondot,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-icondot {
+    top: calc(var(--ctw-title-bar-center) - (var(--ctw-ibx-size) / 4)) !important;
+    margin-top: 0 !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-arrow,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-arrow {
+    top: calc(var(--ctw-title-bar-center) - (var(--ctw-arw-span) / 2)) !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-labels,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-labels {
+    top: calc(var(--ctw-title-bar-center) - (var(--ctw-lbl-big-size) / 2)) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   6c. Editor preview - outrank the block stylesheet
+
+   includes/shortcode-blocks/src/style.scss pins the marker, the label and the
+   connector to Free's LEGACY desktop positions with !important, because the
+   editor canvas is frequently under 768px and Free's mobile CSS would other-
+   wise take over a preview that is meant to show the desktop layout. It was
+   written before this sheet existed, so what it restores is the pre-refresh
+   geometry: markers anchored off --ctw-ibx-position instead of centred on the
+   title bar, and horizontal offsets with no --ctw-story-line-gap term at all.
+
+   Its selectors run to 0,7,0 and 0,8,0, so section 6b's !important lost to it
+   on specificity and the preview kept the old placement while the front end
+   moved. These restate the refreshed geometry one class heavier than the
+   heaviest of those rules. Note the marker rules must carry the side class:
+   the block sheet writes its icon and dot `top` per side (0,8,0), so a generic
+   `.ctl-story .ctl-icon` here ties it and loses on source order - the block
+   assets are enqueued after this sheet. Its arrow and label `top` are generic
+   (0,7,0), so those two are already outranked.
+
+   The real fix is in that stylesheet - it now carries
+   a :not(.ctl-new-design) guard - but that only takes effect once the block
+   assets are rebuilt, and this sheet ships on its own.
+
+   Same 768 gate as 6b: below that the mobile stack must own the markers.
+   -------------------------------------------------------------------------- */
+
+/* The card width has to come first: every marker offset below is measured from
+   the story's inner edge, and the block sheet pins that edge with
+   `width: calc(50% - var(--ctw-ibx-size))` - the pre-refresh width, with no
+   --ctw-story-line-gap term. That leaves the card a gap's width too wide, its
+   inner edge a gap closer to the rail, and every marker measured off it lands
+   a gap out: the right-hand icon sits --ctw-story-line-gap left of the rail and
+   the left-hand dot the same distance right of it. Restoring the width puts the
+   edge back where the offsets expect it, and the markers centre on their own.
+   Per side as well as bare, because the block sheet names both. */
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right {
+    width: calc(50% - var(--ctw-ibx-size) - var(--ctw-story-line-gap, 0px)) !important;
+}
+
+/* Per side, not bare. The block sheet's arrow rule carries TWO selectors:
+   `.ctl-story .ctl-arrow` at 0,7,0, which a bare rule here outranks, and
+   `.ctl-story.ctl-story-left .ctl-arrow` at 0,8,0, which it only ties - and
+   loses to on source order. That is why right-hand arrows followed the title
+   bar while left-hand ones stayed on the legacy anchor. Naming the side on
+   both puts them at 0,9,0 and clear of either. */
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-arrow,
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-arrow,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-arrow,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-arrow {
+    top: calc(var(--ctw-title-bar-center) - (var(--ctw-arw-span) / 2)) !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story .ctl-labels,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story .ctl-labels {
+    top: calc(var(--ctw-title-bar-center) - (var(--ctw-lbl-big-size) / 2)) !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-icon,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-icon {
+    top: calc(var(--ctw-title-bar-center) - ((var(--ctw-ibx-size) - 5px) / 2)) !important;
+    margin-top: 0 !important;
+    left: calc(0px - var(--ctw-ibx-size) - (var(--ctw-ibx-size) - 5px) / 2 - var(--ctw-story-line-gap, 0px)) !important;
+    right: auto !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-icon,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-icon {
+    top: calc(var(--ctw-title-bar-center) - ((var(--ctw-ibx-size) - 5px) / 2)) !important;
+    margin-top: 0 !important;
+    left: auto !important;
+    right: calc(0px - var(--ctw-ibx-size) - (var(--ctw-ibx-size) - 5px) / 2 - var(--ctw-story-line-gap, 0px)) !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-icondot,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-icondot {
+    top: calc(var(--ctw-title-bar-center) - (var(--ctw-ibx-size) / 4)) !important;
+    margin-top: 0 !important;
+    left: calc(0px - var(--ctw-ibx-size) - var(--ctw-ibx-size) / 4 - var(--ctw-line-width) / 6 - var(--ctw-story-line-gap, 0px)) !important;
+    right: auto !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-icondot,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-icondot {
+    top: calc(var(--ctw-title-bar-center) - (var(--ctw-ibx-size) / 4)) !important;
+    margin-top: 0 !important;
+    left: auto !important;
+    right: calc(0px - var(--ctw-ibx-size) - var(--ctw-ibx-size) / 4 + var(--ctw-line-width) / 4 - var(--ctw-story-line-gap, 0px)) !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-labels,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-right .ctl-labels {
+    right: calc(100% + var(--ctw-ibx-size) * 2 + (var(--ctw-story-line-gap, 0px) * 2)) !important;
+    left: auto !important;
+}
+
+.ctl-new-design.ctl-wrapper.ctl-editor-preview .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-labels,
+.editor-styles-wrapper .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-both-sided:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-labels {
+    left: calc(100% + var(--ctw-ibx-size) * 2 + (var(--ctw-story-line-gap, 0px) * 2)) !important;
+    right: auto !important;
+}
+
+} /* end min-width:768 editor preview 6b/6c */
+
+
+/* --------------------------------------------------------------------------
+   7. Small screens
+
+   Free's mobile geometry is its own self-consistent system (several
+   Free-only rules, some !important) and does not line up with Pro's mobile
+   constants for every offset, so most positional numbers stay on Free's
+   values. Pro's one-side mobile padding-left is left out too: Free
+   deliberately zeroes that gutter below 768px.
+
+   Width and label flow need an explicit reset (section 3's gap-aware 50%
+   width and absolute label seats outrank Free's legacy mobile rules).
+
+   Arrow / icon / dot need Pro's mobile title-bar seat: once labels are in
+   normal flow above the card, Free's legacy `labels~.ctl-arrow` top formula
+   parks the diamond on a fixed offset that no longer matches the coloured
+   title band, and left-story `right` is never cleared so the wedge can sit
+   in the gutter instead of on the card edge. Same recipe as Pro's
+   max-width:767 block - labels offset + title-bar centre, diamond half
+   outside the card, z-index above the title fill.
+   -------------------------------------------------------------------------- */
+
+@media only screen and (max-width: 767px) {
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided, .ctl-compact-wrapper) .ctl-story {
+        width: calc(100% - var(--ctw-ibx-size) * 1.5);
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-labels,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story.ctl-story-dot-icon .ctl-labels,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-labels {
+        position: relative;
+        left: 0;
+        right: auto;
+        top: 0;
+        width: 100%;
+        text-align: left !important;
+        margin: 20px 5px 20px 0px;
+    }
+
+    /* Labels sit in flow above the card (20 + date line + 20). Title-bar
+       tokens already exist from section 6; restate them here so the mobile
+       block does not depend on source order against other sheets. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) {
+        --ctw-title-pad-y: 19px;
+        --ctw-title-bar-height: calc((var(--ctw-title-pad-y, 19px) * 2.5) + var(--ctw-cbx-title-line-height, 30px));
+        --ctw-title-bar-center: calc(var(--ctw-title-bar-height) / 2);
+        /* Margin-top on in-flow labels collapses against the story, so only
+           the date row height + bottom margin separate the date from the title
+           band. Prefer the rendered date font size over --ctw-lbl-big-size
+           (still 20px here while settings often paint a larger date). */
+        --ctw-mobile-labels-offset: calc(var(--ctw-cbx-date-font-size, var(--ctw-lbl-big-size, 20px)) + 20px);
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story:not(:has(.ctl-labels)) {
+        --ctw-mobile-labels-offset: 0px;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story :is(.ctl-icon, .ctl-icondot, .ctl-arrow) {
+        margin-top: 0 !important;
+    }
+
+    /* Icon box is ibx-size - 5; top at the centre line, then translate back
+       by half so the box (not its top edge) sits on the title-bar centre. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-icon {
+        top: calc(var(--ctw-mobile-labels-offset) + var(--ctw-title-bar-center)) !important;
+        transform: translateY(-50%) !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-icondot {
+        top: calc(var(--ctw-mobile-labels-offset) + var(--ctw-title-bar-center)) !important;
+        transform: translateY(-50%) !important;
+    }
+
+    /* Mobile pointer: Pro half-fill wedge, same as desktop. Only the vertical
+       seat adds --ctw-mobile-labels-offset because the date stacks above the
+       card under 768px. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story .ctl-arrow,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-story.ctl-story-left .ctl-arrow {
+        top: calc(var(--ctw-mobile-labels-offset) + var(--ctw-title-bar-center) - (var(--ctw-arw-span) / 2)) !important;
+        left: calc(var(--ctw-cbx-edge-inset, 0px) - var(--ctw-arw-span) / 2 + var(--ctw-cbx-bd-left-width, 0px) / 3) !important;
+        right: auto !important;
+        width: var(--ctw-arw-span) !important;
+        height: var(--ctw-arw-span) !important;
+        z-index: 4 !important;
+        background: linear-gradient(to top right, var(--ctw-arw-bg) 52%, transparent 48%) !important;
+        border-style: var(--ctw-cbx-bd-style, solid) !important;
+        border-color: var(--ctw-cbx-bd-color, var(--ctw-arw-bd-color)) !important;
+        /* Every story is left-aligned under 768px, so both sides point left. */
+        border-width: 0 0 var(--ctw-cbx-bd-left-width, 1px) var(--ctw-cbx-bd-left-width, 1px) !important;
+        box-shadow: none !important;
+        transform: rotate(45deg) !important;
+        clip-path: none !important;
+        -webkit-clip-path: none !important;
+    }
+
+    /* Compact mobile: seat the diamond on the date band (not the legacy
+       ~8–14px top that parks it inside the card's 20px top-left radius —
+       that is the white fringe and the "top pointer" look). Square the
+       connector-side radii so the tuck stays green-on-green. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper {
+        /* Legacy's `ibx*1.5` gutter. This used to carry an extra +14px to
+           keep the diamond tip off the line marker, but the tip is seated at
+           `pad - arw/2`, so it moves with the gutter and the padding was
+           buying far more room than the marker needs: measured at ibx 30 the
+           tip cleared the icon by 32px, which just read as the card being
+           pushed away from the rail. Without the term the clearance is ~18px,
+           still comfortably clear. */
+        --ctw-compact-story-pad-left: calc(var(--ctw-ibx-size) * 1.5);
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story:nth-child(2) {
+        padding-left: var(--ctw-compact-story-pad-left) !important;
+    }
+
+    /* Start/end rings live on the wrapper; the line lives inside
+       .ctl-timeline (after the wrapper's 10px side padding). Legacy
+       `4% - line + 1.4*line` ignored that and sat the ring on the line's
+       left edge. Add the padding, subtract the 4% of the 20px side padding
+       (line's 4% is of the timeline width), then centre the 4*line-wide
+       circle on the line. */
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-start,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-end {
+        left: calc(10px + 4% - 0.8px - var(--ctw-line-width) * 2.5) !important;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story {
+        anchor-scope: --ctl-compact-label;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-labels {
+        anchor-name: --ctl-compact-label;
+    }
+
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-arrow,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+    .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+    .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+    .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow {
+        /* Fallback when anchor positioning is unavailable. */
+        top: calc(var(--ctw-compact-label-bar-center) - var(--ctw-compact-arw-size) / 2) !important;
+        /* Centre the pre-rotate square ON the padded content edge so half the
+           diamond sticks out and its transverse vertices land on the card's
+           border line. No tuck - see the desktop compact block above. */
+        left: calc(var(--ctw-compact-story-pad-left) - var(--ctw-compact-arw-size) / 2) !important;
+        right: auto !important;
+        width: var(--ctw-compact-arw-size) !important;
+        height: var(--ctw-compact-arw-size) !important;
+        z-index: 5 !important;
+        background: var(--ctw-arw-bg) !important;
+        background-image: none !important;
+        border-style: var(--ctw-cbx-bd-style, solid) !important;
+        border-color: var(--ctw-cbx-bd-color, var(--ctw-arw-bd-color)) !important;
+        /* Every story is left-aligned under 768px, so both sides point left. */
+        border-width: 0 0 var(--ctw-cbx-bd-left-width, 1px) var(--ctw-cbx-bd-left-width, 1px) !important;
+        box-shadow: none !important;
+        transform: rotate(45deg) !important;
+        clip-path: none !important;
+        -webkit-clip-path: none !important;
+        margin-top: 0 !important;
+    }
+
+
+    @supports (anchor-name: --ctl-compact-label) {
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-arrow,
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+        .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+        .ctl-new-design.ctl-wrapper.ctl-editor-preview .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow,
+        .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-left .ctl-arrow,
+        .editor-styles-wrapper .ctl-new-design.ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story.ctl-story-right .ctl-arrow {
+            position-anchor: --ctl-compact-label;
+            top: anchor(center) !important;
+            /* Individual translate runs before transform, so the -50% is
+               vertical in screen space; then rotate. A single
+               `translateY(-50%) rotate(45deg)` list rotates FIRST and the
+               nudge goes diagonal — that parked the tip at the header top. */
+            translate: 0 -50%;
+            transform: rotate(45deg) !important;
+        }
+
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-icondot,
+        .ctl-new-design.ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-story .ctl-icon {
+            position-anchor: --ctl-compact-label;
+            top: anchor(center) !important;
+            transform: translateY(-50%) !important;
+        }
+    }
+
+}

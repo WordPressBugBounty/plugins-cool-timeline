@@ -4,7 +4,7 @@
  * Cool Timeline Demo Generator
  *
  * Creates demo timeline stories and a draft page with the shortcode.
- * Used during onboarding for the Classic Shortcode-Based flow.
+ * Also creates a Bricks Story Timeline sample page during onboarding.
  *
  * @package CoolTimeline
  */
@@ -21,10 +21,11 @@ final class CTL_Demo_Generator {
 	/**
 	 * Option keys.
 	 */
-	const OPTION_CREATED  = 'ctl_demo_created';
-	const OPTION_PAGE_ID  = 'ctl_demo_page_id';
-	const OPTION_POST_IDS = 'ctl_demo_post_ids';
-	const META_DEMO_FLAG  = '_ctl_is_demo';
+	const OPTION_CREATED        = 'ctl_demo_created';
+	const OPTION_PAGE_ID        = 'ctl_demo_page_id';
+	const OPTION_POST_IDS       = 'ctl_demo_post_ids';
+	const OPTION_BRICKS_PAGE_ID = 'ctl_bricks_onboarding_demo_page_id';
+	const META_DEMO_FLAG        = '_ctl_is_demo';
 
 	/**
 	 * Custom post type slug.
@@ -300,6 +301,265 @@ final class CTL_Demo_Generator {
 		);
 
 		return $page_id;
+	}
+
+	/**
+	 * Create or reopen the sample Bricks timeline page.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function generate_bricks() {
+		$existing = $this->get_existing_bricks_demo();
+		if ( $existing ) {
+			return $existing;
+		}
+
+		$page_id = $this->create_bricks_timeline_page();
+		if ( is_wp_error( $page_id ) ) {
+			return $page_id;
+		}
+
+		update_option( self::OPTION_BRICKS_PAGE_ID, (int) $page_id, false );
+
+		$redirect = $this->bricks_builder_edit_url( (int) $page_id );
+		if ( '' === $redirect ) {
+			return new WP_Error( 'no_builder_url', __( 'Could not open the Bricks builder.', 'cool-timeline' ) );
+		}
+
+		return array(
+			'page_id'      => (int) $page_id,
+			'redirect_url' => $redirect,
+			'preview_url'  => $redirect,
+		);
+	}
+
+	/**
+	 * Reuse a still-valid Bricks demo page.
+	 *
+	 * @return array|false
+	 */
+	protected function get_existing_bricks_demo() {
+		if ( apply_filters( 'ctl_bricks_onboarding_force_new_page', false ) ) {
+			return false;
+		}
+
+		$page_id = (int) get_option( self::OPTION_BRICKS_PAGE_ID );
+		if ( ! $page_id ) {
+			return false;
+		}
+
+		$page = get_post( $page_id );
+		if ( ! $page || 'trash' === $page->post_status || ! $this->bricks_page_has_timeline( $page_id ) ) {
+			delete_option( self::OPTION_BRICKS_PAGE_ID );
+			return false;
+		}
+
+		$redirect = $this->bricks_builder_edit_url( $page_id );
+		if ( '' === $redirect ) {
+			return false;
+		}
+
+		return array(
+			'page_id'      => $page_id,
+			'redirect_url' => $redirect,
+			'preview_url'  => $redirect,
+			'already'      => true,
+		);
+	}
+
+	/**
+	 * Whether saved Bricks content includes a Story Timeline element.
+	 *
+	 * @param int $page_id Page ID.
+	 * @return bool
+	 */
+	protected function bricks_page_has_timeline( $page_id ) {
+		$elements = get_post_meta( (int) $page_id, $this->bricks_content_meta_key(), true );
+		if ( ! is_array( $elements ) ) {
+			return false;
+		}
+
+		foreach ( $elements as $element ) {
+			if ( is_array( $element ) && isset( $element['name'] ) && 'timeline-story' === $element['name'] ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Bricks builder URL for a page.
+	 *
+	 * @param int $page_id Page ID.
+	 * @return string
+	 */
+	protected function bricks_builder_edit_url( $page_id ) {
+		$page_id = (int) $page_id;
+		if ( $page_id < 1 ) {
+			return '';
+		}
+
+		if ( class_exists( '\Bricks\Helpers' ) && method_exists( '\Bricks\Helpers', 'get_builder_edit_link' ) ) {
+			$url = \Bricks\Helpers::get_builder_edit_link( $page_id );
+			if ( is_string( $url ) && '' !== $url ) {
+				return $url;
+			}
+		}
+
+		$base = get_permalink( $page_id );
+		if ( ! $base ) {
+			$base = home_url( '/?page_id=' . $page_id );
+		}
+
+		return add_query_arg( 'bricks', 'run', $base );
+	}
+
+	/**
+	 * Insert a draft page with section → container → Story Timeline.
+	 *
+	 * @return int|WP_Error
+	 */
+	protected function create_bricks_timeline_page() {
+		$page_id = wp_insert_post(
+			array(
+				'post_type'    => 'page',
+				'post_title'   => __( 'Sample Timeline', 'cool-timeline' ),
+				'post_status'  => 'draft',
+				'post_content' => '',
+				'meta_input'   => array(
+					self::META_DEMO_FLAG => 1,
+				),
+			),
+			true
+		);
+
+		if ( is_wp_error( $page_id ) || ! $page_id ) {
+			return is_wp_error( $page_id )
+				? $page_id
+				: new WP_Error( 'no_page', __( 'Could not create the timeline page.', 'cool-timeline' ) );
+		}
+
+		update_post_meta( (int) $page_id, $this->bricks_editor_mode_meta_key(), 'bricks' );
+		update_post_meta( (int) $page_id, $this->bricks_content_meta_key(), $this->bricks_timeline_elements() );
+
+		return (int) $page_id;
+	}
+
+	/**
+	 * Flat Bricks element tree with a seeded Story Timeline.
+	 *
+	 * @return array
+	 */
+	protected function bricks_timeline_elements() {
+		$section_id   = $this->bricks_random_id();
+		$container_id = $this->bricks_random_id();
+		$timeline_id  = $this->bricks_random_id();
+
+		return array(
+			array(
+				'id'       => $section_id,
+				'name'     => 'section',
+				'parent'   => 0,
+				'children' => array( $container_id ),
+				'settings' => array(),
+			),
+			array(
+				'id'       => $container_id,
+				'name'     => 'container',
+				'parent'   => $section_id,
+				'children' => array( $timeline_id ),
+				'settings' => array(),
+			),
+			array(
+				'id'       => $timeline_id,
+				'name'     => 'timeline-story',
+				'parent'   => $container_id,
+				'children' => array(),
+				'label'    => __( 'Story Timeline', 'cool-timeline' ),
+				'settings' => array(
+					'_twpbDemoStoriesSeeded' => true,
+					'stories'                => $this->bricks_demo_stories(),
+				),
+			),
+		);
+	}
+
+	/**
+	 * Demo stories (same set the builder seeds on a new element).
+	 *
+	 * @return array
+	 */
+	protected function bricks_demo_stories() {
+		if ( ! class_exists( 'CTL_Bricks_Demo_Images' ) ) {
+			$demo_images = CTL_PLUGIN_DIR . 'bricks/class-ctl-bricks-demo-images.php';
+			if ( file_exists( $demo_images ) ) {
+				require_once $demo_images;
+			}
+		}
+
+		if ( ! class_exists( 'CTL_Bricks_Element_Story_Timeline' ) ) {
+			$element = CTL_PLUGIN_DIR . 'bricks/elements/element-timeline-story.php';
+			if ( file_exists( $element ) ) {
+				require_once $element;
+			}
+		}
+
+		$stories = class_exists( 'CTL_Bricks_Element_Story_Timeline' )
+			? CTL_Bricks_Element_Story_Timeline::ctl_default_stories()
+			: array();
+
+		if ( ! is_array( $stories ) ) {
+			$stories = array();
+		}
+
+		foreach ( $stories as $index => $story ) {
+			if ( ! is_array( $story ) ) {
+				continue;
+			}
+			if ( empty( $story['id'] ) ) {
+				$stories[ $index ]['id'] = $this->bricks_random_id();
+			}
+			if ( empty( $story['ctl_story_tab'] ) ) {
+				$stories[ $index ]['ctl_story_tab'] = 'content';
+			}
+		}
+
+		return $stories;
+	}
+
+	/**
+	 * 6-character Bricks element id.
+	 *
+	 * @return string
+	 */
+	protected function bricks_random_id() {
+		if ( class_exists( '\Bricks\Helpers' ) && method_exists( '\Bricks\Helpers', 'generate_random_id' ) ) {
+			$id = \Bricks\Helpers::generate_random_id( false );
+			if ( is_string( $id ) && '' !== $id ) {
+				return $id;
+			}
+		}
+
+		return strtolower( substr( wp_generate_password( 8, false, false ), 0, 6 ) );
+	}
+
+	/**
+	 * Bricks content meta key.
+	 *
+	 * @return string
+	 */
+	protected function bricks_content_meta_key() {
+		return defined( 'BRICKS_DB_PAGE_CONTENT' ) ? BRICKS_DB_PAGE_CONTENT : '_bricks_page_content_2';
+	}
+
+	/**
+	 * Bricks editor-mode meta key.
+	 *
+	 * @return string
+	 */
+	protected function bricks_editor_mode_meta_key() {
+		return defined( 'BRICKS_DB_EDITOR_MODE' ) ? BRICKS_DB_EDITOR_MODE : '_bricks_editor_mode';
 	}
 
 	/**

@@ -156,6 +156,12 @@ if ( ! class_exists( 'CTL_Shortcode_Preview' ) ) {
 				array_push( $file_names, 'ctl-vertical-timeline.min.css' );
 			}
 
+			// Same new-install gate as the front end. Appended last so the
+			// refreshed spacing overrides the layout sheets above it.
+			if ( class_exists( 'CTL_Helpers' ) && CTL_Helpers::ctl_is_new_install() ) {
+				array_push( $file_names, 'ctl-design-refresh.min.css' );
+			}
+
 			$this->assets_object['style'] = $this->files_path( $file_names, 'css' );
 		}
 
@@ -190,6 +196,18 @@ if ( ! class_exists( 'CTL_Shortcode_Preview' ) ) {
 			$dir       = 'css' === $type ? 'includes/shortcodes/assets/css/' : 'includes/shortcodes/assets/js/';
 			foreach ( $files as $file ) {
 				$file_path = CTL_PLUGIN_URL . $dir . $file;
+
+				// These URLs carry no version at all, so the preview iframe keeps
+				// serving whatever it cached first. Stamp them with the file's mtime
+				// so an edited asset is a new URL.
+				$abs = CTL_PLUGIN_DIR . $dir . $file;
+				if ( file_exists( $abs ) ) {
+					$mtime = filemtime( $abs );
+					if ( false !== $mtime ) {
+						$file_path = add_query_arg( 'ver', CTL_V . '.' . $mtime, $file_path );
+					}
+				}
+
 				array_push( $files_arr, $file_path );
 			}
 			return $files_arr;

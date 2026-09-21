@@ -4,7 +4,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version:3.4.0
+  Version: 4.0.0
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Configuration */
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '3.4.0' );
+	define( 'CTL_V', '4.0.0' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -97,8 +97,11 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		private static function register_core_hooks( $plugin ) {
 			add_action( 'activated_plugin', array( $plugin, 'ctl_plugin_redirection' ) );
 			add_action( 'plugins_loaded', array( $plugin, 'ctl_include_files' ) );
+			add_action( 'after_setup_theme', array( $plugin, 'ctl_load_bricks_integration' ) );
 			add_action( 'init', array( $plugin, 'ctl_flush_rules' ) );
 			add_action( 'init', array( $plugin, 'ctl_maybe_init_plugin_options' ) );
+			add_action( 'init', array( $plugin, 'ctl_register_cpfm_usage_cron' ), 5 );
+			add_action( 'cpfm_after_opt_in_ctl', array( $plugin, 'ctl_handle_cpfm_opt_in' ) );
 		}
 
 		/**
@@ -129,6 +132,8 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			add_action( 'admin_head', array( $plugin, 'ctl_timeline_addons_menu_style' ) );
 			add_action( 'admin_print_scripts', array( $plugin, 'ctl_hide_unrelated_notices' ), 999 );
 			add_action( 'enqueue_block_editor_assets', array( $plugin, 'ctl_enqueue_onboarding_script' ) );
+			add_action( 'init', array( $plugin, 'register_cpfm_notices' ), 999 );
+			add_action( 'admin_init', array( $plugin, 'ctl_handle_design_upgrade_notice' ), 5 );
 		}
 
 		/**
@@ -157,10 +162,18 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		}
 		public function cpfm_load_file(){
 			require_once __DIR__ . '/admin/ctp-getting-started-url.php';
-			if(!class_exists('CPFM_Feedback_Notice')){
-					require_once __DIR__ . '/admin/cpfm-feedback/cpfm-feedback-notice.php';
+		
+				if (!class_exists('CPFM_Loader')) {
+				$file = __DIR__ . '/admin/cpfm-feedback/class-cpfm-loader.php';
+				if (file_exists($file)) {
+					require_once $file;
 				}
-			require_once __DIR__ . '/includes/cron/class-cron.php';
+	
+			}
+			if (class_exists('CPFM_Loader')) {
+				CPFM_Loader::load();
+			}
+		
 		}
 
 		/**
@@ -337,10 +350,84 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		/**
 		 * Schedule the usage tracking cron when it is not already scheduled.
 		 */
-		private function ctl_maybe_schedule_tracking_cron() {
-			if ( ! wp_next_scheduled( 'ctl_extra_data_update' ) ) {
-				wp_schedule_event( time(), 'every_30_days', 'ctl_extra_data_update' );
+		public function ctl_maybe_schedule_tracking_cron() {
+			
+			$this->ctl_register_cpfm_usage_cron();
+
+			if ( class_exists( 'CPFM_Usage_Cron' ) ) {
+				CPFM_Usage_Cron::cpfm_schedule_event( 'ctl_extra_data_update' );
 			}
+		}
+
+		/**
+		 * Register the shared usage-data cron (admin + WP-Cron).
+		 *
+		 * @return void
+		 */
+		public function ctl_register_cpfm_usage_cron() {
+			static $usage_cron_registered = false;
+
+			if ( $usage_cron_registered || ! class_exists( 'CPFM_Usage_Cron' ) ) {
+				return;
+			}
+
+			$usage_cron_registered = true;
+
+			CPFM_Usage_Cron::cpfm_register(
+				array(
+					'id'                    => 'ctl',
+					'plugin_name'           => 'Cool Timeline',
+					'version'               => defined( 'CTL_V' ) ? CTL_V : '',
+					'api'                   => defined( 'CTL_FEEDBACK_API' ) ? CTL_FEEDBACK_API : '',
+					'cron_hook'             => 'ctl_extra_data_update',
+					'consent_master_option' => 'cpfm_opt_in_choice_cool-timeline',
+					'consent_callback'      => array( $this, 'ctl_has_usage_tracking_consent' ),
+					'install_date_option'   => 'ctl-install-date',
+					'initial_version_option'=> 'ctl_initial_save_version' ,
+					'onboarding_data'       => 'ctl_onboarding_telemetry',
+					'site_key'              => '31',
+				)
+			);
+		}
+
+		/**
+		 * Whether usage-data sharing is enabled for Cool Timeline.
+		 *
+		 * @return bool
+		 */
+		public function ctl_has_usage_tracking_consent() {
+
+			$data = get_option( 'cool_timeline_settings' );
+			
+			if ( is_array( $data ) && ! empty( $data['ctl_cpfm_feedback_data'] ) ) {
+				return true;
+			}
+
+			return 'yes' === get_option( 'cpfm_opt_in_choice_cool-timeline' );
+		}
+
+		/**
+		 * Opt-in handler: persist consent, send first payload, schedule cron.
+		 *
+		 * @param string $category Notice category key.
+		 * @return void
+		 */
+		public function ctl_handle_cpfm_opt_in( $category ) {
+			if ( 'cool-timeline' !== $category ) {
+				return;
+			}
+
+			$this->ctl_register_cpfm_usage_cron();
+
+			$data = get_option( 'cool_timeline_settings' );
+			if ( ! is_array( $data ) ) {
+				$data = array();
+			}
+			$data['ctl_cpfm_feedback_data'] = true;
+			update_option( 'cool_timeline_settings', $data );
+
+			do_action( 'ctl_extra_data_update' );
+			$this->ctl_maybe_schedule_tracking_cron();
 		}
 
 		/**
@@ -404,6 +491,9 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 							if ( is_array( $fn ) && ! empty( $fn[0] ) && is_object( $fn[0] ) ) {
 								$class = strtolower( get_class( $fn[0] ) );
+							} elseif ( is_array( $fn ) && ! empty( $fn[0] ) && is_string( $fn[0] ) ) {
+								
+								$class = strtolower( $fn[0] );
 							} elseif ( is_object( $fn ) ) {
 								$class = strtolower( get_class( $fn ) );
 							}
@@ -416,7 +506,12 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 									false !== strpos( $class, 'ctp_' ) ||
 									false !== strpos( $class, 'license_helper' ) ||
 									false !== strpos( $class, 'twae' ) ||
-									false !== strpos( $class, 'tmdivi' )
+									false !== strpos( $class, 'tmdivi' )||
+									// Shared Cool Plugins framework - review ask, welcome
+									// notice, deactivation survey, consent panel. All
+									// consistently prefixed CPFM_, unlike the plugin's
+									// own classes checked above.
+									false !== strpos( $class, 'cpfm_' )
 								);
 							}
 
@@ -447,6 +542,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		 */
 		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 		public function ctl_dash_admin_notices() {
+
 			if ( defined( 'CTL_ADMIN_NOTICE_RENDERED' ) ) {
 				return;
 			}
@@ -467,11 +563,23 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 			if ( is_admin() ) {
 				$this->include_admin_files();
+				
 			}
 
 			$this->include_block_files();
 			$this->include_shortcode_generator_files();
-			$this->register_feedback_hooks();
+			
+		}
+
+		/**
+		 * Load Bricks Builder integration when Bricks is active.
+		 */
+		public function ctl_load_bricks_integration() {
+			if ( ! defined( 'BRICKS_VERSION' ) ) {
+				return;
+			}
+			require_once CTL_PLUGIN_DIR . 'bricks/class-ctl-bricks-loader.php';
+			CTL_Bricks_Loader::instance();
 		}
 
 		/**
@@ -506,11 +614,10 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		 * Include admin-only files.
 		 */
 		private function include_admin_files() {
-			require_once CTL_PLUGIN_DIR . 'admin/cpfm-feedback/users-feedback.php';
 			require_once CTL_PLUGIN_DIR . 'admin/codestar-framework/codestar-framework.php';
 
 			/*** Plugin review notice file */
-			require_once CTL_PLUGIN_DIR . '/admin/notices/admin-notices.php';
+			
 
 			// Including onboarding config file for timeline (after framework loads).
 			add_action(
@@ -538,25 +645,159 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 		}
 
 		/**
+		 * "Yes, Upgrade Design" lands on settings with ctl_upgrade_design=1.
+		 *
+		 * @return void
+		 */
+		public function ctl_handle_design_upgrade_notice() {
+			if ( empty( $_GET['cpfm-welcome'] ) || empty( $_GET['ctl_upgrade_design'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce checked below.
+				return;
+			}
+
+			if ( 'ctl' !== sanitize_key( wp_unslash( $_GET['cpfm-welcome'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce checked below.
+				return;
+			}
+
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
+			check_admin_referer( 'cpfm_welcome_ctl' );
+			update_option( 'ctl_migrate_new_design', 'yes' );
+		}
+
+		/**
 		 * Register feedback hooks after feedback files are available.
 		 */
-		private function register_feedback_hooks() {
+		public function register_cpfm_notices() {
+
+			if ( ! is_admin() ) {
+				return;
+			}
+			static $registered = false;
+			
+			if ( $registered ) {
+				return;
+			}
+
+			$registered = true;
+
+			if ( class_exists( 'CPFM_Welcome_Notice' ) && ! class_exists( 'CoolTimelinePro' ) ) {
+				$initial_version = trim( (string) get_option( 'ctl_initial_save_version', '' ) );
+				$design_refresh  = class_exists( 'CTL_Helpers' ) ? CTL_Helpers::DESIGN_REFRESH_VERSION : '4.0.0';
+				$is_pre_refresh  = ( '' === $initial_version || version_compare( $initial_version, $design_refresh, '<' ) );
+
+				if ( $is_pre_refresh && 'yes' !== get_option( 'ctl_migrate_new_design' ) ) {
+
+					add_option( 'ctl_v2_welcome', 'show' );
+
+					CPFM_Welcome_Notice::cpfm_register(
+						array(
+							'id'             => 'ctl',
+							'option'         => 'ctl_v2_welcome',
+							'migrate_option' => 'ctl_migrate_new_design',
+							'settings_url'   => admin_url( 'admin.php?page=cool_timeline_settings&ctl_upgrade_design=1' ),
+							'screens'        => array(
+								'dashboard',
+								'plugins',
+								'edit-cool_timeline',
+								'cool_timeline',
+								'cool_timeline_settings',
+								'cool-plugins-timeline-addon',
+								'toplevel_page_cool-plugins-timeline-addon',
+								'timeline-addons_page_cool_timeline_settings',
+								'timeline-addons_page_ctl-getting-started',
+								'ctl-getting-started',
+							),
+							'i18n'           => array(
+								'headline'    => __( 'Cool Timeline 4.0.0 – Major Design Enhancement!', 'cool-timeline' ),
+								'body'        => __( ' Would you like to upgrade your existing timelines to the new design?', 'cool-timeline' ),
+								'cta'         => __( 'Yes, Upgrade Design', 'cool-timeline' ),
+								'dismiss'     => __( 'No, Keep Current Design', 'cool-timeline' ),
+								'close_label' => __( 'Close', 'cool-timeline' ),
+							),
+						)
+					);
+				}
+			}
+
+
+			if(class_exists('CPFM_Deactivation_Feedback')) {
+
+				$name = 'Cool Timeline';
+
+			\CPFM_Deactivation_Feedback::cpfm_register(
+				array(
+					'id'          => 'ctl',
+					'slug'        => 'cool-timeline',
+					'plugin_name' => $name,
+					'version'     => CTL_V,
+					'api'         => CTL_FEEDBACK_API,
+					'site_key'              => '31',
+					// OUR option names — the module must not guess them.
+					'install_date_option'    => 'ctl-install-date',
+					'initial_version_option' => 'ctl_initial_save_version',
+					'onboarding_data'        => 'ctl_onboarding_telemetry',
+
+					'reasons'                => array(
+						'not_working'  => array(
+							'title'       => __( "The plugin isn't working", 'cool-timeline' ),
+							'placeholder' => __( 'Which problem did you run into? We read every reply.', 'cool-timeline' ),
+						),
+						'not_expected' => array(
+							'title'       => __( "It didn't do what I expected", 'cool-timeline' ),
+							'placeholder' => __( 'What were you hoping it would do?', 'cool-timeline' ),
+						),
+						'found_better' => array(
+							'title'       => __( 'I found a better plugin', 'cool-timeline' ),
+							'placeholder' => __( 'Mind sharing which one?', 'cool-timeline' ),
+						),
+						'temporary'    => array(
+							'title'       => __( "It's a temporary deactivation", 'cool-timeline' ),
+							'placeholder' => '',
+						),
+						'other'        => array(
+							'title'       => __( 'Another reason', 'cool-timeline' ),
+							'placeholder' => __( 'Please tell us more', 'cool-timeline' ),
+						),
+					),
+
+					'i18n'                   => array(
+						'title'           => __( 'Before you go…', 'cool-timeline' ),
+						/* translators: %s: plugin name (bold). */
+						'intro'           => __( 'What made you deactivate %s? Your answer helps us fix it.', 'cool-timeline' ),
+						'submit'          => __( 'Submit & Deactivate', 'cool-timeline' ),
+						'skip'            => __( 'Skip & Deactivate', 'cool-timeline' ),
+						'deactivating'    => __( 'Deactivating…', 'cool-timeline' ),
+						'pick_reason'     => __( 'Please choose a reason.', 'cool-timeline' ),
+						'close_label'     => __( 'Close', 'cool-timeline' ),
+						/* translators: %s: company name. */
+						'byline'          => __( 'A plugin by %s', 'cool-timeline' ),
+						// Must describe the FULL payload: submitting is deliberate and
+						// is not consent-gated, so this is the disclosure.
+						'consent'         => __( 'Submitting shares your reason plus your site URL, admin email and basic environment details (PHP, WordPress, active plugins). Skip & Deactivate sends nothing.', 'cool-timeline' ),
+					),
+				)
+			);
+			
+			}
+
 			add_action('cpfm_register_notice', function () {
             
 				if (!class_exists('CPFM_Feedback_Notice') || !current_user_can('manage_options')) {
 					return;
 				}
 	
-		$notice = [
-	
-			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-			'title' => __('Timeline Plugins by Cool Plugins', 'ctl'),
-			// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-			'message' => __('Help us make this plugin more compatible with your site by sharing non-sensitive site data.', 'cool-plugins-feedback'),
-			'pages' => ['cool_timeline_settings', 'cool-plugins-timeline-addon', 'ctl-getting-started'],
-			'always_show_on' => ['cool_timeline_settings', 'cool-plugins-timeline-addon', 'ctl-getting-started'],
-			'plugin_name'=>'ctl'
-		];
+				$notice = [
+			
+					// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+					'title' => __('Timeline Plugins by Cool Plugins', 'ctl'),
+					// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+					'message' => __('Help us make this plugin more compatible with your site by sharing non-sensitive site data.', 'cool-plugins-feedback'),
+					'pages' => ['cool_timeline_settings', 'cool-plugins-timeline-addon', 'ctl-getting-started'],
+					'always_show_on' => ['cool_timeline_settings', 'cool-plugins-timeline-addon', 'ctl-getting-started'],
+					'plugin_name'=>'ctl'
+				];
 	
 			
 				CPFM_Feedback_Notice::cpfm_register_notice('cool-timeline', $notice);
@@ -569,19 +810,110 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 					$GLOBALS['cool_plugins_feedback']['cool-timeline'][] = $notice;
 		   
 			});
-			add_action('cpfm_after_opt_in_ctl', function($category){
-			
 
-				if ($category === 'cool-timeline') {
-					$data = get_option('cool_timeline_settings'); 
-					$data['ctl_cpfm_feedback_data'] = true;
-			update_option('cool_timeline_settings', $data);
-		
-					if(class_exists('CTL_CRONJOB')){
-						CTL_CRONJOB::ctl_send_data();
-					}
-				}
-			});
+			if (class_exists('CPFM_Review')) {
+				
+				$name = 'Cool Timeline';
+
+				CPFM_Review::cpfm_register(
+					
+				array(
+					'id' => 'ctl',
+					'plugin_file' => __FILE__,
+					'plugin_name' => $name,
+					'review_url' => 'https://wordpress.org/support/plugin/cool-timeline/reviews/#new-post',
+					'capability' => 'activate_plugins',
+
+					// Cross-family quiet window after ANY sibling's ask renders;
+					// keep the value identical across the family. Does not apply
+					// on own_screens; 0 disables.
+					'quiet_days' => 1,
+
+					// Our own panel: exempt from the cross-plugin quiet period, so a
+					// sibling's ask elsewhere never silences ours in our own UI.
+					// NOTE: WP screen ids for submenu pages are
+					// "{parent_hookname}_page_{slug}", not the raw menu slug -
+					// ctl-getting-started's parent is the 'cool-plugins-timeline-addon'
+					// top-level menu (title "Timeline Addons" -> sanitize_title()
+					// -> "timeline-addons"), so its real screen id is
+					// "timeline-addons_page_ctl-getting-started". Verified against
+					// get_plugin_page_hookname() directly, not guessed.
+					'own_screens' => array('timeline-addons_page_ctl-getting-started'),
+
+					// Ask once the install is a day old. Existing users inherit
+					// their real install date, so they qualify immediately.
+					'trigger' => array(
+						'type' => 'install_age',
+						'hours' => 24,
+					),
+
+					'notice' => array(
+						'enabled' => true,
+						'template' => 'two_step',
+						// Literal screen ids, verified with get_plugin_page_hookname()
+						// against the real menu registration - NOT the raw menu
+						// slugs (WP submenu screen ids are
+						// "{parent_hookname}_page_{slug}"; the top-level menu
+						// itself is "toplevel_page_{slug}"). 'plugins' is the one
+						// genuine WP core screen id in this list, unprefixed.
+						'screens' => array(
+							'plugins',
+							'timeline-addons_page_ctl-getting-started',
+							'timeline-addons_page_cool_timeline_settings',
+							'toplevel_page_cool-plugins-timeline-addon',
+						),
+						// ONLY our own full-bleed panel needs to opt out of core's
+						// notice relocation - its h1 lives inside the hero, so an
+						// un-relocated notice would land mid-panel. On plugins.php
+						// and All Events the relocation is correct, and blocking it
+						// strands the notice above the page title.
+						'inline_screens' => array('timeline-addons_page_ctl-getting-started'),
+					),
+					'row' => array('enabled' => true),
+					
+					//$old_alreadyRated = get_option( 'cool-timelne-ratingDiv' ) !== false ? get_option( 'cool-timelne-ratingDiv' ) : 'no';
+					//$alreadyRated     = get_option( 'cool-timeline-already-rated' ) !== false ? get_option( 'cool-timeline-already-rated' ) : 'no';
+					'legacy' => array(
+						'done_options' => array(
+							// Match on VALUE 'yes' only — legacy seeds
+							// cool-timelne-ratingDiv='no' at activation, so accepting 'no'
+							// would silence the ask for the whole user base.
+							'cool-timelne-ratingDiv' => 'yes',
+							'cool-timelne_review_prompt' => array('yes', 'done', 'dismissed'),
+							'cool-timelne_review_shown' => array('yes', 'done', 'dismissed'),
+						),
+						'done_user_meta' => array(
+							'eca_review_dismissed' => array('in_key' => 'countdown'),
+						),
+						'install_dates' => array('cool-timelne-installDate', 'ctl-install-date'),
+						// Keep any still-installed sibling that reads the old flag in sync.
+						'mirror_write' => array('cool-timelne-ratingDiv' => 'yes'),
+					),
+
+					'i18n' => array(
+						'like_question' => sprintf(
+							/* translators: %s: plugin name. */
+							__('Do you like the %s plugin?', 'cool-timeline'),
+							$name
+						),
+						'yes_button' => __('Yes, I like it', 'cool-timeline'),
+						'dismiss_link' => __('Not good, dismiss', 'cool-timeline'),
+						'later_link' => __('Ask me later', 'cool-timeline'),
+						'thanks_line' => __('That is great to hear! A quick review on WordPress.org would really help us.', 'cool-timeline'),
+						'submit_button' => __('Submit review', 'cool-timeline'),
+						'no_link' => __('I do not like it, dismiss', 'cool-timeline'),
+						'row_question' => __('Do you like this plugin?', 'cool-timeline'),
+						'inline_title' => sprintf(
+							/* translators: %s: plugin name. */
+							__('Enjoying %s?', 'cool-timeline'),
+							$name
+						),
+						'inline_text' => __('A short review helps other event organisers find it.', 'cool-timeline'),
+						'close_label' => __('Close', 'cool-timeline'),
+					),
+				)
+			);
+			}
 		}
 
 		function ctl_enqueue_onboarding_script() {
@@ -863,88 +1195,13 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 
 		/* Deactivate the plugin */
 		public function ctl_deactivate() {
-			if (wp_next_scheduled('ctl_extra_data_update')) {
-				wp_clear_scheduled_hook('ctl_extra_data_update');
-			}
-		}
-
-	/**
-	 * Retrieves server, theme, plugin, and onboarding information for telemetry.
-	 *
-	 */
-	public static function ctl_get_user_info() {
-
-		global $wpdb;
-	
-		// Server and WP environment details
-		  
-		$server_info = [
-
-		'server_software'        => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'N/A',
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			'mysql_version'          => $wpdb ? sanitize_text_field( $wpdb->get_var( 'SELECT VERSION()' ) ) : 'N/A',
-			'php_version'            => sanitize_text_field(phpversion() ?: 'N/A'),
-			'wp_version'             => sanitize_text_field(get_bloginfo('version') ?: 'N/A'),
-			'wp_debug'               => (defined('WP_DEBUG') && WP_DEBUG) ? 'Enabled' : 'Disabled',
-			'wp_memory_limit'        => sanitize_text_field(ini_get('memory_limit') ?: 'N/A'),
-			'wp_max_upload_size'     => sanitize_text_field(ini_get('upload_max_filesize') ?: 'N/A'),
-			'wp_permalink_structure' => sanitize_text_field(get_option('permalink_structure') ?: 'Default'),
-			'wp_multisite'           => is_multisite() ? 'Enabled' : 'Disabled',
-			'wp_language'            => sanitize_text_field(get_option('WPLANG') ?: get_locale()),
-			'wp_prefix'              => isset($wpdb->prefix) ? sanitize_key($wpdb->prefix) : 'N/A',
-
-		];
-	
-		// Theme details
-		$theme = wp_get_theme();
-		$theme_data = [
-			'name'      => sanitize_text_field($theme->get('Name')),
-			'version'   => sanitize_text_field($theme->get('Version')),
-			'theme_uri' => esc_url($theme->get('ThemeURI')),
-		];
-	
-
-		if (!function_exists('get_plugins')) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-		if (!function_exists('get_plugin_data')) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-	
-
-		$plugin_data = [];
-		$active_plugins = get_option('active_plugins', []);
-	
-		foreach ($active_plugins as $plugin_path) {
-			$plugin_file = WP_PLUGIN_DIR . '/' . ltrim($plugin_path, '/');
-	
-			if (file_exists($plugin_file)) {
-
-				$plugin_info = get_plugin_data($plugin_file, false, false);
-				$plugin_url = !empty($plugin_info['PluginURI']) ? esc_url($plugin_info['PluginURI']) : (!empty($plugin_info['AuthorURI']) ? esc_url($plugin_info['AuthorURI']) : 'N/A');
-				$plugin_data[] = [
-					'name'       => sanitize_text_field($plugin_info['Name']),
-					'version'    => sanitize_text_field($plugin_info['Version']),
-					'plugin_uri' => !empty($plugin_url) ? $plugin_url : 'N/A',
-				];
-			}
-		}
-		 $onboarding_data=[];
-		 $telemetry = get_option('ctl_onboarding_telemetry', array()); // cp-onboarding framework Telemetry store.
-			if (!empty($telemetry)) {
-				$onboarding_data = $telemetry;
-				$onboarding_data['install_date']=get_option('ctl-install-date', 'N/A');
+			if ( wp_next_scheduled( 'ctl_extra_data_update' ) ) {
+				wp_clear_scheduled_hook( 'ctl_extra_data_update' );
 			}
 
-		return [
-			'server_info'   => $server_info,
-			'extra_details' => [
-				'wp_theme'        => $theme_data,
-				'active_plugins'  => $plugin_data,
-				'onboarding_data' => $onboarding_data
-			],
-		];
-	}
+			delete_option( 'ctl_bricks_demo_image_ids' );
+		}
+
 	
 	}
 }

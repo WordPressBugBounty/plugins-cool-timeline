@@ -60,7 +60,10 @@ class CTL_free_migrations {
 		}
 
 		
-		if ( get_option( 'ctl-postmeta-migration' ) ) {
+		// 'ctl-postmeta-migration' is the legacy shared flag; it is only read for
+		// back-compat so existing sites do not re-run this migration. Pro tracks its
+		// own state under 'ctl-pro-postmeta-migration'.
+		if ( get_option( 'ctl-free-postmeta-migration' ) || get_option( 'ctl-postmeta-migration' ) ) {
 			return;
 		}
 		
@@ -121,7 +124,7 @@ class CTL_free_migrations {
 				update_post_meta( $post_id, 'story_icon', $array_icon_type );
 			}
 
-			update_option( 'ctl-postmeta-migration', 'done' );
+			update_option( 'ctl-free-postmeta-migration', 'done' );
 		}
 	}
 
@@ -156,7 +159,7 @@ class CTL_free_migrations {
 		$new_settings = map_deep( $new_settings, 'sanitize_text_field' );
 
 		update_option( 'cool_timeline_settings', $new_settings );
-		update_option( 'ctl_settings_migration_status', 'done' );
+		update_option( 'ctl_free_settings_migration_status', 'done' );
 		delete_option( 'cool_timeline_options' );
 	}
 

@@ -42,8 +42,8 @@ final class CTL_Onboarding_Config {
 
 		$config     = $this->identity();
 		$elementor  = $this->method_elementor( $telemetry, $is_onboarding );
-	
 		$divi       = $this->method_divi( $telemetry, $is_onboarding );
+		$bricks     = $this->method_bricks( $telemetry, $is_onboarding );
 		// Cross-sell cards in the bottom "addon section". Each addon supports three modes:
 		//   1. Free install (default)  → 'type' => 'free' (or omit). Shows Install/Activate.
 		//   2. Pro promotion           → 'type' => 'pro' with 'upgrade_url' (+ optional
@@ -88,6 +88,11 @@ final class CTL_Onboarding_Config {
 		} else {
 			$config['methods'] = array( 'divi-module' => $divi['method'] ) + $config['methods'];
 		}
+
+		// Bricks Story Timeline is built into Cool Timeline — always append last
+		// so Block Editor / Shortcode / other builders stay ahead in the chooser.
+		$config['methods']['bricks-widget'] = $bricks['method'];
+
 		return $config;
 	}
 	/**
@@ -369,6 +374,66 @@ final class CTL_Onboarding_Config {
 	}
 
 	/**
+	 * Bricks Story Timeline method (built into Cool Timeline).
+	 *
+	 * @param array $telemetry     Telemetry counters.
+	 * @param bool  $is_onboarding Whether onboarding mode is active.
+	 * @return array{method: array, addon: null}
+	 */
+	private function method_bricks( array $telemetry, $is_onboarding ) {
+		$td = self::TEXT_DOMAIN;
+
+		$utm_params = $is_onboarding
+			? '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=onboarding'
+			: '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard';
+
+		$method = array(
+			'type'          => 'bricks-based',
+			'title'         => __( 'Bricks', $td ),
+			'badge'         => __( 'Built-for-bricks', $td ),
+			'content_badge' => __( 'Bricks Users', $td ),
+			'icon'          => '<img src="' . esc_url( CTL_PLUGIN_URL . 'assets/images/bricks-icon.svg' ) . '" alt="">',
+			'description'   => __( 'Create a Story Timeline Using Bricks', $td ),
+			'best_for'      => __( 'Sites built with Bricks', $td ),
+			'editions'      => array( 'full' ),
+			'steps'         => array(
+				array(
+					'title' => __( 'Insert the Story Timeline', $td ),
+					'desc'  => __( 'Open a page in the Bricks builder, search for "Story Timeline", and drop it onto the canvas.', $td ),
+				),
+				array(
+					'title' => __( 'Add Timeline Stories', $td ),
+					'desc'  => __( 'Add a title, date, description, media, and icon for each story.', $td ),
+				),
+				array(
+					'title' => __( 'Customize & Publish', $td ),
+					'desc'  => __( 'Adjust the layout and design, then save and publish your page.', $td ),
+				),
+			),
+			'secondary'     => array(
+				'label' => __( 'View Documentation', $td ),
+				'url'   => 'https://cooltimeline.com/docs/cool-timeline-pro/' . $utm_params,
+			),
+			'footer'        => $this->footer_cards( 'bricks', $is_onboarding ),
+		);
+
+		$method['condition'] = static function () {
+			return self::is_bricks_active();
+		};
+
+		if ( empty( $telemetry['bricks_clicks'] ) ) {
+			$method['cta'] = array( 'label' => __( 'Create Sample Timeline', $td ) );
+		} else {
+			$method['cta'] = array();
+		}
+
+		return array(
+			'method' => $method,
+			'addon'  => null,
+		);
+	}
+
+	/**
 	 * Block editor method.
 	 *
 	 * @param array $telemetry Telemetry counters.
@@ -530,6 +595,23 @@ final class CTL_Onboarding_Config {
 				&& false !== stripos( (string) wp_get_theme()->get( 'Name' ), 'Divi' ) )
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			|| 'Divi' === apply_filters( 'divi_ghoster_ghosted_theme', '' );
+	}
+
+	/**
+	 * Whether the Bricks theme (or a Bricks child theme) is active.
+	 *
+	 * @return bool
+	 */
+	private static function is_bricks_active() {
+		if ( defined( 'BRICKS_VERSION' ) || class_exists( '\Bricks\Elements' ) ) {
+			return true;
+		}
+
+		$theme = wp_get_theme();
+
+		return 'bricks' === $theme->get_template()
+			|| false !== stripos( (string) $theme->get( 'Name' ), 'Bricks' )
+			|| false !== stripos( (string) $theme->parent_theme, 'Bricks' );
 	}
 
 	/**
@@ -747,7 +829,7 @@ final class CTL_Onboarding_Config {
 	/**
 	 * Footer card set for a given context.
 	 *
-	 * @param string $context 'global' | 'block' | 'elementor' | 'divi'.
+	 * @param string $context 'global' | 'block' | 'elementor' | 'divi' | 'bricks'.
 	 * @param bool $is_onboarding Whether onboarding mode is active.
 	 * @return array
 	 */
@@ -899,6 +981,56 @@ final class CTL_Onboarding_Config {
 								'label' => __( 'View All Docs', $td ),
 								'class' => 'ctl_doc_link',
 								'url'   => 'https://cooltimeline.com/docs/cool-timeline-pro/'.$utm_params,
+							),
+						)
+					),
+					$this->card(
+						'<span class="dashicons dashicons-star-filled"></span>',
+						__( 'Your Feedback Matters', $td ),
+						__( 'If you \'re happy with the plugin, we \'d greatly appreciate a quick review. Your support helps us continue improving it', $td ),
+						array(
+							array(
+								'label' => __( 'Leave a Review', $td ),
+								'url'   => 'https://wordpress.org/support/plugin/cool-timeline/reviews/#new-post',
+								'class' => 'cpo-button cpo-button-secondary cpo-button-small',
+							),
+						)
+					),
+				);
+
+			case 'bricks':
+				return array(
+					$this->card(
+						'<span class="dashicons dashicons-editor-help"></span>',
+						__( 'Support', $td ),
+						__( 'Building with Bricks? Our team can help with the Story Timeline setup.', $td ),
+						array(
+							array(
+								'class' => 'cpo-button cpo-button-secondary cpo-button-small',
+								'label' => __( 'Get Support', $td ),
+								'url'   => 'https://coolplugins.net/support/' . $utm_params,
+							),
+						)
+					),
+					$this->card(
+						'<span class="dashicons dashicons-book"></span>',
+						__( 'Documentation', $td ),
+						__( 'Learn how to design timelines inside the Bricks builder.', $td ),
+						array(
+							array(
+								'label' => __( 'How to Add Timeline Stories', $td ),
+								'class' => 'ctl_doc_link',
+								'url'   => 'https://cooltimeline.com/doc/add-timeline-stories/' . $utm_params,
+							),
+							array(
+								'label' => __( 'FAQ', $td ),
+								'class' => 'ctl_doc_link',
+								'url'   => 'https://cooltimeline.com/doc/faq/' . $utm_params,
+							),
+							array(
+								'label' => __( 'View All Docs', $td ),
+								'class' => 'ctl_doc_link',
+								'url'   => 'https://cooltimeline.com/docs/cool-timeline-pro/' . $utm_params,
 							),
 						)
 					),
@@ -1207,6 +1339,49 @@ function ctl_onboarding_register_hooks( Config $config ) {
 				);
 			}
 
+			// Bricks: create a draft page with Story Timeline and open the builder.
+			if ( 'bricks-based' === $type ) {
+				if ( ! defined( 'BRICKS_VERSION' ) && ! class_exists( '\Bricks\Elements' ) ) {
+					wp_send_json_error(
+						array( 'message' => __( 'Please activate the Bricks theme first.', 'cool-timeline' ) ),
+						400
+					);
+				}
+
+				if ( ! class_exists( 'CTL_Demo_Generator' ) ) {
+					require_once CTL_PLUGIN_DIR . 'admin/cp-onboarding/class-ctl-demo-generator.php';
+				}
+
+				if ( ! class_exists( 'CTL_Demo_Generator' ) || ! method_exists( 'CTL_Demo_Generator', 'generate_bricks' ) ) {
+					wp_send_json_error( array( 'message' => __( 'Bricks demo creator is unavailable.', 'cool-timeline' ) ), 500 );
+				}
+
+				$result = ( new CTL_Demo_Generator() )->generate_bricks();
+				if ( is_wp_error( $result ) ) {
+					wp_send_json_error(
+						array(
+							'message' => $result->get_error_message(),
+							'code'    => $result->get_error_code(),
+						),
+						500
+					);
+				}
+
+				$redirect = ! empty( $result['redirect_url'] ) ? $result['redirect_url'] : '';
+				if ( '' === $redirect ) {
+					wp_send_json_error( array( 'message' => __( 'Could not open the Bricks builder.', 'cool-timeline' ) ), 500 );
+				}
+
+				wp_send_json_success(
+					array(
+						'redirectUrl' => $redirect,
+						'pageId'      => isset( $result['page_id'] ) ? (int) $result['page_id'] : 0,
+						'type'        => $type,
+						'already'     => ! empty( $result['already'] ),
+					)
+				);
+			}
+
 			if ( 'shortcode-based' !== $type ) {
 				foreach ( $config->methods() as $method ) {
 					if ( isset( $method['type'] ) && $method['type'] === $type ) {
@@ -1277,6 +1452,9 @@ $elementor_clicks = isset( $telemetry_data['counters']['cta_clicked.elementor-ba
 $divi_clicks = isset( $telemetry_data['counters']['cta_clicked.divi-module-based'] )
 	? $telemetry_data['counters']['cta_clicked.divi-module-based']
 	: 0;
+$bricks_clicks = isset( $telemetry_data['counters']['cta_clicked.bricks-based'] )
+	? $telemetry_data['counters']['cta_clicked.bricks-based']
+	: 0;
 
 
 $builder      = new CTL_Onboarding_Config();
@@ -1287,7 +1465,8 @@ $config_array = $builder->build(
 		'shortcode_clicks' => $shortcode_clicks,
 		'block_clicks'     => $block_clicks,
 		'elementor_clicks' => $elementor_clicks,
-		'divi_clicks'     => $divi_clicks,	
+		'divi_clicks'      => $divi_clicks,
+		'bricks_clicks'    => $bricks_clicks,
 	)
 );
 

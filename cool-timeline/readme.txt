@@ -3,8 +3,8 @@ Contributors: narinder-singh,satindersingh,coolplugins
 Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.6
-Tested up to: 6.9
-Stable tag:3.4.0
+Tested up to: 7.1
+Stable tag: 4.0.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -23,14 +23,16 @@ Using Cool Timeline, you can create timeline stories in two ways:
 
 1. **Gutenberg Timeline Block:** Add and manage timeline stories easily using the built-in block in the WordPress editor. Great for showing steps, events, or roadmaps with a clean design.
 2. **Shortcode-Based Classic Timelines:** Using the classic editor? Just add a simple shortcode to display your timeline on any page or post and customize it the way you like.
+3. **Bricks Builder Story Timeline:** Add the dedicated **Story Timeline** element directly inside Bricks Builder. Create stories, add media, configure layouts, and styling without coding.
 
 ### Key Features
 * **Timeline Slider:** Display your stories in a stunning vertical or horizontal timeline layout.
 * **Gutenberg and Classic Editor Support:** Create timelines easily using the Gutenberg block or a simple shortcode. This works with both new and classic WordPress editors.
+* **Bricks Builder Support:** Create and customize story timelines directly inside Bricks Builder using the dedicated Story Timeline element. 
 * **Smart Shortcode Generator:** Use shortcodes to display timeline slider anywhere on your site without needing the code.
     * **Cool Timeline Shortcode:**
 [cool-timeline layout="default" skin="default" date-format="F j" icons="YES" show-posts="20" order="DESC" story-content="full"]
-* **Works with Page Builders:** Compatible with popular page builders like Gutenberg, WPBakery, and Classic Editor. Elementor and Divi users can also create timelines with additional plugins.
+* **Works with Page Builders:** Compatible with popular page builders like Gutenberg, WPBakery, Bricks Builder and Classic Editor. Elementor and Divi users can also create timelines with additional plugins.
 * **ASC/DESC Order:** Arrange your timeline stories in ascending or descending order as needed.
 * **Customizable Description:** Choose to show either a summary or the full description for each timeline story, depending on how much detail you want to present.
 * **Story Order (ASC / DESC):** Sort your stories in ascending (oldest to newest) or descending (newest to oldest) order based on your timeline.
@@ -78,7 +80,7 @@ Each with 6+ design styles like Classic, Modern, Elegant, etc., and 3 skins (Lig
 * **Add Images & Videos:** Make your timeline stories more interactive by adding images, videos, and slideshows.
 * **Multiple Timelines:** Create and manage several timelines on one site, like company history, product updates, or personal stories.
 * **Smart Shortcode Generator:** Use shortcodes to display timelines anywhere on your site without needing to code.
-* **Works with Page Builders:** Compatible with popular page builders like Gutenberg, WPBakery, and Classic Editor. Elementor and Divi users can also create timelines with additional plugins.
+* **Works with Page Builders:** Compatible with popular page builders like Gutenberg, WPBakery, Bricks Builder and Classic Editor. Elementor and Divi users can also create timelines with additional plugins.
 * **Custom Labels:** Use labels instead of dates for events, such as process steps or historical periods like AD/BC.
 * **Category Filters:** Add filters so users can sort timeline stories by category.
 * **Blog Post Timeline:** Display your blog posts in a timeline layout, highlighting your content by date.
@@ -156,6 +158,14 @@ Yes, the Cool Timeline plugin is fully responsive and ensures that your timeline
 = Can I use Cool Timeline with the Gutenberg editor? =
 Yes, Cool Timeline includes an advanced Timeline Block for Gutenberg, allowing you to easily create elegant timelines using pre-made presets.
 
+= Can I create a timeline directly inside Bricks Builder? =
+Yes. Cool Timeline includes a dedicated **Story Timeline** element for Bricks Builder that allow you to display your timelines using advanced customization options.
+
+= Do I need to use shortcodes with Bricks Builder? =
+No. The dedicated Story Timeline element lets you create and customize timelines visually inside Bricks Builder without manually adding timeline shortcodes.
+
+Edit your page with Bricks Builder, search for **Story Timeline**, and drag the element onto the page. You can then manage timeline stories, media, layouts, icons, navigation, pagination, animations, and styling directly from the Bricks Builder panel without using shortcodes.
+
 = Can I create multiple timelines based on different categories? =
 The timeline category option is only available in our Pro version, so you need to purchase Pro if you want to create category-specific **multiple timelines**.
 
@@ -196,8 +206,20 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
-= Version 3.4.0 | 28 July 2026 =
+= Version 4.0.0 | 21 Sep 2026 =
 
+* **Added:** Initial integration with Bricks Builder.
+* **Major Design Enhancement:** Completely refreshed timeline design with modern styling, improved layouts, typography, spacing, cards, icons, images, and enhanced customization options.
+* **Responsive Design:** Optimized timeline layouts and readability across desktop, tablet, and mobile devices.
+* **Compatibility:** Enhanced compatibility with WordPress themes, page builders, existing timelines, and custom styling. Existing shortcodes and timeline content continue to work without migration.
+* **Performance:** Optimized CSS structure for better frontend performance and future design enhancements.
+* **Improvements:** Review notice design for a better user experience.
+
+= Version 3.4.1 | 03 Sep 2026 =
+
+* **Improved:** Review notice and feedback form design for a better user experience.
+
+= Version 3.4.0 | 28 July 2026 =
 * **New:** Introduced a“Get Started”onboarding page for a smoother setup experience.
 * **New:** Added a guided sample timeline demo creation flow to help users get started quickly.
 * **Removed:** Removed the legacy dashboard and replaced it with the new onboarding experience.

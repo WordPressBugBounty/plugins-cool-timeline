@@ -1,0 +1,658 @@
+/* ----------------------------- Vertical Styles ---------------------------- */
+/* ---------------------------- Vertical Wrapper ---------------------------- */
+.ctl-vertical{
+    --tw-ibx-position: 0;
+    --tw-cbx-img-order: 2;
+
+    max-width: 1600px;
+    padding: calc(var(--tw-line-width) * 3) 20px;
+    margin: 0 auto;
+    overflow-x: visible;
+}
+/* ------------------------- Vertical Wrapper - END ------------------------- */
+
+/* -------------------- Timeline Start/End Dots Vertical -------------------- */
+.ctl-vertical.ctl-wrapper .ctl-start,
+.ctl-vertical.ctl-wrapper .ctl-end{
+    background-color: var(--tw-line-bg);
+    width: calc(var(--tw-line-width) * 3);
+    height: calc(var(--tw-line-width) * 3);
+    display: inline-block;
+    position: absolute;
+    left: calc(50% - var(--tw-line-width) * 1.5);
+    z-index: 9;
+    border-width: calc(var(--tw-line-bd-width) * 1px);
+    border-style: var(--tw-line-bd-style);
+    border-color: var(--tw-line-bd-color);
+    border-radius: calc(var(--tw-ibx-radius) * 1%);
+    -webkit-border-radius: calc(var(--tw-ibx-radius) * 1%);
+    -moz-border-radius: calc(var(--tw-ibx-radius) * 1%);
+    -ms-border-radius: calc(var(--tw-ibx-radius) * 1%);
+    -o-border-radius: calc(var(--tw-ibx-radius) * 1%);
+}
+.ctl-vertical.ctl-wrapper .ctl-start{
+    top: 0;
+}
+.ctl-vertical.ctl-wrapper .ctl-end{
+    bottom: 0;
+}
+.ctl-vertical.ctl-wrapper .ctl-start:after,
+.ctl-vertical.ctl-wrapper .ctl-end:after{
+    content: '';
+    position: absolute;
+    width: var(--tw-line-width);
+    height: calc(var(--tw-line-width) * 2);
+    background-color: var(--tw-line-bg);
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 0;
+}
+.ctl-vertical.ctl-wrapper .ctl-start:after{
+    top: 100%;
+    margin-top: calc(0px - var(--tw-line-bd-width) * 1px);
+}
+.ctl-vertical.ctl-wrapper .ctl-end:after{
+    bottom: 100%;
+    margin-bottom: calc(0px - var(--tw-line-bd-width) * 1px);
+}
+/* ----------------- Timeline Start/End Dots Vertical - END ----------------- */
+
+/* ------------------------- Timeline Line Vertical ------------------------- */
+.ctl-vertical.ctl-wrapper .ctl-timeline{
+    position: relative;
+    margin: 0px;
+    padding: 40px 4px;
+    display: flow-root;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible;
+}
+.ctl-vertical.ctl-wrapper .ctl-timeline:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(50% - var(--tw-line-width) / 2);
+    display: block;
+    width: var(--tw-line-width);
+    background-color: var(--tw-line-bg);
+    border-width: 0px calc(var(--tw-line-bd-width) * 1px) 0px calc(var(--tw-line-bd-width) * 1px);
+    border-style: var(--tw-line-bd-style);
+    border-color: var(--tw-line-bd-color);
+}
+/* ------------------ Timeline Line Filling Vertical - END ------------------ */
+
+/* ------------------------- Line Year Box Vertical ------------------------- */
+/* Block + clear so year never sits beside a floated story */
+.ctl-vertical.ctl-wrapper .ctl-year{
+    position: relative;
+    clear: both;
+    display: block;
+    float: none;
+    width: 100%;
+    min-height: var(--tw-ybx-size);
+    margin: 30px 0;
+    padding: 0;
+    overflow: visible;
+}
+/* Pin year badge to the center of the timeline line */
+.ctl-vertical.ctl-wrapper .ctl-year .ctl-year-text{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    z-index: 3;
+    overflow: visible;
+}
+.ctl-vertical.ctl-wrapper .ctl-year:first-child{
+    margin-top: 0;
+}
+/* Centered layout only — hide year branch stubs (right-only needs the connector) */
+.ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-year-text:before,
+.ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-year-text:after{
+    content: none;
+    display: none;
+}
+/* ---------------------- Line Year Box Vertical - END ---------------------- */
+
+/* ----------------------------- Labels Vertical ---------------------------- */
+.ctl-vertical.ctl-wrapper .ctl-labels{
+    justify-content: space-between;
+    top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 - (var(--tw-lbl-big-size) / 2 - var(--tw-ibx-size) / 2));
+    left: calc(-100% - var(--tw-ibx-size) * 2);
+    text-align: right;
+}
+.ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-labels{
+    left: auto;
+    right: calc(-100% - var(--tw-ibx-size) * 2);
+    text-align: left;
+}
+/* -------------------------- Labels Vertical - END ------------------------- */
+
+/* ------------------------- Icon / Dot Box Vertical ------------------------ */
+.ctl-vertical.ctl-wrapper .ctl-icon,
+.ctl-vertical.ctl-wrapper .ctl-icondot{
+    z-index: 5;
+}
+.ctl-vertical.ctl-wrapper .ctl-icon{
+    top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100);
+    left: calc(var(--tw-ibx-size) / 2 - var(--tw-ibx-size) * 2);
+}
+.ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-icon{
+    left: auto;
+    right: calc(var(--tw-ibx-size) / 2 - var(--tw-ibx-size) * 2);
+}
+.ctl-vertical.ctl-wrapper .ctl-icondot{
+    left: calc(var(--tw-ibx-size) * 0.75 - var(--tw-ibx-size) * 2);
+    top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 4);
+}
+.ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-icondot{
+    left: auto;
+    right: calc(var(--tw-ibx-size) * 0.75 - var(--tw-ibx-size) * 2);
+}
+.ctl-vertical.ctl-wrapper .ctl-icondot:before,
+.ctl-vertical.ctl-wrapper .ctl-icondot:after,
+.ctl-vertical.ctl-wrapper .ctl-icon:before,
+.ctl-vertical.ctl-wrapper .ctl-icon:after{
+    height: calc(var(--tw-ibx-bd-width) + var(--tw-line-width) * 0.1);
+    width: calc(var(--tw-line-width) - var(--tw-line-bd-width) * 2px);
+    left: calc(50% - (var(--tw-line-width) - var(--tw-line-bd-width) * 2px) / 2);
+    background-color: var(--tw-line-bg);
+    opacity: 1;
+}
+.ctl-vertical.ctl-wrapper .ctl-icondot:before,
+.ctl-vertical.ctl-wrapper .ctl-icon:before{
+    top: calc(0px - var(--tw-ibx-bd-width));
+}
+.ctl-vertical.ctl-wrapper .ctl-icondot:after,
+.ctl-vertical.ctl-wrapper .ctl-icon:after{
+    bottom: calc(0px - var(--tw-ibx-bd-width));
+}
+/* ---------------------- Icon / Dot Box Vertical - END --------------------- */
+
+/* ------------------------ Story Box Arrow Vertical ------------------------ */
+/* Arrow sits inside .ctl-content: solid fill + two borders = speech-bubble tip */
+.ctl-vertical.ctl-wrapper .ctl-arrow{
+    /* Solid card-colored tip (gradient made it look like a bare "<") */
+    background: var(--tw-arw-bg, var(--tw-cbx-bg));
+    background-image: none;
+    left: calc(-0.5 * var(--tw-ibx-size) / 2.7);
+    right: auto;
+    top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 2 - var(--tw-ibx-size) / 7);
+    width: calc(var(--tw-ibx-size) / 3.5);
+    height: calc(var(--tw-ibx-size) / 3.5);
+    border-style: solid;
+    border-color: var(--tw-arw-bd-color, var(--tw-cbx-bd-color));
+    /* Only the two outer edges keep a border → left-pointing tip */
+    border-width: 0 0 max(1px, var(--tw-cbx-bd-left-width, 1px)) max(1px, var(--tw-cbx-bd-left-width, 1px));
+    box-shadow: -1px 1px 2px rgb(0, 0, 0, 0.12);
+    transform: rotate(45deg);
+    z-index: 3;
+}
+.ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-arrow{
+    left: auto;
+    right: calc(-0.5 * var(--tw-ibx-size) / 2.5);
+    background: var(--tw-arw-bg, var(--tw-cbx-bg));
+    background-image: none;
+    border-width: max(1px, var(--tw-cbx-bd-left-width, 1px)) max(1px, var(--tw-cbx-bd-left-width, 1px)) 0 0;
+    box-shadow: 1px -1px 2px rgb(0, 0, 0, 0.12);
+}
+/* --------------------- Story Box Arrow Vertical - END --------------------- */
+
+/* --------------------------- Story Box Vertical --------------------------- */
+.ctl-vertical.ctl-wrapper .ctl-story{
+    position: relative;
+    width: calc(50% - var(--tw-ibx-size));
+    float: right;
+    clear: both;
+    overflow: visible;
+}
+.ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left{
+    float: left;
+}
+.ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-content{
+    box-shadow: var(--tw-cbx-shadow-left);
+    border-width: var(--tw-cbx-bd-top-width) var(--tw-cbx-bd-left-width) var(--tw-cbx-bd-bottom-width) var(--tw-cbx-bd-right-width);
+    border-radius: var(--tw-cbx-radius-left);
+    -webkit-border-radius: var(--tw-cbx-radius-left);
+    -moz-border-radius: var(--tw-cbx-radius-left);
+    -ms-border-radius: var(--tw-cbx-radius-left);
+    -o-border-radius: var(--tw-cbx-radius-left);
+}
+.ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left:hover .ctl-content{
+    box-shadow: var(--tw-cbx-shadow-left-hover);
+    border-radius: var(--tw-cbx-radius-left-hover);
+    -webkit-border-radius: var(--tw-cbx-radius-left-hover);
+    -moz-border-radius: var(--tw-cbx-radius-left-hover);
+    -ms-border-radius: var(--tw-cbx-radius-left-hover);
+    -o-border-radius: var(--tw-cbx-radius-left-hover);
+}
+
+/* One-sided alignment (separate var — does not bleed into both-sided). */
+.ctl-vertical-right.ctl-wrapper .ctl-title{ justify-content:var(--tw-cbx-text-align-one-sided); text-align:var(--tw-cbx-text-align-one-sided); }
+.ctl-vertical-right.ctl-wrapper .ctl-media{ justify-content:var(--tw-cbx-img-align,var(--tw-cbx-text-align-one-sided)); }
+.ctl-vertical-right.ctl-wrapper .ctl-description{ text-align:var(--tw-cbx-text-align-one-sided); }
+
+/* Both-sided left cards */
+.ctl-both-sided.ctl-wrapper .ctl-story-left .ctl-title{ justify-content:var(--tw-cbx-text-align-alternate); text-align:var(--tw-cbx-text-align-alternate); }
+.ctl-both-sided.ctl-wrapper .ctl-story-left .ctl-media{ justify-content:var(--tw-cbx-img-align,var(--tw-cbx-text-align-alternate)); }
+.ctl-both-sided.ctl-wrapper .ctl-story-left .ctl-description{ text-align:var(--tw-cbx-text-align-alternate); }
+/* ---------------------------- One Sided Styles ---------------------------- */
+@media only screen and (min-width: 768px){
+
+    /* ------------------------ One Sided Vertical Right ------------------------ */
+    /*
+     * Match Elementor TWAE: 0 horizontal padding so 33.33% is the same box for
+     * wrapper start/end, timeline spine, year badge, and story icons.
+     */
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-timeline {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-start,
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-end {
+        left: calc(33.33% - var(--tw-line-width) * 1.5);
+        transform: none;
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-timeline:before {
+        left: calc(33.33% - var(--tw-line-width) / 2);
+        transform: none;
+    }
+
+    /*
+     * Layout 2 — Vertical (Right Only):
+     * Year sits LEFT of the spine with a horizontal connector into the line.
+     */
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-year {
+        justify-content: flex-start;
+        padding-left: 0;
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-year .ctl-year-text {
+        left: calc(33.33% - var(--tw-ibx-size) - var(--tw-ybx-size) - var(--tw-line-width) / 2);
+        top: 50%;
+        transform: translateY(-50%);
+        overflow: visible;
+    }
+
+    /* Horizontal branch from year badge → main vertical line */
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-year .ctl-year-text:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: calc(50% - var(--tw-line-width) / 2);
+        left: calc(100% + var(--tw-ybx-bd-width, var(--tw-line-width)));
+        right: auto;
+        bottom: auto;
+        width: calc(var(--tw-ibx-size) + var(--tw-line-width) + var(--tw-line-bd-width, 0) * 1px);
+        height: var(--tw-line-width);
+        background-color: var(--tw-line-bg);
+        border: none;
+        opacity: 1;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-year .ctl-year-text:after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: calc(50% - var(--tw-line-width) / 2);
+        left: 100%;
+        right: auto;
+        width: var(--tw-ybx-bd-width, var(--tw-line-width));
+        height: var(--tw-line-width);
+        background-color: var(--tw-line-bg);
+        border: none;
+        opacity: 1;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-labels {
+        right: auto;
+        left: calc((-100% + var(--tw-ibx-size)) / 2 - var(--tw-ibx-size) * 2);
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 - (var(--tw-lbl-big-size) / 2 - var(--tw-ibx-size) / 2));
+        width: calc((100% + var(--tw-ibx-size)) / 2 - var(--tw-ibx-size));
+        text-align: right;
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-story {
+        width: calc(66.66% - var(--tw-ibx-size));
+        float: right;
+        margin-bottom: var(--tw-cbx-bottom-margin);
+        text-align: left;
+        top: auto;
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-content {
+        border-width: var(--tw-cbx-bd-top-width) var(--tw-cbx-bd-right-width) var(--tw-cbx-bd-bottom-width) var(--tw-cbx-bd-left-width);
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-icon {
+        right: auto;
+        left: calc(var(--tw-ibx-size) / 2 - var(--tw-ibx-size) * 2);
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100);
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-icondot {
+        right: auto;
+        left: calc(var(--tw-ibx-size) * 0.75 - var(--tw-ibx-size) * 2);
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 4);
+    }
+
+    .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-arrow {
+        background: var(--tw-arw-bg, var(--tw-cbx-bg));
+        background-image: none;
+        border-width: 0 0 max(1px, var(--tw-cbx-bd-left-width, 1px)) max(1px, var(--tw-cbx-bd-left-width, 1px));
+        right: auto;
+        left: calc(-0.5 * var(--tw-ibx-size) / 2.7);
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 2 - var(--tw-ibx-size) / 7);
+        box-shadow: -1px 1px 2px rgb(0, 0, 0, 0.12);
+        transform: rotate(45deg);
+        z-index: 3;
+    }
+
+    /* --------------------- One Sided Vertical Right - END --------------------- */
+}
+/* ------------------------- One Sided Styles - END ------------------------- */
+
+/* ============================================================================
+ | Centered (Right / Left) layout — Bricks-stable positioning
+ | Full-width story rows; icon pinned to 50%; content/labels on opposite halves.
+ | Replaces fragile float + negative-offset positioning inside Bricks.
+ *=========================================================================== */
+@media only screen and (min-width: 768px){
+    .ctl-vertical.ctl-both-sided.ctl-wrapper {
+        display: block;
+        width: 100%;
+    }
+
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-timeline {
+        display: block;
+        width: 100%;
+        position: relative;
+    }
+
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-timeline:before {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-start,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-end {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Full-width row — no floats */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story {
+        position: relative;
+        float: none;
+        clear: both;
+        width: 100%;
+        margin-bottom: var(--tw-cbx-bottom-margin);
+        display: block;
+    }
+
+    /* Content card: right half (default / story-right) */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story .ctl-content {
+        position: relative;
+        overflow: visible;
+        width: calc(50% - var(--tw-ibx-size));
+        margin-left: calc(50% + var(--tw-ibx-size));
+        margin-right: 0;
+        float: none;
+        box-sizing: border-box;
+    }
+
+    /* Content card: left half */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story.ctl-story-left .ctl-content {
+        margin-left: 0;
+        margin-right: calc(50% + var(--tw-ibx-size));
+        border-width: var(--tw-cbx-bd-top-width) var(--tw-cbx-bd-left-width) var(--tw-cbx-bd-bottom-width) var(--tw-cbx-bd-right-width);
+        border-radius: var(--tw-cbx-radius-left);
+        box-shadow: var(--tw-cbx-shadow-left);
+    }
+
+    /* Icon always on the center line */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story .ctl-icon,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story.ctl-story-left .ctl-icon {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100);
+        z-index: 4;
+    }
+
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story .ctl-icondot,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story.ctl-story-left .ctl-icondot {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 4);
+        z-index: 4;
+    }
+
+    /* Kill icon connector stubs (stray lines) */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icon:before,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icon:after,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icondot:before,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icondot:after {
+        content: none;
+        display: none;
+    }
+
+    /* Labels opposite the content card */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story .ctl-labels {
+        position: absolute;
+        width: calc(50% - var(--tw-ibx-size));
+        left: 0;
+        right: auto;
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 - (var(--tw-lbl-big-size) / 2 - var(--tw-ibx-size) / 2));
+        padding-right: calc(var(--tw-ibx-size) * 0.75);
+        padding-left: 0;
+        text-align: right;
+        box-sizing: border-box;
+        z-index: 2;
+    }
+
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story.ctl-story-left .ctl-labels {
+        left: auto;
+        right: 0;
+        padding-left: calc(var(--tw-ibx-size) * 0.75);
+        padding-right: 0;
+        text-align: left;
+    }
+
+    /* Arrow inside content — solid tip on the card edge facing the center icon */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story:not(.ctl-story-left) .ctl-arrow {
+        left: calc(-0.5 * var(--tw-ibx-size) / 2.7);
+        right: auto;
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 2 - var(--tw-ibx-size) / 7);
+        background: var(--tw-arw-bg, var(--tw-cbx-bg));
+        background-image: none;
+        border-width: 0 0 max(1px, var(--tw-cbx-bd-left-width, 1px)) max(1px, var(--tw-cbx-bd-left-width, 1px));
+        box-shadow: -1px 1px 2px rgb(0, 0, 0, 0.12);
+        transform: rotate(45deg);
+        z-index: 3;
+    }
+
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-story.ctl-story-left .ctl-arrow {
+        left: auto;
+        right: calc(-0.5 * var(--tw-ibx-size) / 2.5);
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 2 - var(--tw-ibx-size) / 7);
+        background: var(--tw-arw-bg, var(--tw-cbx-bg));
+        background-image: none;
+        border-width: max(1px, var(--tw-cbx-bd-left-width, 1px)) max(1px, var(--tw-cbx-bd-left-width, 1px)) 0 0;
+        box-shadow: 1px -1px 2px rgb(0, 0, 0, 0.12);
+        transform: rotate(45deg);
+        z-index: 3;
+    }
+
+    /* Year stays on center line */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-year .ctl-year-text {
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* ------------------------- Mobile / Tablet Vertical ------------------------- */
+@media only screen and (max-width: 767px) {
+    .ctl-vertical.ctl-wrapper {
+        --tw-mobile-label-stack: calc(var(--tw-lbl-big-size) + var(--tw-lbl-small-size) + var(--tw-lbl-gap) + 12px);
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .ctl-vertical.ctl-wrapper .ctl-timeline {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-start,
+    .ctl-vertical.ctl-wrapper .ctl-end {
+        left: calc(var(--tw-ibx-size) / 2 - var(--tw-line-width) * 1.5);
+        transform: none;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-timeline:before {
+        left: calc(var(--tw-ibx-size) / 2 - var(--tw-line-width) / 2);
+        transform: none;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-year {
+        justify-content: flex-start;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-year .ctl-year-text {
+        position: relative;
+        overflow: visible;
+        left: calc(var(--tw-ibx-size) * 1.5);
+        right: auto;
+        transform: translateY(-50%);
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-year .ctl-year-text:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: calc(50% - var(--tw-line-width) / 2);
+        height: var(--tw-line-width);
+        left: auto;
+        right: calc(100% + var(--tw-ybx-bd-width, var(--tw-line-width)));
+        width: calc(var(--tw-ibx-size) - var(--tw-line-width) / 2 + var(--tw-line-bd-width, 0) * 1px);
+        background-color: var(--tw-line-bg);
+        border: none;
+        opacity: 1;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-year .ctl-year-text:after {
+        content: none;
+        display: none;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-story,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left {
+        width: calc(100% - var(--tw-ibx-size) * 1.5);
+        float: right;
+        text-align: left;
+        margin-bottom: var(--tw-cbx-bottom-margin);
+        top: 0;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-story .ctl-labels,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-labels {
+        position: relative;
+        left: 0;
+        right: auto;
+        top: 0;
+        text-align: left;
+        padding: 0 0 12px;
+        width: 100%;
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-story .ctl-content,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-content {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        float: none;
+        border-width: var(--tw-cbx-bd-top-width) var(--tw-cbx-bd-right-width) var(--tw-cbx-bd-bottom-width) var(--tw-cbx-bd-left-width);
+        border-radius: var(--tw-cbx-radius);
+        box-shadow: var(--tw-cbx-shadow);
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-icon,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-icon {
+        left: calc(var(--tw-ibx-size) / 2 - var(--tw-ibx-size) * 2);
+        right: auto;
+        transform: none;
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100);
+    }
+
+    /* Icon sits on the story; offset only when labels are in normal document flow. */
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-has-labels .ctl-icon,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-has-labels.ctl-story-left .ctl-icon {
+        top: calc(
+            var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100
+            + var(--tw-mobile-label-stack)
+            - (var(--tw-mobile-label-stack) * var(--tw-ibx-position) / 100)
+        );
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-icondot,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-icondot {
+        left: calc(var(--tw-ibx-size) * 0.75 - var(--tw-ibx-size) * 2);
+        right: auto;
+        transform: none;
+        top: calc(var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 4);
+    }
+
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-has-labels .ctl-icondot,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-has-labels.ctl-story-left .ctl-icondot {
+        top: calc(
+            var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100 + var(--tw-ibx-size) / 4
+            + var(--tw-mobile-label-stack)
+            - (var(--tw-mobile-label-stack) * var(--tw-ibx-position) / 100)
+        );
+    }
+
+    /* Restore icon spine connectors (hidden on desktop both-sided). */
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icon:before,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icon:after,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icondot:before,
+    .ctl-vertical.ctl-both-sided.ctl-wrapper .ctl-icondot:after {
+        content: "";
+        display: block;
+    }
+
+    /* Arrow is inside .ctl-content, which already sits below in-flow labels — no label-stack offset here. */
+    .ctl-vertical.ctl-wrapper .ctl-arrow,
+    .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-arrow {
+        background: var(--tw-arw-bg, var(--tw-cbx-bg));
+        background-image: none;
+        border-width: 0 0 max(1px, var(--tw-cbx-bd-left-width, 1px)) max(1px, var(--tw-cbx-bd-left-width, 1px));
+        left: calc(-0.5 * var(--tw-ibx-size) / 2.7);
+        right: auto;
+        top: calc(
+            var(--tw-ibx-position) * 1% - var(--tw-ibx-size) * var(--tw-ibx-position) / 100
+            + var(--tw-ibx-size) / 2 - var(--tw-ibx-size) / 7
+        );
+        box-shadow: -1px 1px 2px rgb(0, 0, 0, 0.12);
+        transform: rotate(45deg);
+    }
+
+    /* Mobile: both-sided stacks on the right — left cards use primary alignment. */
+    .ctl-both-sided.ctl-wrapper .ctl-story-left .ctl-title{ justify-content:var(--tw-cbx-text-align); text-align:var(--tw-cbx-text-align); }
+    .ctl-both-sided.ctl-wrapper .ctl-story-left .ctl-media{ justify-content:var(--tw-cbx-img-align,var(--tw-cbx-text-align)); }
+    .ctl-both-sided.ctl-wrapper .ctl-story-left .ctl-description{ text-align:var(--tw-cbx-text-align); }
+}
+/* ------------------- Mobile / Tablet Vertical - END ------------------- */

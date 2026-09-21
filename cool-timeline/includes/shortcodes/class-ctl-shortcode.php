@@ -109,6 +109,15 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 				'show-posts'    => '',
 				'skin'          => 'default',
 				'items'         => '',
+				'timeline-width'        => 'custom',
+				'timeline-custom-width' => '1140',
+				'show-title'            => 'show',
+				'title-link'            => 'enable',
+				'content-length'        => '50',
+				'read-more'             => 'show',
+				'read-more-text'        => 'Read More',
+				'read-more-target'      => '_self',
+				'year-label'            => '',
 			);
 
 			// Set shortcode attribute.
@@ -173,12 +182,76 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 		public function ctl_config_layouts( $attributes ) {
 			$config_arr                   = array();
 			$main_wrapper_cls             = 'ctl-wrapper';
+
+			// Layout is resolved further down for the wrapper classes, but the
+			// design gate below needs it now.
+			$ctl_layout_early = $this->ctl_set_val( $attributes['layout'], 'default' );
+
+			// Refreshed design CSS is scoped under this class, so existing sites
+			// keep rendering the unscoped/legacy rules untouched.
+			//
+			// Horizontal is excluded outright. The refresh is a port of Pro's
+			// default design for the vertical family - card border, shadow, radius,
+			// full-bleed title band, the card-to-line gap. Free's horizontal layout
+			// is a different thing entirely: a stripped card whose body lives in a
+			// lightbox popup, with no title band to hang any of that on. Giving it
+			// the card treatment framed a card that was never meant to be one.
+			// Without the class none of the refreshed sheet applies and horizontal
+			// renders exactly as it did before.
+			if ( CTL_Helpers::ctl_is_new_install() && 'horizontal' !== $ctl_layout_early ) {
+				$main_wrapper_cls .= ' ctl-new-design';
+			}
+
+			// Mark the block editor's ServerSideRender pass. The refreshed sheet
+			// centres the marker on the title bar only from 768px up, because below
+			// that Free switches to its own single-column anchors -- but the editor
+			// canvas is its own viewport and is routinely narrower than that while
+			// still previewing the desktop layout, so it needs the rule regardless
+			// of width. Never present on a published page.
+			$ctl_is_preview = function_exists( 'ctl_block_is_ssr_preview' ) && ctl_block_is_ssr_preview();
+
+			// The shortcode generator's modal preview renders over admin-ajax, not
+			// REST, so the check above never sees it. Its iframe is its own viewport
+			// too, so it needs the same width-independent rules. The handler itself
+			// verifies the nonce before rendering; this only picks a CSS class.
+			if ( ! $ctl_is_preview && function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$ctl_ajax_action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+				$ctl_is_preview  = ( 'get_shortcode_preview' === $ctl_ajax_action );
+			}
+
+			if ( $ctl_is_preview ) {
+				$main_wrapper_cls .= ' ctl-editor-preview';
+			}
 			$wrapper_cls                  = array( 'cool-timeline-wrapper' );
 			$ctl_animation                = '';
 			$config_arr['data_attribute'] = array();
 
 			$layout = $this->ctl_set_val( $attributes['layout'], 'default' );
 			$skin   = $this->ctl_set_val( $attributes['skin'], 'default' );
+			if ( ! in_array( $skin, array( 'default', 'clean' ), true ) ) {
+				$skin = 'default';
+			}
+
+			$timeline_width = isset( $attributes['timeline-width'] ) ? sanitize_key( $attributes['timeline-width'] ) : 'custom';
+			if ( 'contained' === $timeline_width ) {
+				$timeline_width = 'custom';
+			}
+			if ( ! in_array( $timeline_width, array( 'full', 'custom' ), true ) ) {
+				$timeline_width = 'custom';
+			}
+			$main_wrapper_cls  .= ' ctl-timeline-' . $timeline_width;
+			$main_wrapper_style = '';
+			if ( 'custom' === $timeline_width ) {
+				$custom_width       = isset( $attributes['timeline-custom-width'] ) && '' !== $attributes['timeline-custom-width'] && is_numeric( $attributes['timeline-custom-width'] )
+					? absint( $attributes['timeline-custom-width'] )
+					: 1140;
+				$custom_width       = max( 400, min( 1920, $custom_width ) );
+				$main_wrapper_style = '--ctl-timeline-max-width: ' . $custom_width . 'px; max-width: ' . $custom_width . 'px';
+			} else {
+				$main_wrapper_style = 'max-width: none; width: 100%';
+			}
+
 			// create wrapper class based upon layout.
 			switch ( $layout ) {
 				case 'one-side':
@@ -207,22 +280,40 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 			// create here a deprcated logic.
 
 			// Deprecated animations attribute setting if the user has configured the shortcode with animations attribute.
-			$ctl_animation = $attributes['animation'];
+			$ctl_animation = isset( $attributes['animation'] ) ? sanitize_text_field( $attributes['animation'] ) : 'none';
+
+			// Legacy VC / shortcode generator mistakenly stored animate.css labels as values.
+			$animation_aliases = array(
+				'fadeInUp'   => 'fade-up',
+				'fadein'     => 'fade-up',
+				'fade-in'    => 'fade-up',
+				'fadeIn'     => 'fade-up',
+				'fadeinup'   => 'fade-up',
+			);
+			if ( isset( $animation_aliases[ $ctl_animation ] ) ) {
+				$ctl_animation = $animation_aliases[ $ctl_animation ];
+			}
 
 			if ( in_array( $ctl_animation, CTL_Helpers::get_deprecated_animations(), true ) ) {
-				$ctl_animation = 'fade-in';
+				$ctl_animation = 'fade-up';
+			}
+
+			// Free supports None + Fade In Up only (same as Gutenberg).
+			if ( ! in_array( $ctl_animation, array( 'none', 'fade-up' ), true ) ) {
+				$ctl_animation = 'none';
 			}
 
 			if ( 'horizontal' === $layout ) {
 				$config_arr['data_attribute'][] = 'data-items="' . esc_attr( $this->attributes['items'] ) . '"';
 			}
 
-			$config_arr['layout']       = esc_attr( $layout );
-			$config_arr['active_skin']  = esc_attr( $skin );
-			$config_arr['main_wrp_cls'] = esc_attr( $main_wrapper_cls );
-			$config_arr['wrapper_cls']  = $wrapper_cls;
-			$config_arr['wrapper_id']   = wp_unique_id( 'cool_timeline_' );
-			$config_arr['animation']    = ! empty( $ctl_animation ) ? esc_attr( $ctl_animation ) : 'none';
+			$config_arr['layout']         = esc_attr( $layout );
+			$config_arr['active_skin']    = esc_attr( $skin );
+			$config_arr['main_wrp_cls']   = esc_attr( $main_wrapper_cls );
+			$config_arr['main_wrp_style'] = $main_wrapper_style;
+			$config_arr['wrapper_cls']    = $wrapper_cls;
+			$config_arr['wrapper_id']     = wp_unique_id( 'cool_timeline_' );
+			$config_arr['animation']      = ! empty( $ctl_animation ) ? esc_attr( $ctl_animation ) : 'none';
 			return $config_arr;
 		}
 

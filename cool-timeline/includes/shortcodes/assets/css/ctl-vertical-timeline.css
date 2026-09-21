@@ -79,6 +79,13 @@
     top: calc(0px - var(--ctw-line-bd-width) * 1px);
 }
 
+.ctl-wrapper .ctl-vertical-wrapper.ctl-content-empty .ctl-start,
+.ctl-wrapper .ctl-vertical-wrapper.ctl-content-empty .ctl-end,
+.ctl-wrapper .ctl-vertical-wrapper.ctl-content-empty .ctl-inner-line,
+.ctl-wrapper .ctl-vertical-wrapper.ctl-content-empty .ctl-timeline:before {
+    display: none !important;
+}
+
 /* ----------------- Timeline Start/End Dots Vertical - END ----------------- */
 /* ------------------------- Timeline Line Vertical ------------------------- */
 
@@ -383,26 +390,52 @@
 /* ------------------------- One Sided Styles - END ------------------------- */
 /* --------pagination css-------- */
 
-.ctl-pagination {
+.ctl-vertical-wrapper nav.ctl-pagination {
     display: flex;
-    align-items: stretch;
-    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    text-align: center;
+    position: relative;
+    margin: 34px 0 12px;
 }
 
-.cool-timeline-wrapper:not(.ctl-one-sided) .ctl-pagination {
-    justify-content: center;
+.ctl-vertical-wrapper .ctl-pagination-links {
+    display: contents;
+}
+
+.ctl-vertical-wrapper .ctl-pagination .page-numbers.ctl-page-num {
+    width: 100%;
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    opacity: .55;
 }
 
 .ctl-vertical-wrapper .ctl-pagination a,
 .ctl-vertical-wrapper .ctl-pagination span {
-    display: inline-block;
-    padding: 2px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-variant-numeric: tabular-nums;
+    transition: background-color .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1), border-color .2s cubic-bezier(.4, 0, .2, 1), transform .2s cubic-bezier(.4, 0, .2, 1), box-shadow .2s cubic-bezier(.4, 0, .2, 1);
 }
 
 .ctl-vertical-wrapper .ctl-pagination a {
     background-color: #ebebeb;
     color: #777;
     text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
     position: relative;
 }
 
@@ -441,6 +474,28 @@
     }
 }
 
+.ctl-vertical-wrapper .ctl-pagination :where(.prev.page-numbers, .next.page-numbers) {
+    fill: #6b6b6b;
+}
+
+.ctl-vertical-wrapper .ctl-pagination a.prev.page-numbers,
+.ctl-vertical-wrapper .ctl-pagination a.next.page-numbers {
+    border-radius: 50%;
+}
+
+.ctl-vertical-wrapper .ctl-pagination :is(.prev.page-numbers, .next.page-numbers) svg {
+    margin-bottom: -1px;
+    transition: transform .2s cubic-bezier(.4, 0, .2, 1);
+}
+
+.ctl-vertical-wrapper .ctl-pagination .prev.page-numbers:hover svg {
+    transform: translateX(-2px);
+}
+
+.ctl-vertical-wrapper .ctl-pagination .next.page-numbers:hover svg {
+    transform: translateX(2px);
+}
+
 .ctl-vertical-wrapper .ctl-pagination .prev.page-numbers:hover,
 .ctl-vertical-wrapper .ctl-pagination .next.page-numbers:hover {
     fill: #ffffff;
@@ -451,10 +506,27 @@
     color: #fff;
 }
 
+.ctl-vertical-wrapper .ctl-pagination a:focus-visible {
+    outline: 2px solid #26292b;
+    outline-offset: 2px;
+}
 
-.ctl-vertical-wrapper .ctl-pagination span.dots {
-    padding: 0;
-    color: #dcdcdc;
+.ctl-vertical-wrapper .ctl-pagination span.dots,
+.ctl-vertical-wrapper .ctl-pagination .page-numbers.dots {
+    padding: 0 6px;
+    min-width: 38px;
+    height: 38px;
+    background: transparent !important;
+    color: #6b6b6b !important;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    opacity: 1 !important;
+    box-shadow: none !important;
+    border: none !important;
+    cursor: default;
+    transform: none !important;
 }
 
 .ctl-vertical-wrapper .ctl-pagination span.current {
@@ -462,15 +534,21 @@
     color: #fff;
 }
 
-
-.ctl-vertical-wrapper nav.ctl-pagination {
-    text-align: center;
-    position: relative;
-    margin: 20px 0px;
+.ctl-vertical-wrapper.light-skin .ctl-pagination span.current {
+    color: #fff;
 }
 
 .ctl-vertical-wrapper.ctl-one-sided nav.ctl-pagination {
-    text-align: left;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .ctl-vertical-wrapper .ctl-pagination a,
+    .ctl-vertical-wrapper .ctl-pagination span {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+    }
 }
 
 

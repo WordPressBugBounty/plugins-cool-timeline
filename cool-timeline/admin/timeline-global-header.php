@@ -224,6 +224,62 @@ body.cph-timeline-addon-page.cool-plugins-timeline-addon_page_cool_timeline_sett
 	display: none;
 }
 
+.cph-screen-meta-bar {
+    clear: both;
+    position: relative;
+    z-index: 100;
+    margin-top: -16px;
+    margin-right: 10px;
+    min-height: 28px;
+}
+
+.cph-screen-meta-bar #screen-meta {
+	clear: both;
+	float: none;
+	margin: 0 0 -1px 0;
+}
+
+.cph-screen-meta-bar #screen-meta-links {
+	float: right;
+	margin: 0;
+}
+
+.cph-screen-meta-bar #screen-options-link-wrap,
+.cph-screen-meta-bar #contextual-help-link-wrap {
+	float: left;
+	margin: 0 0 0 6px;
+}
+
+.cph-screen-meta-bar .show-settings {
+	display: inline-block;
+	min-height: 30px;
+	color: #646970 !important;
+	background: #fff !important;
+	border: 1px solid #c3c4c7 !important;
+	border-top: 1px solid #c3c4c7 !important;
+	border-radius: 0 0 4px 4px;
+	font-size: 13px;
+	line-height: 2.15384615;
+	padding: 0 6px 0 16px;
+	cursor: pointer;
+	box-shadow: none;
+}
+
+.cph-screen-meta-bar .show-settings:hover,
+.cph-screen-meta-bar .show-settings:focus,
+.cph-screen-meta-bar .show-settings.screen-meta-active {
+	color: #2c3338 !important;
+}
+
+.cph-screen-meta-bar .show-settings:after {
+	font-family: dashicons;
+	display: inline-block;
+}
+
+body.cph-timeline-addon-page.post-type-cool_timeline .wrap {
+	clear: both;
+}
+
 @media screen and (max-width: 782px) {
 	.cph-top-header {
 		padding: 0 10px;
@@ -242,6 +298,10 @@ body.cph-timeline-addon-page.cool-plugins-timeline-addon_page_cool_timeline_sett
 
 	.cph-header-notices {
 		margin-left: 10px;
+		margin-right: 10px;
+	}
+
+	.cph-screen-meta-bar {
 		margin-right: 10px;
 	}
 }
@@ -274,7 +334,7 @@ if ( ! function_exists( 'cp_timeline_header_enqueue_styles' ) ) {
 	function cp_timeline_header_enqueue_styles( $version = '1.0.0' ) {
 		$handle = 'cp-timeline-global-header';
 
-		wp_register_style( $handle, false, array(), $version );
+		wp_register_style( $handle, false, array( 'common', 'dashicons' ), $version );
 		wp_enqueue_style( $handle );
 		wp_add_inline_style( $handle, cp_timeline_header_get_css() );
 	}

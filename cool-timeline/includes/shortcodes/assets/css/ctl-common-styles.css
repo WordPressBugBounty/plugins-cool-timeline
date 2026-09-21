@@ -119,6 +119,19 @@
     position: relative;
     text-align: center;
     margin: 0px 0px 30px;
+    max-width: var(--ctl-timeline-max-width, none);
+}
+
+.ctl-wrapper.ctl-timeline-custom {
+    max-width: var(--ctl-timeline-max-width, 1140px);
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.ctl-wrapper.ctl-timeline-full {
+    max-width: none !important;
+    width: 100%;
 }
 
 .ctl-wrapper .cool-timeline-wrapper:not(.ctl-one-sided, .ctl-compact-wrapper) .ctl-story.even {
@@ -445,6 +458,38 @@
     width: auto;
 }
 
+/* Editor preview only - the front end is already correct.
+
+   class-ctl-loop-helpers.php wraps every story image in an
+   <a class="ctl_glightbox">, and .ctl-media a img below is a percentage, so
+   the anchor - not the card - is what the image resolves against. The rule
+   above declares the anchor at 0,2,1. On the front end nothing outbids it and
+   the image fills the card. Inside the block editor the theme's editor
+   stylesheet is loaded over the plugin's, and a theme link or lightbox rule
+   there sizes the anchor instead - so the anchor came out at the theme's
+   width and dragged the image down with it, in the preview only.
+
+   Both editor anchors, because only one is guaranteed: .ctl-editor-preview is
+   added by the shortcode on its SSR pass, .editor-styles-wrapper is the canvas
+   the block editor always wraps content in. Neither exists on a published
+   page, so the front end keeps width: auto exactly as it is today and no
+   existing site changes.
+
+   Full media is meant to span the card - that is what choosing 'full' over
+   'small' means - so the anchor is pinned to the full width. .small keeps the
+   auto width above, which is what lets --ctw-cbx-img-align place a thumbnail.
+
+   flex: none is part of the fix, not padding: .ctl-media is a flex container,
+   so a theme that sets flex/flex-basis on the anchor resizes it without ever
+   touching width, and the width below would be ignored. */
+.ctl-wrapper.ctl-editor-preview .ctl-media:not(.small) > a,
+.editor-styles-wrapper .ctl-wrapper .ctl-media:not(.small) > a {
+    display: block !important;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
 .ctl-wrapper .ctl-media a img {
     width: 100%;
 }
@@ -551,16 +596,116 @@
 
 
 
+.ctl_glightbox_card {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28);
+    text-align: left;
+}
+
+.ctl_glightbox_card-media {
+    background: #111827;
+    line-height: 0;
+}
+
+.ctl_glightbox_card-media img,
+.ctl_glightbox_card .ctl_popup_slideshow img {
+    display: block;
+    width: 100%;
+    max-height: 62vh;
+    object-fit: contain;
+    object-position: center;
+}
+
+.ctl_glightbox_content {
+    padding: 18px 22px 22px;
+}
+
+.ctl_glightbox_content--caption {
+    padding: 14px 20px;
+    text-align: center;
+    max-height: none;
+    overflow: visible;
+}
+
 .ctl_glightbox_content .ctl_glightbox_date {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #646970;
+    margin: 0 0 6px;
+}
+
+.ctl_glightbox_content .ctl_glightbox_title {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #1d2327;
+}
+
+.ctl_glightbox_content--caption .ctl_glightbox_title {
+    font-size: 16px;
+}
+
+.ctl_glightbox_content .ctl_glightbox_desc {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: #3c434a;
+}
+
+.ctl_glightbox_content .ctl_glightbox_desc p {
+    margin: 0 0 10px;
+}
+
+.ctl_glightbox_content .ctl_glightbox_desc p:last-child {
+    margin-bottom: 0;
+}
+
+.ctl_glightbox_content .ctl_glightbox_title:empty,
+.ctl_glightbox_content .ctl_glightbox_date:empty,
+.ctl_glightbox_content .ctl_glightbox_desc:empty {
+    display: none;
+}
+
+.ctl_glightbox_container .ctl-labels {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    white-space: normal;
+}
+
+.ctl_glightbox_container .ctl-label-big,
+.ctl_glightbox_container .ctl-label-small {
+    position: static;
+    display: block;
+    white-space: normal;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+}
+
+.ctl_glightbox_container .ctl-description {
+    width: auto;
+    padding: 0;
+    margin: 0;
+    background: transparent;
 }
 
 .ctl_glightbox_close_btn {
-    position: absolute;
-    width: 32px;
-    height: 32px;
+    position: relative;
+    display: block;
+    width: 16px;
+    height: 16px;
     opacity: 1;
 }
 
@@ -571,11 +716,14 @@
 .ctl_glightbox_close_btn:before,
 .ctl_glightbox_close_btn:after {
     position: absolute;
-    left: 15px;
+    left: 50%;
+    top: 0;
     content: ' ';
-    height: 33px;
+    height: 16px;
     width: 2px;
-    background-color: white;
+    margin-left: -1px;
+    background-color: #fff;
+    border-radius: 1px;
 }
 
 .ctl_glightbox_close_btn:before {
@@ -586,26 +734,83 @@
     transform: rotate(-45deg);
 }
 
-.ctl_glightbox_container .gdesc-inner {
-    padding: 12px 12px;
+.glightbox-container:has(.ctl_glightbox_container) .goverlay {
+    background: rgba(15, 23, 42, 0.72);
 }
 
-.ctl_glightbox_container .gdesc-inner h4 {
-    margin-block: 5px;
+.ctl_glightbox_card_close,
+.ctl_glightbox_container .ginner-container > .gclose {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 30;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(15, 23, 42, 0.72);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ctl_glightbox_card_close:hover,
+.ctl_glightbox_container .ginner-container > .gclose:hover {
+    background-color: rgba(15, 23, 42, 0.9);
+}
+
+.ctl_glightbox_container:has(.ctl_glightbox_card) > .gclose {
+    display: none !important;
+}
+
+.ctl_glightbox_container .gdesc-inner {
+    padding: 16px 20px 20px;
+}
+
+.ctl_glightbox_container .gdesc-inner h4,
+.ctl_glightbox_container .gslide-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1d2327;
+    text-align: center;
+}
+
+.ctl_glightbox_container .gslide-desc {
+    margin: 0;
+}
+
+.ctl_glightbox_container.minimal-layout .gslide-description {
+    background: #fff;
 }
 
 .ctl_glightbox_container.minimal-layout .gslide-description .ctl_glightbox_content {
-    max-height: 30vh;
+    max-height: min(34vh, 260px);
     overflow-y: auto;
+    text-align: left;
 }
 
 .ctl_glightbox_container .gslide-media {
-    border-radius: 5px;
     overflow: hidden !important;
+    border-radius: 0;
+    box-shadow: none !important;
 }
 
 .ctl_glightbox_container .gslide-media .ginlined-content {
-    overflow: hidden !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    background: transparent;
+    width: 100%;
+}
+
+.ctl_glightbox_container .gslide-inline {
+    background: transparent !important;
+    max-height: calc(100vh - 40px);
+    overflow: auto;
 }
 
 .ctl_glightbox_container .glightbox-button-hidden {
@@ -617,15 +822,30 @@
 }
 
 .ctl_glightbox_container .gslide:not(.zoomed) .gslide-inner-content {
-    max-width: 60%;
+    max-width: min(860px, calc(100vw - 48px));
+}
+
+.ctl_glightbox_container.minimal-layout .ginner-container,
+.ctl_glightbox_container.minimal-layout .ginner-container.desc-bottom,
+.ctl_glightbox_container.minimal-layout .ginner-container.desc-top {
+    display: flex;
+    flex-direction: column !important;
+    width: 100%;
+    max-height: calc(100vh - 48px);
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+}
+
+.ctl_glightbox_container.minimal-layout .gslide-media {
+    width: 100%;
+    box-shadow: none !important;
 }
 
 .ctl_glightbox_container .gslide:not(.zoomed) .gslide-image>img {
-    max-height: 80vh !important;
-}
-
-.ctl_glightbox_container.minimal-layout .gslide:not(.zoomed) .gslide-image>img {
-    max-height: 60vh !important;
+    max-height: 62vh !important;
+    width: 100%;
+    object-fit: contain;
 }
 
 .ctl_glightbox_container .gslide.zoomed .gslide-image {
@@ -636,49 +856,42 @@
     max-width: 100%;
 }
 
-
-
-.ctl_glightbox_container .swiper-slide img,
-.ctl_glightbox_container .swiper-slide,
-.ctl_glightbox_container .swiper-wrapper {
-    height: 100% !important;
+.ctl_glightbox_card .ctl_glightbox_content {
+    max-height: min(38vh, 320px);
+    overflow: auto;
 }
 
-.ctl_glightbox_container .swiper-slide img {
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
-@media only screen and (max-width: 768px) {
-    .ctl_glightbox_container.minimal-layout .gslide:not(.zoomed) .gslide-media.gslide-image>img {
-        max-height: 100vh!important;
+@media only screen and (max-width: 767px) {
+    .ctl_glightbox_card-media img,
+    .ctl_glightbox_container .gslide:not(.zoomed) .gslide-image>img {
+        max-height: 48vh !important;
     }
-    .glightbox-clean .gslide-description {
-        background: #fff!important;
+    .ctl_glightbox_card_close,
+    .ctl_glightbox_container .ginner-container > .gclose {
+        top: 8px;
+        right: 8px;
     }
-    .glightbox-mobile .glightbox-container .gslide-description {
-        padding-bottom: 19px!important;
-        position: unset!important;
+    .glightbox-mobile .glightbox-container:has(.ctl_glightbox_container) .gslide-description {
+        padding-bottom: 0 !important;
+        position: unset !important;
+        background: #fff;
+        max-height: none;
     }
-    .glightbox-container .ginner-container {
-        height: auto!important;
+    .glightbox-container:has(.ctl_glightbox_container) .ginner-container {
+        height: auto !important;
     }
-    .ctl_glightbox_container .gdesc-inner {
-        padding: 0px!important;
+    .ctl_glightbox_container .gdesc-inner,
+    .ctl_glightbox_content {
+        padding: 14px 16px 16px;
     }
-    .glightbox-clean .gslide-desc {
-        font-size: 16px!important;
-    }
-    .desc-bottom .gslide-media,
-    .desc-top .gslide-media {
-        margin: 0px!important;
+    .ctl_glightbox_content .ctl_glightbox_title {
+        font-size: 18px;
     }
     .ctl_glightbox_container .gslide:not(.zoomed) .gslide-inner-content {
-        max-width: 90%;
+        max-width: calc(100vw - 24px);
     }
-    .glightbox-mobile .glightbox-container .gslide-inner-content .gslide-title {
-        color: #000;
+    .glightbox-mobile .glightbox-container:has(.ctl_glightbox_container) .gslide-inner-content .gslide-title {
+        color: #1d2327;
     }
     .gslide-inner-content .desc-bottom .gslide-image img,
     .gslide-inner-content .desc-top .gslide-image img {

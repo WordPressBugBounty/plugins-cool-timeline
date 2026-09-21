@@ -20,6 +20,46 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 	class CTL_Helpers {
 
 		/**
+		 * Plugin version this refreshed design first shipped in. Update this ONE constant
+		 * when the design change is actually released — do NOT compare against the live
+		 * CTL_V constant, since that changes on every unrelated version bump and would flip
+		 * already-"new" sites back to the legacy look after any future release.
+		 */
+		const DESIGN_REFRESH_VERSION = '4.0.0';
+
+		/**
+		 * Whether the current site first installed Free on DESIGN_REFRESH_VERSION
+		 * or newer — vs. an existing site that originally installed an older version.
+		 * Used to gate refreshed design defaults so upgrading sites keep their existing look.
+		 *
+		 * The 'ctl_initial_save_version' option is seeded (via add_option — only if missing)
+		 * at first-ever activation. It never changes afterwards. Sites that predate this
+		 * option (no value at all) are treated as existing/old. Users who accept the
+		 * welcome "Upgrade Design" CTA set ctl_migrate_new_design=yes and get the new look.
+		 *
+		 * @return bool
+		 */
+		public static function ctl_is_new_install() {
+			if ( 'yes' === get_option( 'ctl_migrate_new_design' ) ) {
+				return true;
+			}
+
+			$initial_version = get_option( 'ctl_initial_save_version', false );
+
+			if ( false === $initial_version || null === $initial_version || '' === $initial_version ) {
+				return false;
+			}
+
+			$initial_version = trim( (string) $initial_version );
+
+			if ( version_compare( $initial_version, self::DESIGN_REFRESH_VERSION, '<' ) ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
 		 * Timeline Stories Load More Pagination
 		 *
 		 * @param string $current_page_id current page id.
@@ -108,19 +148,32 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 		 * @param array $attributes timeline attributes.
 		 * @param array $settings settings settings.
 		 */
-		public static function ctl_get_excerpt( $settings ) {
+		public static function ctl_get_excerpt( $attributes, $settings = null ) {
 			global $post;
 
+			if ( is_array( $attributes ) && ( isset( $attributes['layout'] ) || isset( $attributes['content-length'] ) ) ) {
+				// Called with $attributes and $settings.
+			} else {
+				// Backward compatibility when only $settings was passed as first arg
+				$settings = $attributes;
+				$attributes = array();
+			}
+
 			$post_content      = $post->post_content;
-			$length            = $settings['story_content_length'];
-			$display_read_more = $settings['display_readmore'];
+			$length            = isset( $attributes['content-length'] ) ? intval( $attributes['content-length'] ) : ( isset( $settings['story_content_length'] ) ? intval( $settings['story_content_length'] ) : 50 );
+			$display_read_more = isset( $attributes['read-more'] ) ? $attributes['read-more'] : ( isset( $settings['display_readmore'] ) ? $settings['display_readmore'] : 'hide' );
+			if ( $display_read_more === 'yes' || $display_read_more === 'show' ) {
+				$display_read_more = 'show';
+			} else {
+				$display_read_more = 'hide';
+			}
 			$read_more_link    = '';
 
 			// display read more btn if read more yes.
-			if ( 'yes' === $display_read_more ) {
+			if ( 'show' === $display_read_more ) {
 				$url             = get_the_permalink( get_the_ID() );
-				$read_more_lbl   = __( 'Read More', 'cool-timeline' );
-				$target          = ! empty( $settings['story_link_target'] ) ? $settings['story_link_target'] : '_self';
+				$read_more_lbl   = isset( $attributes['read-more-text'] ) && '' !== $attributes['read-more-text'] ? $attributes['read-more-text'] : __( 'Read More', 'cool-timeline' );
+				$target          = ! empty( $attributes['read-more-target'] ) ? $attributes['read-more-target'] : ( ! empty( $settings['story_link_target'] ) ? $settings['story_link_target'] : '_self' );
 				$read_more_link .= '&hellip;<a class="read_more ctl_read_more" target="' . esc_attr( $target ) . '" href="' . esc_url( $url ) . '" role="link">' . esc_html($read_more_lbl) . '</a>';
 			}
 			  // Trim content
@@ -129,7 +182,7 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
                    $length,
                    $read_more_link
                );
- 
+  
           // Run embed + shortcode filters.
               // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
               $excerpt = apply_filters( 'the_content', $excerpt );
@@ -171,7 +224,7 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 		 * @param int      $paged current page number.
 		 */
 		public static function ctl_pagination( $wp_query, $paged, $fontawesome ) {
-			$paged = max( 1, absint( $paged ) );
+			$paged    = max( 1, absint( $paged ) );
 			$output   = '';
 			$numpages = $wp_query->max_num_pages;
 			if ( ! $numpages ) {
@@ -199,12 +252,18 @@ if ( ! class_exists( 'CTL_Helpers' ) ) {
 				'add_fragment' => '',
 			);
 
+			$pagination_args = apply_filters(
+				'cool_timeline_pagination_args',
+				$pagination_args,
+				$paged
+			);
+
 			$paginate_links = paginate_links( $pagination_args );
 
 			if ( $paginate_links ) {
-				$output  = '<nav class="ctl-pagination" aria-label="Timeline Navigation">';
-				$output .= '<span class="page-numbers ctl-page-num" role="status">' . $page_lbl . $paged . $of_lbl . $numpages . '</span> ';
-				$output .= $paginate_links;
+				$output  = '<nav class="ctl-pagination ctl-pagination-style-1" aria-label="Timeline Navigation">';
+				$output .= '<span class="page-numbers ctl-page-num" role="status">' . $page_lbl . esc_html( $paged ) . $of_lbl . esc_html( $numpages ) . '</span> ';
+				$output .= '<div class="ctl-pagination-links">' . $paginate_links . '</div>';
 				$output .= '</nav>';
 				return $output;
 			}

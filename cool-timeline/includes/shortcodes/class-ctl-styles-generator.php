@@ -135,7 +135,19 @@ if ( ! class_exists( 'CTL_Styles_Generator' ) ) {
 						$property_key   = trim( $property_parts[0] );
 						$property_value = trim( $property_parts[1] );
 
+						/*
+						 * Two names for one value. --ctw-cbx-* is what every sheet reads and
+						 * is all an existing install needs. --ctl-set-* is the same value
+						 * under a name only the settings screen ever writes, and the
+						 * refreshed sheet reads it as the fallback in front of each of its
+						 * own defaults. That is what lets a setting reach a new install:
+						 * the design defaults sit on .ctl-new-design.ctl-wrapper, which
+						 * outweighs anything this block can say about --ctw-cbx-* alone.
+						 * Only properties the user actually filled in reach here, so a
+						 * default the user never touched is never overridden.
+						 */
 						$typo_value .= "--ctw-cbx-$key-$property_key: $property_value;";
+						$typo_value .= "--ctl-set-$key-$property_key: $property_value;";
 					}
 				}
 			}

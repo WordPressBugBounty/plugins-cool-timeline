@@ -161,6 +161,17 @@
 
 /* -------------------------------- Line Fill ------------------------------- */
 
+.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-button-prev,
+.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-button-next,
+.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-h-line {
+    display: none;
+}
+
+.ctl-wrapper .ctl-horizontal-wrapper.ctl-content-empty .ctl-slider-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
 .ctl-wrapper .ctl-horizontal-timeline .ctl-h-line {
     position: absolute;
     top: calc(0px + var(--ctw-lbl-big-size) + var(--ctw-lbl-small-size) + var(--ctw-lbl-gap) + 20px + var(--ctw-ibx-size) - var(--ctw-line-width) * .5 + var(--lbl-bd-width)*2) !important;
@@ -337,14 +348,28 @@
     text-align: center;
 }
 
+/* Keep date labels visible when Title is hidden: absolute .ctl-labels sit
+   in the space normally opened by .ctl-title padding; empty content would
+   collapse the slide and Swiper's overflow:hidden would clip the dates. */
+.ctl-wrapper .ctl-horizontal-wrapper .ctl-title.ctl-title-spacer {
+    min-height: 0;
+    padding-bottom: 0;
+    margin: 0;
+    border: 0;
+    font-size: 0;
+    line-height: 0;
+}
+
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-story.even .ctl-title {
     padding-top: 60px;
 }
 
+.ctl-wrapper .ctl-horizontal-wrapper .ctl-story:nth-child(odd) .ctl-title,
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-story:nth-child(odd) .ctl-title :where(a, a:hover) {
     color: var(--ctw-first-story-color);
 }
 
+.ctl-wrapper .ctl-horizontal-wrapper .ctl-story.even .ctl-title,
 .ctl-wrapper .ctl-horizontal-wrapper .ctl-story.even .ctl-title :where(a, a:hover) {
     color: var(--ctw-second-story-color);
 }

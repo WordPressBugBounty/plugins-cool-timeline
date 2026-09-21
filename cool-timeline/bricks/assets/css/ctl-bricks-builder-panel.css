@@ -1,0 +1,148 @@
+/* Builder panel: options labeled "(PRO only)" stay visible but non-interactive. */
+.bricks-panel [data-control="select"] .dropdown > li.ctl-pro-only-option,
+#bricks-panel [data-control="select"] .dropdown > li.ctl-pro-only-option,
+[data-controlkey="chooseMedia"] .dropdown > li.ctl-pro-only-option,
+[data-controlkey="chooseMedia"] .dropdown > li:nth-child(n + 2) {
+	opacity: 0.45 !important;
+	pointer-events: none !important;
+	cursor: not-allowed !important;
+	user-select: none;
+}
+
+[data-control-key="stories"] .repeater-header .actions li.ctl-story-delete-locked,
+[data-control-key="stories"] .repeater-header .actions li.ctl-story-delete-locked button {
+	opacity: 0.35;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+/* Story Timeline element panel icon (twae-story-icon.png). */
+i.ctl-eicon-timeline-story,
+.bricks-panel i.ctl-eicon-timeline-story,
+#bricks-panel-element-classes i.ctl-eicon-timeline-story,
+.bricks-structure-item i.ctl-eicon-timeline-story,
+[class*="bricks-panel"] i.ctl-eicon-timeline-story {
+	position: relative;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	font-size: 0 !important;
+	line-height: 0 !important;
+	color: transparent !important;
+	vertical-align: middle;
+}
+
+i.ctl-eicon-timeline-story::before,
+.bricks-panel i.ctl-eicon-timeline-story::before,
+#bricks-panel-element-classes i.ctl-eicon-timeline-story::before,
+.bricks-structure-item i.ctl-eicon-timeline-story::before,
+[class*="bricks-panel"] i.ctl-eicon-timeline-story::before {
+	content: "" !important;
+	position: absolute;
+	inset: 0;
+	display: block;
+	background: url("../images/twae-story-icon.png") no-repeat center center;
+	background-size: contain;
+	font-family: none !important;
+}
+
+/*
+ * Non-interactive heading between native Bricks Style groups
+ * (Layout, CSS, Attributes, …) and Cool Timeline style groups.
+ */
+#bricks-panel .twpb-plugin-settings-label {
+	display: block;
+	margin: 8px 0 4px;
+	padding: 10px 14px 8px;
+	pointer-events: none;
+	user-select: none;
+	cursor: default;
+	border-top: 1px solid rgba(255, 214, 79, 0.4);
+	color: #ffd64f;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	line-height: 1.35;
+}
+
+/*
+ * Plugin control groups vs native Bricks Style groups.
+ * Native groups keep Bricks icons; ours get a gold edge + unique icons.
+ */
+#bricks-panel .control-group[data-twpb-group] > .control-group-title {
+	box-shadow: inset 3px 0 0 #ffd64f;
+}
+
+#bricks-panel .control-group[data-twpb-group] > .control-group-title .icon {
+	position: relative;
+	width: 16px;
+	height: 16px;
+	min-width: 16px;
+	transform: none !important;
+}
+
+#bricks-panel .control-group[data-twpb-group] > .control-group-title .icon svg,
+#bricks-panel .control-group[data-twpb-group] > .control-group-title .icon i {
+	opacity: 0 !important;
+}
+
+#bricks-panel .control-group[data-twpb-group] > .control-group-title .icon::before {
+	content: "";
+	display: block;
+	width: 16px;
+	height: 16px;
+	background-color: currentColor;
+	-webkit-mask: var(--twpb-group-icon) center / contain no-repeat;
+	mask: var(--twpb-group-icon) center / contain no-repeat;
+}
+
+#bricks-panel .control-group[data-twpb-group="stories"] {
+	--twpb-group-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01'/%3E%3C/svg%3E");
+}
+#bricks-panel .control-group[data-twpb-group="layout"] {
+	--twpb-group-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='18' rx='1'/%3E%3Crect x='14' y='3' width='7' height='18' rx='1'/%3E%3C/svg%3E");
+}
+#bricks-panel .control-group[data-twpb-group="line"] {
+	--twpb-group-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round'%3E%3Cpath d='M12 3v18'/%3E%3Ccircle cx='12' cy='7' r='2' fill='%23000'/%3E%3Ccircle cx='12' cy='17' r='2' fill='%23000'/%3E%3C/svg%3E");
+}
+#bricks-panel .control-group[data-twpb-group="iconBox"] {
+	--twpb-group-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%23000'/%3E%3C/svg%3E");
+}
+#bricks-panel .control-group[data-twpb-group="labels"] {
+	--twpb-group-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='5' width='16' height='16' rx='2'/%3E%3Cpath d='M8 3v4M16 3v4M4 10h16'/%3E%3C/svg%3E");
+}
+#bricks-panel .control-group[data-twpb-group="contentBox"] {
+	--twpb-group-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+}
+#bricks-panel .control-group[data-twpb-group="storyContent"] {
+	--twpb-group-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round'%3E%3Cpath d='M5 7h14M5 12h10M5 17h8'/%3E%3C/svg%3E");
+}
+
+/* Style-tab pairing: labeled rules inside plugin groups.
+ * Bricks already draws a :before line — keep that one only. */
+#bricks-panel .control-group[data-twpb-group] [data-control="separator"],
+#bricks-panel .control-group[data-twpb-group] .control[data-control="separator"] {
+	margin: 14px 0 8px;
+	padding: 8px 0 0 !important;
+	border: 0 !important;
+	background: none;
+}
+
+#bricks-panel .control-group[data-twpb-group] [data-control="separator"]::before,
+#bricks-panel .control-group[data-twpb-group] .control[data-control="separator"]::before {
+	border-top: 1px solid var(--builder-border-color, #3d4752) !important;
+}
+
+#bricks-panel .control-group[data-twpb-group] [data-control="separator"] label,
+#bricks-panel .control-group[data-twpb-group] [data-control="separator"] .control-label,
+#bricks-panel .control-group[data-twpb-group] [data-control="separator"] .title {
+	display: block !important;
+	margin: 0;
+	color: #ffd64f;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	line-height: 1.3;
+}

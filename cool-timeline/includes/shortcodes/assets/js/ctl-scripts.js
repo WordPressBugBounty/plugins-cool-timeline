@@ -46,72 +46,111 @@ class CtlCommonScript {
 		return GLightbox(attributes);
 	};
 
+	popupCloseBtn = () =>
+		'<button type="button" class="ctl_glightbox_card_close" aria-label="Close"><i class="ctl_glightbox_close_btn" aria-hidden="true"></i></button>';
+
+	bindPopupClose = (lightbox) => {
+		const bind = () => {
+			jQuery('.ctl_glightbox_card_close')
+				.off('click.ctlPopupClose')
+				.on('click.ctlPopupClose', (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					if (lightbox && typeof lightbox.close === 'function') {
+						lightbox.close();
+					}
+				});
+
+			const nativeClose = document.querySelector('.ctl_glightbox_container > .gclose');
+			const hasCard = document.querySelector('.gslide.current .ctl_glightbox_card');
+			const inner = document.querySelector('.gslide.current .ginner-container');
+			if (nativeClose && inner && !hasCard && nativeClose.parentElement !== inner) {
+				inner.appendChild(nativeClose);
+			}
+		};
+
+		if (lightbox && typeof lightbox.on === 'function') {
+			lightbox.on('open', bind);
+			lightbox.on('slide_changed', bind);
+		}
+		setTimeout(bind, 80);
+	};
+
+	// Same story popup fields in every layout: date, title, description.
+	storyPopupCopy = (title, date, desc) => {
+		return `<div class="ctl_glightbox_content">
+			<div class="ctl_glightbox_date">${date || ''}</div>
+			<h2 class="ctl_glightbox_title">${title || ''}</h2>
+			<div class="ctl_glightbox_desc">${desc || ''}</div>
+		</div>`;
+	};
+
+	storyPopupCard = (mediaHtml, title, date, desc) => {
+		return `<div class="ctl_glightbox_card">${this.popupCloseBtn()}${mediaHtml || ''}${this.storyPopupCopy(title, date, desc)}</div>`;
+	};
+
 	// Default Lightbox for single image
 	CtlLighBox = (ele) => {
 		ele.preventDefault();
+		ele.stopPropagation();
 		const element = ele.currentTarget;
 		const lightbox = this.CtlLightBoxSettings('default');
 
 		const targetHref = element.getAttribute('href');
-		const title = element.getAttribute('data-glightbox');
-		lightbox.setElements([{ href: targetHref, title: this.ctlEscHtml(title) }]);
+		const title = element.getAttribute('data-glightbox') || '';
+		const safeTitle = this.ctlEscHtml(title);
+		const caption = safeTitle
+			? `<div class="ctl_glightbox_content ctl_glightbox_content--caption"><h2 class="ctl_glightbox_title">${safeTitle}</h2></div>`
+			: '';
+
+		this.bindPopupClose(lightbox);
+		lightbox.setElements([{
+			content: `<div class="ctl_glightbox_card">${this.popupCloseBtn()}<div class="ctl_glightbox_card-media"><img src="${targetHref}" alt="${safeTitle.replace(/"/g, '&quot;')}"></div>${caption}</div>`,
+			width: '860px',
+			height: 'auto',
+		}]);
 		lightbox.open();
 	};
 
 	// Lightbox For minimal Layout
 	CtlLighBoxMinimal = (ele) => {
 		ele.preventDefault();
-	
+
 		const popUpContainerID = jQuery(ele.currentTarget).data('popup-id');
 		const popUpConatiner = jQuery(popUpContainerID);
-	
+
 		const lightbox = this.CtlLightBoxSettings('minimal');
-	
+
 		const img = popUpConatiner
 			.find('.ctl_popup_media .ctl_popup_img')
 			.data('popup-image');
-	
-		// Changed .html() -> .text()
-		const date = popUpConatiner.find('.ctl_popup_date').text();
-		const title = popUpConatiner.find('.ctl_popup_title').text();
-	
-		// Keep .html() because description supports rich HTML/iframe
+
+		// Date may include label markup; title/desc come from server-escaped/rich HTML.
+		const date = popUpConatiner.find('.ctl_popup_date').html();
+		const title = popUpConatiner.find('.ctl_popup_title').html();
 		const desc = popUpConatiner.find('.ctl_popup_desc').html();
-	
-		const safeTitle = this.ctlEscHtml(title);
-		const safeDate = this.ctlEscHtml(date);
 		const elements = [];
-	
+
 		if (img !== undefined) {
-	
 			elements.push({
-				href: img,
-				type: 'image',
-				description: `
-					<div class='ctl_glightbox_content'>
-						<h2 class='ctl_glightbox_title'>${safeTitle}</h2>
-						<div class='ctl_glightbox_date'>${safeDate}</div>
-						<div class="ctl_glightbox_desc">${desc}</div>
-					</div>
-				`,
-				height: '200px',
+				content: this.storyPopupCard(
+					`<div class="ctl_glightbox_card-media"><img src="${img}" alt=""></div>`,
+					title,
+					date,
+					desc
+				),
+				height: 'auto',
+				width: '800px',
 			});
-	
 		} else {
-	
 			elements.push({
-				content: `
-					<h2 class='ctl_glightbox_title'>${safeTitle}</h2>
-					<div class='ctl_glightbox_content'>
-						<div class='ctl_glightbox_date'>${safeDate}</div>
-						<div class="ctl_glightbox_desc">${desc}</div>
-					</div>
-				`,
-				'max-width': '50vw',
+				content: this.storyPopupCard('', title, date, desc),
+				width: '640px',
 				height: 'auto',
 			});
 		}
-	
+
+		this.bindPopupClose(lightbox);
 		lightbox.setElements(elements);
 		lightbox.open();
 	};
@@ -163,6 +202,9 @@ class CtlCommonScript {
 		const eachTimeline=jQuery('.ctl-wrapper .cool-timeline-wrapper');
 		eachTimeline.each((index,element) => {
 			const timeline=jQuery(element);
+			if ( timeline.find('.ctl-story').length === 0 ) {
+				timeline.addClass('ctl-content-empty');
+			}
 			if(!timeline.hasClass('ctl-horizontal-timeline')){
 				const animation=timeline.find(".ctl-timeline-container").attr("data-animation");
 				if('none' !== animation){

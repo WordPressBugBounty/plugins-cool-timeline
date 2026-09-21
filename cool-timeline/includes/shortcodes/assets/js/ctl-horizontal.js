@@ -10,7 +10,12 @@ class CtlHorizontal {
 	CtlHrLoop() {
 		this.parentWrp = jQuery('.ctl-horizontal-wrapper');
         this.parentWrp.map((key,ele) => {
-            const mainSwiper = jQuery(ele).find('.ctl-slider-container')[0];
+            const $ele = jQuery(ele);
+            if ( $ele.find('.ctl-story').length === 0 ) {
+                $ele.addClass('ctl-content-empty');
+                return;
+            }
+            const mainSwiper = $ele.find('.ctl-slider-container')[0];
             // Initialize main slider
             this.initializeMainSlider(mainSwiper); 
         });

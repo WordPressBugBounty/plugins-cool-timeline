@@ -112,7 +112,14 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 			}
 
 			// Get Year label.
-			if ( $this->settings['year_label'] && ( 'one-side' === $layout || 'default' === $layout ) ) {
+			$show_year_label = true;
+			if ( isset( $this->attributes['year-label'] ) && '' !== $this->attributes['year-label'] ) {
+				$show_year_label = ( 'show' === $this->attributes['year-label'] || 'yes' === $this->attributes['year-label'] || '1' === $this->attributes['year-label'] );
+			} else {
+				$show_year_label = ! empty( $this->settings['year_label'] );
+			}
+
+			if ( $show_year_label && ( 'one-side' === $layout || 'default' === $layout ) ) {
 				$output .= $this->ctl_get_year_label( $post_id );
 			}
 			$output .= '<!-- Timeline Content --><div  id="ctl-story-' . esc_attr( $post_id ) . '" class="' . esc_attr( implode( ' ', $classes ) ) . '" data-aos="' . esc_attr( $animation ) . '"   data-story-index="' . esc_attr( $index ) . '" role="article">';
@@ -164,19 +171,31 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 		 */
 		public function ctl_get_title( $post_id ) {
 			$output = '';
+			$attributes = $this->attributes;
+			$layout     = isset( $attributes['layout'] ) ? $attributes['layout'] : '';
+			if ( isset( $attributes['show-title'] ) && 'hide' === $attributes['show-title'] ) {
+				// Horizontal dates are absolutely positioned below the line and
+				// need the content-box height that .ctl-title padding normally
+				// provides; without it Swiper's overflow:hidden clips the dates.
+				if ( 'horizontal' === $layout ) {
+					return '<div class="ctl-title ctl-title-spacer" aria-hidden="true"></div>';
+				}
+				return '';
+			}
 			if ( ! empty( get_the_title() ) ) {
-				$layout      = $this->attributes['layout'];
 				$title_class = 'story-' . $post_id;
-				$re_more     = ( ( isset( $this->settings['display_readmore'] ) && 'yes' === $this->settings['display_readmore'] ) || 'horizontal' === $layout );
+				$want_links  = ( ( isset( $attributes['read-more'] ) && 'show' === $attributes['read-more'] ) || 'horizontal' === $layout );
+				$link_title  = $want_links && ( ! isset( $attributes['title-link'] ) || 'disable' !== $attributes['title-link'] );
 				$output     .= '<!-- ' . $this->tm_type . ' Title --><div class="ctl-title ' . esc_attr( $title_class ) . '" aria-label="2">';
-				$output     .= $re_more ? $this->get_story_link( $post_id ) : '';
+				$output     .= $link_title ? $this->get_story_link( $post_id ) : '';
 				$output     .= esc_html( get_the_title( $post_id ) );
-				$output     .= $re_more ? '</a>' : '';
+				$output     .= $link_title ? '</a>' : '';
 
-				if ( ( isset( $this->settings['display_readmore'] ) && 'yes' === $this->settings['display_readmore'] ) && 'horizontal' === $layout ) {
-					$output .= $re_more ? $this->get_story_link( $post_id ) : '';
-					$output .= '<p class="ctl_read_more">' . __( 'Read More', 'cool-timeline' ) . '</p>';
-					$output .= $re_more ? '</a>' : '';
+				if ( ( isset( $attributes['read-more'] ) && 'show' === $attributes['read-more'] ) && 'horizontal' === $layout ) {
+					$read_more_lbl = isset( $attributes['read-more-text'] ) && '' !== $attributes['read-more-text'] ? $attributes['read-more-text'] : __( 'Read More', 'cool-timeline' );
+					$output .= $want_links ? $this->get_story_link( $post_id ) : '';
+					$output .= '<p class="ctl_read_more">' . esc_html( $read_more_lbl ) . '</p>';
+					$output .= $want_links ? '</a>' : '';
 				}
 
 				$output .= '</div>';
@@ -197,7 +216,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 			if ( 'horizontal' === $attributes['layout'] ) {
 				$story_link = '<a class="minimal_glightbox" data-popup-id="#ctl-popup-' . esc_attr( $post_id ) . '">';
 			} else {
-				$target = ! empty( $this->settings['story_link_target'] ) ? $this->settings['story_link_target'] : '_self';
+				$target = ! empty( $attributes['read-more-target'] ) ? $attributes['read-more-target'] : ( ! empty( $this->settings['story_link_target'] ) ? $this->settings['story_link_target'] : '_self' );
 				$url    = get_the_permalink( $post_id );
 
 				$story_link = '<a target="' . esc_attr( $target ) . '" title="' . esc_attr( get_the_title( $post_id ) ) . '" href="' . esc_url( $url ) . '" class="story-link">';
@@ -255,6 +274,9 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 		 */
 		public function ctl_get_content() {
 			$attributes = $this->attributes;
+			if ( isset( $attributes['story-content'] ) && 'hide' === $attributes['story-content'] ) {
+				return '';
+			}
 			$output     = '';
 			$content    = '';
 			if ( 'full' === $attributes['story-content'] ) {
@@ -263,7 +285,7 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 				$content .= apply_filters( 'the_content', $post->post_content );
 
 			} else {
-				$content .= CTL_Helpers::ctl_get_excerpt( $this->settings );
+				$content .= CTL_Helpers::ctl_get_excerpt( $attributes, $this->settings );
 
 			}
 		

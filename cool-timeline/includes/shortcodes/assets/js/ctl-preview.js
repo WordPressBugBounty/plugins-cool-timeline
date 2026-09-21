@@ -136,7 +136,7 @@ setTimeout(function () {
 }
 
 (function () {
-    // Set up a click event for the third tab
+    // Set up a click event for the Preview tab (last tab: Layout / Content / Extra / Preview).
     let shortcodePreview = false;
     let iframeLoaded = true;
 
@@ -162,7 +162,14 @@ setTimeout(function () {
         }
     };
 
-    jQuery(document).on('click', '.csf-tabbed-nav a:nth-child(2)', (e) => {
+    const isPreviewTab = (el) => {
+        return jQuery(el).text().trim() === 'Preview';
+    };
+
+    jQuery(document).on('click', '.csf-tabbed-nav a', (e) => {
+        if (!isPreviewTab(e.currentTarget)) {
+            return;
+        }
         // Update the shortcode before rendering and submit
         if (!shortcodePreview) {
             iframeReload();
@@ -175,11 +182,14 @@ setTimeout(function () {
         e.stopPropagation();
     });
 
-    // Set up a click event for the Second tab
+    // Reset preview when leaving the Preview tab or closing the modal
     jQuery(document).on(
         'click',
-        '.csf-tabbed-nav a:not(:nth-child(2)), .csf-modal-close , .csf-modal-overlay',
-        () => {
+        '.csf-tabbed-nav a, .csf-modal-close , .csf-modal-overlay',
+        (e) => {
+            if (e.currentTarget && e.currentTarget.matches && e.currentTarget.matches('.csf-tabbed-nav a') && isPreviewTab(e.currentTarget)) {
+                return;
+            }
             iframeReload();
         }
     );

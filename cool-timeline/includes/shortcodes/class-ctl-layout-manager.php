@@ -151,7 +151,8 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 			}
 			wp_reset_postdata();
 			return array(
-				'HTML' => $output,
+				'HTML'     => $output,
+				'IS_EMPTY' => 0 === (int) $query->post_count,
 			);
 		}
 		/**
@@ -162,6 +163,9 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 		private function render_horizontal_layout( $response ) {
 			$attributes         = $this->attributes;
 			$wrapper_cls        = implode( ' ', $attributes['config']['wrapper_cls'] );
+			if ( ! empty( $response['IS_EMPTY'] ) ) {
+				$wrapper_cls .= ' ctl-content-empty';
+			}
 			$fontawesome_icons  = isset( $attributes['icons'] ) && 'yes' === strtolower( $attributes['icons'] );
 			$swiper_left_arrow  = $fontawesome_icons ? '<i class="fas fa-chevron-left"></i>' : CTL_Helpers::ctl_static_svg_icons( 'chevron_left' );
 			$swiper_right_arrow = $fontawesome_icons ? '<i class="fas fa-chevron-right"></i>' : CTL_Helpers::ctl_static_svg_icons( 'chevron_right' );
@@ -180,7 +184,7 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 			);
 			?>
 			<!-- Cool Timeline Free V<?php echo esc_html( CTL_V ); ?> -->
-			<div class="<?php echo esc_attr( $attributes['config']['main_wrp_cls'] ); ?>" role="region" aria-label="Timeline">
+			<div class="<?php echo esc_attr( $attributes['config']['main_wrp_cls'] ); ?>"<?php echo ! empty( $attributes['config']['main_wrp_style'] ) ? ' style="' . esc_attr( $attributes['config']['main_wrp_style'] ) . '"' : ''; ?> role="region" aria-label="Timeline">
 				<div id="<?php echo esc_attr( $attributes['config']['wrapper_id'] ); ?>" class="<?php echo esc_attr( $wrapper_cls ); ?>" <?php echo $this->ctl_build_data_attribute_string( $attributes['config']['data_attribute'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<div class="ctl-wrapper-inside">
 						<div id="ctl-slider-container" class="ctl-slider-container swiper-container swiper-container-horizontal">
@@ -218,10 +222,13 @@ if ( ! class_exists( 'CTL_Layout_Manager' ) ) {
 			$rtl         = is_rtl() ? 'rtl' : '';
 			$attributes  = $this->attributes;
 			$wrapper_cls = implode( ' ', $attributes['config']['wrapper_cls'] );
+			if ( ! empty( $response['IS_EMPTY'] ) ) {
+				$wrapper_cls .= ' ctl-content-empty';
+			}
 			$fontawesome_icons = isset( $attributes['icons'] ) && 'yes' === strtolower( $attributes['icons'] );
 			?>
 			<!-- Cool Timeline Free V<?php echo esc_html( CTL_V ); ?> -->
-			<div class="<?php echo esc_attr( $attributes['config']['main_wrp_cls'] ) . ( $rtl ? ' ' . esc_attr( $rtl ) : '' ); ?>" role="region" aria-label="Timeline">
+			<div class="<?php echo esc_attr( $attributes['config']['main_wrp_cls'] ) . ( $rtl ? ' ' . esc_attr( $rtl ) : '' ); ?>"<?php echo ! empty( $attributes['config']['main_wrp_style'] ) ? ' style="' . esc_attr( $attributes['config']['main_wrp_style'] ) . '"' : ''; ?> role="region" aria-label="Timeline">
 				<?php
 				$timeline_content = CTL_Helpers::timeline_before_content( $this->settings );
 				if ( ! empty( $timeline_content ) ) {

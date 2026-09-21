@@ -73,6 +73,11 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 
 			// Enqueue conditional assets based on attributes.
 			$this->ctl_conditional_assets( $attr );
+
+			// Design refresh must load after layout CSS so new rules override legacy ones.
+			if ( CTL_Helpers::ctl_is_new_install() ) {
+				wp_enqueue_style( 'ctl_design_refresh' );
+			}
 		}
 
 
@@ -176,11 +181,39 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 			// Compact layout uses WordPress core Masonry (jquery-masonry).
 			wp_register_style( 'ctl_compact_style', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-compact-style$minified_file.css", null, CTL_V, 'all' );
 
+			// Refreshed design spacing. Depends on the common sheet and is enqueued
+			// after the layout sheets so its rules override the legacy ones.
+			wp_register_style( 'ctl_design_refresh', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-design-refresh$minified_file.css", array( 'ctl_common_style' ), self::ctl_asset_ver( "includes/shortcodes/assets/css/ctl-design-refresh$minified_file.css" ), 'all' );
+
 			$this->ctl_google_fonts();
 
 			$this->load_assets_on_shortcode_pages();
 		}
 
+
+		/**
+		 * Cache-busting version for a plugin asset.
+		 *
+		 * CTL_V only changes on a release, so an edited stylesheet keeps being served
+		 * from cache under the same ?ver= until then. That bites hardest in the block
+		 * editor, whose canvas is an iframe and holds its subresources across ordinary
+		 * reloads - the front end looks updated while the preview still shows the old
+		 * sheet. Appending the file's mtime makes every edit a new URL. Same helper
+		 * Pro uses for this sheet.
+		 *
+		 * @param string $rel Plugin-relative path to the asset.
+		 * @return string Version string for wp_register_style().
+		 */
+		public static function ctl_asset_ver( $rel ) {
+			$abs = CTL_PLUGIN_DIR . $rel;
+			if ( file_exists( $abs ) ) {
+				$mtime = filemtime( $abs );
+				if ( false !== $mtime ) {
+					return CTL_V . '.' . $mtime;
+				}
+			}
+			return CTL_V;
+		}
 
 		public function load_assets_on_shortcode_pages() {
 			$ctl_shortcode_page_ids = get_option( 'ctl_shortcode_page_ids', array() );
@@ -205,6 +238,11 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 					} else {
 						wp_enqueue_style( 'ctl_vertical_style' );
 					}
+				}
+
+				// Design refresh must load after layout CSS so new rules override legacy ones.
+				if ( CTL_Helpers::ctl_is_new_install() ) {
+					wp_enqueue_style( 'ctl_design_refresh' );
 				}
 			}
 		}
