@@ -73,6 +73,9 @@ final class CTL_Bricks_Loader {
 				'demoStories' => class_exists( 'CTL_Bricks_Element_Story_Timeline' )
 					? CTL_Bricks_Element_Story_Timeline::ctl_default_stories()
 					: array(),
+				'proPanel'    => class_exists( 'CTL_Bricks_Element_Story_Timeline' )
+					? CTL_Bricks_Element_Story_Timeline::ctl_pro_panel_config()
+					: array(),
 			)
 		);
 	}
@@ -179,9 +182,9 @@ final class CTL_Bricks_Loader {
 			$settings['_twpbDemoStoriesSeeded'] = true;
 		}
 
-		// Bricks number inputs treat numeric 0 as empty — keep a string so the field shows.
+		// Keep the default position as a string so the Bricks number field displays it.
 		if ( ! isset( $settings['iconPositionVertical'] ) || '' === $settings['iconPositionVertical'] ) {
-			$settings['iconPositionVertical'] = '0';
+			$settings['iconPositionVertical'] = '4';
 		}
 
 		return $settings;

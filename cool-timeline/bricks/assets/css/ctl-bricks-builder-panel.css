@@ -1,12 +1,133 @@
-/* Builder panel: options labeled "(PRO only)" stay visible but non-interactive. */
-.bricks-panel [data-control="select"] .dropdown > li.ctl-pro-only-option,
-#bricks-panel [data-control="select"] .dropdown > li.ctl-pro-only-option,
-[data-controlkey="chooseMedia"] .dropdown > li.ctl-pro-only-option,
-[data-controlkey="chooseMedia"] .dropdown > li:nth-child(n + 2) {
-	opacity: 0.45 !important;
-	pointer-events: none !important;
-	cursor: not-allowed !important;
+/* Same pattern as Events Shortcode free: "(PRO only)" choices open the Pro page. */
+#bricks-panel [data-control="select"] .dropdown > li.ctl-pro-only-option {
+	opacity: 0.7;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+#bricks-panel [data-controlkey="chooseMedia"] .description,
+#bricks-panel [data-controlkey="chooseMedia"] .control-description,
+#bricks-panel [data-control-key="chooseMedia"] .description,
+#bricks-panel [data-control-key="chooseMedia"] .control-description {
+	margin-top: 6px;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	color: var(--builder-color, #9aa3ad);
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+#bricks-panel .ctl-bricks-pro-lock-item {
+	pointer-events: none;
 	user-select: none;
+	margin-left: 8px;
+	margin-right: 8px;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: 12px;
+	padding-right: 12px;
+	border-left: 1px solid #ffd64f;
+	border-right: 1px solid #ffd64f;
+	box-sizing: border-box;
+}
+
+#bricks-panel .ctl-bricks-pro-lock--first {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px solid #ffd64f;
+	border-radius: 8px 8px 0 0;
+}
+
+#bricks-panel .ctl-bricks-pro-lock--last {
+	position: relative;
+	overflow: visible;
+	margin-bottom: 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid #ffd64f;
+	border-radius: 0 0 8px 8px;
+}
+
+#bricks-panel .ctl-bricks-pro-lock--first.ctl-bricks-pro-lock--last {
+	border-radius: 8px;
+}
+
+#bricks-panel .ctl-bricks-pro-lock__cta {
+	pointer-events: auto;
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	z-index: 5;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transform: translate(-50%, 50%);
+	padding: 6px 14px;
+	border-radius: 999px;
+	background: #ffd64f;
+	color: #1a1a1a;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	line-height: 1;
+	text-transform: uppercase;
+	text-decoration: none;
+	white-space: nowrap;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+	cursor: pointer;
+}
+
+#bricks-panel .ctl-bricks-pro-lock__cta:hover,
+#bricks-panel .ctl-bricks-pro-lock__cta:focus {
+	background: #ffe066;
+	color: #1a1a1a;
+	text-decoration: none;
+}
+
+#bricks-panel .ctl-bricks-pro-lock__cta::after {
+	content: "";
+	display: inline-block;
+	width: 0.7em;
+	height: 0.7em;
+	margin-left: 6px;
+	background: currentColor;
+	clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+#bricks-panel .ctl-bricks-get-pro-link {
+	color: #ffd64f;
+	font-weight: 600;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+#bricks-panel .ctl-bricks-get-pro-link:hover,
+#bricks-panel .ctl-bricks-get-pro-link:focus {
+	color: #ffe066;
+	text-decoration: underline;
+}
+
+#bricks-panel .ctl-bricks-get-pro-link::after {
+	content: "";
+	display: inline-block;
+	width: 0.85em;
+	height: 0.85em;
+	margin-left: 3px;
+	vertical-align: -0.08em;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17L17 7'/%3E%3Cpath d='M8 7h9v9'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17L17 7'/%3E%3Cpath d='M8 7h9v9'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+#bricks-panel [data-controlkey="ctl_story_style_info"],
+#bricks-panel [data-control-key="ctl_story_style_info"],
+#bricks-panel [data-controlkey="ctl_story_style_info"] [data-control="info"],
+#bricks-panel [data-control-key="ctl_story_style_info"] [data-control="info"] {
+	background: transparent;
+	color: #ffd64f;
+	border: 0;
+	box-shadow: none;
 }
 
 [data-control-key="stories"] .repeater-header .actions li.ctl-story-delete-locked,
@@ -16,7 +137,7 @@
 	pointer-events: none;
 }
 
-/* Story Timeline element panel icon (twae-story-icon.png). */
+/* Story Timeline element panel icon — same asset as Cool Timeline Pro. */
 i.ctl-eicon-timeline-story,
 .bricks-panel i.ctl-eicon-timeline-story,
 #bricks-panel-element-classes i.ctl-eicon-timeline-story,
@@ -24,11 +145,11 @@ i.ctl-eicon-timeline-story,
 [class*="bricks-panel"] i.ctl-eicon-timeline-story {
 	position: relative;
 	display: inline-block;
-	width: 22px;
-	height: 22px;
-	font-size: 0 !important;
-	line-height: 0 !important;
-	color: transparent !important;
+	width: 28px;
+	height: 28px;
+	font-size: 0;
+	line-height: 0;
+	color: transparent;
 	vertical-align: middle;
 }
 
@@ -41,8 +162,9 @@ i.ctl-eicon-timeline-story::before,
 	position: absolute;
 	inset: 0;
 	display: block;
-	background: url("../images/twae-story-icon.png") no-repeat center center;
+	background: url("../images/icon-cooltimeline-for-bricks.png") no-repeat center center;
 	background-size: contain;
+	border-radius: 2px;
 	font-family: none !important;
 }
 
@@ -79,12 +201,12 @@ i.ctl-eicon-timeline-story::before,
 	width: 16px;
 	height: 16px;
 	min-width: 16px;
-	transform: none !important;
+	transform: none;
 }
 
 #bricks-panel .control-group[data-twpb-group] > .control-group-title .icon svg,
 #bricks-panel .control-group[data-twpb-group] > .control-group-title .icon i {
-	opacity: 0 !important;
+	opacity: 0;
 }
 
 #bricks-panel .control-group[data-twpb-group] > .control-group-title .icon::before {
@@ -124,20 +246,20 @@ i.ctl-eicon-timeline-story::before,
 #bricks-panel .control-group[data-twpb-group] [data-control="separator"],
 #bricks-panel .control-group[data-twpb-group] .control[data-control="separator"] {
 	margin: 14px 0 8px;
-	padding: 8px 0 0 !important;
-	border: 0 !important;
+	padding: 8px 0 0;
+	border: 0;
 	background: none;
 }
 
 #bricks-panel .control-group[data-twpb-group] [data-control="separator"]::before,
 #bricks-panel .control-group[data-twpb-group] .control[data-control="separator"]::before {
-	border-top: 1px solid var(--builder-border-color, #3d4752) !important;
+	border-top: 1px solid var(--builder-border-color, #3d4752);
 }
 
 #bricks-panel .control-group[data-twpb-group] [data-control="separator"] label,
 #bricks-panel .control-group[data-twpb-group] [data-control="separator"] .control-label,
 #bricks-panel .control-group[data-twpb-group] [data-control="separator"] .title {
-	display: block !important;
+	display: block;
 	margin: 0;
 	color: #ffd64f;
 	font-size: 11px;
@@ -145,4 +267,10 @@ i.ctl-eicon-timeline-story::before,
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
 	line-height: 1.3;
+}
+
+/* Keep injected Pro controls inside the story's accordion state. */
+#bricks-panel .repeater-item:not(.open):not(.always-open) .ctl-bricks-pro-lock-item,
+#bricks-panel .repeater-item:not(.open):not(.always-open) .ctl-bricks-pro-lock__cta {
+    display: none !important;
 }

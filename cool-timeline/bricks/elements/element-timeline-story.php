@@ -9,7 +9,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 	public $name         = 'timeline-story';
 	public $icon         = 'ctl-eicon-timeline-story';
 	public $styles       = array( 'ctl-bricks-common', 'ctl-bricks-vertical' );
-	public $css_selector = '.ctl-wrapper';
+	public $css_selector = '.ctl-bricks-wrapper';
 
 	public function get_label() {
 		return esc_html__( 'Story Timeline', 'cool-timeline' );
@@ -23,10 +23,12 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'ctl-bricks-common'   => array(
 				'src'  => CTL_BRICKS_URL . 'assets/css/ctl-bricks-common-styles.css',
 				'deps' => array(),
+				'ver'  => filemtime( CTL_PLUGIN_DIR . 'bricks/assets/css/ctl-bricks-common-styles.css' ),
 			),
 			'ctl-bricks-vertical' => array(
 				'src'  => CTL_BRICKS_URL . 'assets/css/ctl-bricks-vertical-timeline.css',
 				'deps' => array( 'ctl-bricks-common' ),
+				'ver'  => filemtime( CTL_PLUGIN_DIR . 'bricks/assets/css/ctl-bricks-vertical-timeline.css' ),
 			),
 		);
 
@@ -39,9 +41,68 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 				$handle,
 				$style['src'],
 				( isset( $style['deps'] ) && is_array( $style['deps'] ) ) ? $style['deps'] : array(),
-				CTL_V
+				( isset( $style['ver'] ) ) ? $style['ver'] : CTL_V
 			);
 		}
+	}
+
+
+	/**
+	 * Current Free appearance, shared by editor controls and missing builder settings.
+	 *
+	 * @return array
+	 */
+	public static function ctl_editor_defaults() {
+		return array(
+			'lineWidth' => '3px',
+			'lineBorderWidth' => '0px',
+			'iconBoxSize' => '34px',
+			'iconBoxSize:tablet_portrait' => '32px',
+			'iconBoxSize:mobile_landscape' => '30px',
+			'iconBoxSize:mobile_portrait' => '30px',
+			'iconSize' => '22px',
+			'iconSize:tablet_portrait' => '21px',
+			'iconSize:mobile_landscape' => '19px',
+			'iconRadius' => '50',
+			'iconBorderWidth' => '3px',
+			'iconBorderColor' => '#02c5be',
+			'labelsGap' => '5px',
+			'contentBoxBorderRadius' => '15px',
+			'contentBoxShadow' => '0 10px 40px rgba(15, 23, 42, 0.14)',
+			'connectorBgColor' => '#02c5be',
+			'connectorBdColor' => '#e6e6e6',
+			'lineColor' => array( 'hex' => '#02c5be' ),
+			'iconBgColor' => array( 'hex' => '#02c5be' ),
+			'iconColor' => array( 'hex' => '#ffffff' ),
+			'dateLabelColor' => array( 'hex' => '#02c5be' ),
+			'subLabelColor' => array( 'hex' => '#9CA3AF' ),
+			'yearLabelColor' => array( 'hex' => '#ffffff' ),
+			'yearLabelBg' => array( 'hex' => '#4f4f4f' ),
+			'contentBoxBg' => array( 'hex' => '#ffffff' ),
+			'contentBoxBorderColor' => array( 'hex' => '#e6e6e6' ),
+			'titleColor' => array( 'hex' => '#ffffff' ),
+			'descriptionColor' => array( 'hex' => '#7c7c7c' ),
+			'dateLabelTypography' => array( 'font-family' => 'Inter', 'font-weight' => '600' ),
+			'subLabelTypography' => array( 'font-family' => 'Inter', 'font-weight' => '400' ),
+			'yearTypography' => array( 'font-size' => '18px', 'font-weight' => '600' ),
+			'yearTypography:mobile_landscape' => array( 'font-size' => '16px' ),
+			'titleTypography' => array( 'font-family' => 'Inter', 'font-size' => '20px', 'font-weight' => '600', 'line-height' => '30px' ),
+			'titleTypography:tablet_portrait' => array( 'font-size' => '18px', 'line-height' => '28px' ),
+			'titleTypography:mobile_portrait' => array( 'font-size' => '17px', 'line-height' => '26px' ),
+			'descriptionTypography' => array( 'font-family' => 'Inter', 'font-size' => '17px', 'font-weight' => '400', 'line-height' => '33px' ),
+			'descriptionTypography:tablet_portrait' => array( 'font-size' => '16px', 'line-height' => '28px' ),
+			'descriptionTypography:mobile_portrait' => array( 'font-size' => '15px', 'line-height' => '26px' ),
+			'dateLabelSize' => '18px',
+			'dateLabelSize:mobile_landscape' => '16px',
+			'subLabelSize' => '15px',
+			'subLabelSize:mobile_landscape' => '14px',
+			'yearSize' => '70px',
+			'contentBoxPadding' => array( 'top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0' ),
+			'contentBoxBottomSpacing' => '100px',
+			'contentBoxBorderWidth' => '1px',
+			'titleBottomSpacing' => '0px',
+			'descriptionBottomSpacing' => '0px',
+		);
 	}
 
 	public static function ctl_empty_story() {
@@ -127,6 +188,148 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 		$conditions[]        = $tab_condition;
 
 		return $conditions;
+	}
+
+	/**
+	 * Cool Timeline Pro URL used by the Bricks Get Pro tag.
+	 *
+	 * @return string
+	 */
+	public static function ctl_get_tracked_url( $base, $campaign, $utm_content ) {
+		return add_query_arg(
+			array(
+				'utm_source'   => 'ctl_plugin',
+				'utm_medium'   => 'inside',
+				'utm_campaign' => $campaign,
+				'utm_content'  => sanitize_key( $utm_content ),
+			),
+			$base
+		);
+	}
+
+	public static function ctl_get_pro_url( $utm_content = 'bricks_editor_panel' ) {
+		$base = defined( 'CTL_BUY_PRO' ) ? CTL_BUY_PRO : 'https://cooltimeline.com/plugin/cool-timeline-pro/';
+
+		return self::ctl_get_tracked_url( $base, 'get_pro', $utm_content );
+	}
+
+	public static function ctl_get_demo_url( $slug, $utm_content ) {
+		return self::ctl_get_tracked_url( 'https://cooltimeline.com/bricks/' . sanitize_title( $slug ) . '/', 'demo', $utm_content );
+	}
+
+	/**
+	 * Plain "Get Pro" sentence used as a control description.
+	 *
+	 * @param string $after Unlinked trailing copy.
+	 * @return string
+	 */
+	public static function ctl_get_pro_notice_html( $after, $utm_content = 'bricks_editor_content' ) {
+		$link = '<a class="ctl-bricks-get-pro-link" href="' . esc_url( self::ctl_get_pro_url( $utm_content ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Get Pro', 'cool-timeline' ) . '</a>';
+
+		return $link . ' ' . esc_html( $after );
+	}
+
+	/**
+	 * Pro controls wrapped by the gold Upgrade to Pro box.
+	 * Each group keeps its own Get Pro tracking URL.
+	 *
+	 * @return array<int,array{keys:string[],url:string}>
+	 */
+	public static function ctl_pro_lock_groups() {
+		return array(
+			array(
+				'keys' => array(
+					'iconText',
+					'iconImage',
+					'showReadMore',
+					'buttonText',
+					'buttonLink',
+				),
+				'url'  => self::ctl_get_pro_url( 'bricks_editor_content_icon' ),
+			),
+			array(
+				'keys' => array(
+					'presetVertical',
+					'initialAlignment',
+					'displayIcons',
+					'connectorStyle',
+					'mediaOrder',
+					'imageOutsideBox',
+					'contentInPopup',
+					'animation',
+					'lightbox',
+				),
+				'url'  => self::ctl_get_pro_url( 'bricks_editor_content_layout' ),
+			),
+			array(
+				'keys' => array(
+					'lineWidth',
+					'lineFilling',
+					'lineFillingColor',
+					'lineBorder',
+					'lineBorderStyle',
+					'lineBorderWidth',
+					'lineBorderColor',
+				),
+				'url'  => self::ctl_get_pro_url( 'bricks_editor_style' ),
+			),
+			array(
+				'keys' => array(
+					'iconBoxSize',
+					'iconSize',
+					'iconRadius',
+					'iconBorderStyle',
+					'iconBorderWidth',
+					'iconBorderColor',
+				),
+				'url'  => self::ctl_get_pro_url( 'bricks_editor_style_icon' ),
+			),
+			array(
+				'keys' => array(
+					'labelsGap',
+					'labelContentTop',
+					'labelInside',
+					'labelConnectorStyle',
+					'labelBgColor',
+					'labelBorderStyle',
+				),
+				'url'  => self::ctl_get_pro_url( 'bricks_editor_style_label' ),
+			),
+			array(
+				'keys' => array(
+					'contentBoxBgType',
+					'contentBoxBorderStyle',
+					'contentBoxBorderRadius',
+					'contentBoxShadow',
+					'connectorBgColor',
+					'connectorBdColor',
+				),
+				'url'  => self::ctl_get_pro_url( 'bricks_editor_style_border' ),
+			),
+		);
+	}
+
+	/**
+	 * Panel config for the builder script.
+	 *
+	 * @return array
+	 */
+	public static function ctl_pro_panel_config() {
+		return array(
+			'upgradeUrl'    => self::ctl_get_pro_url( 'bricks_pro_lock_editor_panel' ),
+			'upgradeLabel'  => __( 'Upgrade to Pro', 'cool-timeline' ),
+			'proLockGroups' => self::ctl_pro_lock_groups(),
+			'proOptionUrls'   => array(
+				'iconType'    => self::ctl_get_demo_url( 'vertical-left-right-timeline', 'bricks_editor_content' ),
+				'chooseMedia' => self::ctl_get_demo_url( 'right-side-vertical-timeline', 'bricks_editor_content' ),
+			),
+			'proOptionLabels' => array(
+				'Text (PRO only)'      => self::ctl_get_demo_url( 'vertical-left-right-timeline', 'bricks_editor_content' ),
+				'Image (PRO only)'     => self::ctl_get_demo_url( 'vertical-left-right-timeline', 'bricks_editor_content' ),
+				'Video (PRO only)'     => self::ctl_get_demo_url( 'right-side-vertical-timeline', 'bricks_editor_content' ),
+				'Slideshow (PRO only)' => self::ctl_get_demo_url( 'right-side-vertical-timeline', 'bricks_editor_content' ),
+			),
+		);
 	}
 
 	public function set_control_groups() {
@@ -237,6 +440,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 					'inline'      => true,
 					'default'     => 'image',
 					'placeholder' => esc_html__( 'Image', 'cool-timeline' ),
+					'description' => self::ctl_get_pro_notice_html( __( 'to unlock more media types.', 'cool-timeline' ) ),
 					'required'    => self::ctl_require_story_tab( null, 'content' ),
 				),
 				'image'               => array(
@@ -258,8 +462,10 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 					'label'       => esc_html__( 'Icon Type', 'cool-timeline' ),
 					'type'        => 'select',
 					'options'     => array(
-						'icon' => esc_html__( 'Icon', 'cool-timeline' ),
-						'dot'  => esc_html__( 'Dot', 'cool-timeline' ),
+						'icon'       => esc_html__( 'Icon', 'cool-timeline' ),
+						'dot'        => esc_html__( 'Dot', 'cool-timeline' ),
+						'customtext' => esc_html__( 'Text (PRO only)', 'cool-timeline' ),
+						'image'      => esc_html__( 'Image (PRO only)', 'cool-timeline' ),
 					),
 					'inline'      => true,
 					'default'     => 'icon',
@@ -272,11 +478,46 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 						'library' => 'themify',
 						'icon'    => 'ti-time',
 					),
-					'required' => self::ctl_require_story_tab( array( 'iconType', '!=', 'dot' ), 'content' ),
+					'required' => self::ctl_require_story_tab( array( 'iconType', '=', 'icon' ), 'content' ),
+				),
+				'iconText'            => array(
+					'label'    => esc_html__( 'Icon Text', 'cool-timeline' ),
+					'type'     => 'text',
+					'inline'   => true,
+					'rerender' => false,
+					'required' => self::ctl_require_story_tab( null, 'content' ),
+				),
+				'iconImage'           => array(
+					'label'    => esc_html__( 'Icon Image', 'cool-timeline' ),
+					'type'     => 'text',
+					'inline'   => true,
+					'rerender' => false,
+					'required' => self::ctl_require_story_tab( null, 'content' ),
+				),
+				'showReadMore'        => array(
+					'label'    => esc_html__( 'Read More Button', 'cool-timeline' ),
+					'type'     => 'checkbox',
+					'rerender' => false,
+					'required' => self::ctl_require_story_tab( null, 'content' ),
+				),
+				'buttonText'          => array(
+					'label'       => esc_html__( 'Button Text', 'cool-timeline' ),
+					'type'        => 'text',
+					'inline'      => true,
+					'placeholder' => esc_html__( 'Read More', 'cool-timeline' ),
+					'rerender'    => false,
+					'required'    => self::ctl_require_story_tab( null, 'content' ),
+				),
+				'buttonLink'          => array(
+					'label'    => esc_html__( 'Button Link', 'cool-timeline' ),
+					'type'     => 'text',
+					'inline'   => true,
+					'rerender' => false,
+					'required' => self::ctl_require_story_tab( null, 'content' ),
 				),
 				'ctl_story_style_info' => array(
 					'type'     => 'info',
-					'content'  => esc_html__( 'Styles are available in the PRO version.', 'cool-timeline' ),
+					'content'  => esc_html__( 'Styles are available in the PRO version only.', 'cool-timeline' ) . ' <a class="ctl-bricks-get-pro-link" href="' . esc_url( self::ctl_get_pro_url( 'bricks_editor_content' ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Upgrade to Pro', 'cool-timeline' ) . '</a>',
 					'required' => self::ctl_require_story_tab( null, 'style' ),
 				),
 			),
@@ -289,8 +530,9 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'     => esc_html__( 'Layout', 'cool-timeline' ),
 			'type'      => 'select',
 			'options'   => array(
-				'centered'  => esc_html__( 'Vertical (Right / Left)', 'cool-timeline' ),
-				'one-sided' => esc_html__( 'Vertical (Right Only)', 'cool-timeline' ),
+				'centered'   => esc_html__( 'Vertical (Right / Left)', 'cool-timeline' ),
+				'one-sided'  => esc_html__( 'Vertical (Right Only)', 'cool-timeline' ),
+				'left-sided' => esc_html__( 'Vertical (Left Only) (PRO only)', 'cool-timeline' ),
 			),
 			'inline'    => true,
 			'default'   => 'centered',
@@ -338,11 +580,12 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'group'       => 'layout',
 			'label'       => esc_html__( 'Icon / Labels Position', 'cool-timeline' ),
 			'type'        => 'number',
+			'description' => esc_html__( 'Each step moves the icon and labels down by 0.5rem.', 'cool-timeline' ),
 			'min'         => 0,
 			'max'         => 100,
 			'step'        => 1,
-			'default'     => '0',
-			'placeholder' => '0',
+			'default'     => '4',
+			'placeholder' => '4',
 			'css'         => array( array( 'property' => '--tw-ibx-position' ) ),
 		);
 
@@ -357,8 +600,8 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 				array( 'property' => '--tw-line-bd-color' ),
 				array( 'property' => '--tw-ibx-bd-color' ),
 				array( 'property' => '--tw-ybx-bd-color' ),
-				array( 'property' => 'background-color', 'selector' => '.ctl-timeline:before, .ctl-start, .ctl-end' ),
-				array( 'property' => 'border-color', 'selector' => '.ctl-icon, .ctl-icondot-inner, .ctl-year-text' ),
+				array( 'property' => 'background-color', 'selector' => '.ctl-bricks-timeline:before, .ctl-bricks-start, .ctl-bricks-end' ),
+				array( 'property' => 'border-color', 'selector' => '.ctl-bricks-icon, .ctl-bricks-icondot-inner, .ctl-bricks-year-text' ),
 			),
 		);
 
@@ -369,7 +612,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'  => 'color',
 			'css'   => array(
 				array( 'property' => '--tw-ibx-bg' ),
-				array( 'property' => 'background-color', 'selector' => '.ctl-icon, .ctl-icondot-inner' ),
+				array( 'property' => 'background-color', 'selector' => '.ctl-bricks-icon, .ctl-bricks-icondot-inner' ),
 			),
 		);
 
@@ -380,7 +623,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'  => 'color',
 			'css'   => array(
 				array( 'property' => '--tw-ibx-color' ),
-				array( 'property' => 'color', 'selector' => '.ctl-icon, .ctl-icon i, .ctl-icon svg' ),
+				array( 'property' => 'color', 'selector' => '.ctl-bricks-icon, .ctl-bricks-icon i, .ctl-bricks-icon svg' ),
 			),
 		);
 
@@ -398,7 +641,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'  => 'color',
 			'css'   => array(
 				array( 'property' => '--tw-lbl-big-color' ),
-				array( 'property' => 'color', 'selector' => '.ctl-label-big' ),
+				array( 'property' => 'color', 'selector' => '.ctl-bricks-label-big' ),
 			),
 		);
 
@@ -408,7 +651,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'   => esc_html__( 'Label Typography', 'cool-timeline' ),
 			'type'    => 'typography',
 			'exclude' => array( 'color', 'text-align', 'font-size', 'font-variation-settings' ),
-			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-label-big' ) ),
+			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-bricks-label-big' ) ),
 		);
 
 		$this->controls['dateLabelSize'] = array(
@@ -418,7 +661,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'    => 'number',
 			'units'   => true,
 			'css'     => array( array( 'property' => '--tw-lbl-big-size' ) ),
-			'default' => '22px',
+			'default' => '18px',
 		);
 
 		$this->controls['subLabelSection'] = array(
@@ -435,7 +678,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'  => 'color',
 			'css'   => array(
 				array( 'property' => '--tw-lbl-small-color' ),
-				array( 'property' => 'color', 'selector' => '.ctl-label-small' ),
+				array( 'property' => 'color', 'selector' => '.ctl-bricks-label-small' ),
 			),
 		);
 
@@ -445,7 +688,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'   => esc_html__( 'Sub Label Typography', 'cool-timeline' ),
 			'type'    => 'typography',
 			'exclude' => array( 'color', 'text-align', 'font-size', 'font-variation-settings' ),
-			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-label-small' ) ),
+			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-bricks-label-small' ) ),
 		);
 
 		$this->controls['subLabelSize'] = array(
@@ -455,7 +698,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'    => 'number',
 			'units'   => true,
 			'css'     => array( array( 'property' => '--tw-lbl-small-size' ) ),
-			'default' => '16px',
+			'default' => '15px',
 		);
 
 		$this->controls['yearLabelSection'] = array(
@@ -472,7 +715,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'  => 'color',
 			'css'   => array(
 				array( 'property' => '--tw-ybx-text-color' ),
-				array( 'property' => 'color', 'selector' => '.ctl-year-text' ),
+				array( 'property' => 'color', 'selector' => '.ctl-bricks-year-text' ),
 			),
 		);
 
@@ -483,7 +726,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'  => 'color',
 			'css'   => array(
 				array( 'property' => '--tw-ybx-bg' ),
-				array( 'property' => 'background-color', 'selector' => '.ctl-year-text' ),
+				array( 'property' => 'background-color', 'selector' => '.ctl-bricks-year-text' ),
 			),
 		);
 
@@ -493,7 +736,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'   => esc_html__( 'Year Typography', 'cool-timeline' ),
 			'type'    => 'typography',
 			'exclude' => array( 'color', 'text-align', 'font-variation-settings' ),
-			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-year-text' ) ),
+			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-bricks-year-text' ) ),
 		);
 
 		$this->controls['yearSize'] = array(
@@ -503,7 +746,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'    => 'number',
 			'units'   => true,
 			'css'     => array( array( 'property' => '--tw-ybx-size' ) ),
-			'default' => '80px',
+			'default' => '70px',
 		);
 
 		$this->controls['contentBoxPadding'] = array(
@@ -511,7 +754,8 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'group' => 'contentBox',
 			'label' => esc_html__( 'Padding', 'cool-timeline' ),
 			'type'  => 'spacing',
-			'css'   => array( array( 'property' => 'padding', 'selector' => '.ctl-content' ) ),
+			'css'   => array( array( 'property' => 'padding', 'selector' => '.ctl-bricks-content' ) ),
+			'rerender' => true,
 		);
 
 		$this->controls['contentBoxBottomSpacing'] = array(
@@ -521,7 +765,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'type'  => 'number',
 			'units' => true,
 			'css'   => array(
-				array( 'property' => 'margin-bottom', 'selector' => '.ctl-story' ),
+				array( 'property' => 'margin-bottom', 'selector' => '.ctl-bricks-story' ),
 				array( 'property' => '--tw-cbx-bottom-margin' ),
 			),
 		);
@@ -539,9 +783,8 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label' => esc_html__( 'Background Color', 'cool-timeline' ),
 			'type'  => 'color',
 			'css'   => array(
-				array( 'property' => 'background-color', 'selector' => '.ctl-content' ),
+				array( 'property' => 'background-color', 'selector' => '.ctl-bricks-content' ),
 				array( 'property' => '--tw-cbx-bg' ),
-				array( 'property' => '--tw-arw-bg', 'value' => 'var(--tw-cbx-bg)' ),
 			),
 		);
 
@@ -558,7 +801,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label' => esc_html__( 'Border Color', 'cool-timeline' ),
 			'type'  => 'color',
 			'css'   => array(
-				array( 'property' => 'border-color', 'selector' => '.ctl-content' ),
+				array( 'property' => 'border-color', 'selector' => '.ctl-bricks-content' ),
 				array( 'property' => '--tw-cbx-bd-color' ),
 				array( 'property' => '--tw-arw-bd-color', 'value' => 'var(--tw-cbx-bd-color)' ),
 			),
@@ -591,7 +834,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label' => esc_html__( 'Title Color', 'cool-timeline' ),
 			'type'  => 'color',
 			'css'   => array(
-				array( 'property' => 'color', 'selector' => '.ctl-title' ),
+				array( 'property' => 'color', 'selector' => '.ctl-bricks-title' ),
 				array( 'property' => '--tw-cbx-title-color' ),
 			),
 		);
@@ -602,7 +845,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'   => esc_html__( 'Title Typography', 'cool-timeline' ),
 			'type'    => 'typography',
 			'exclude' => array( 'color', 'text-align', 'font-variation-settings' ),
-			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-title' ) ),
+			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-bricks-title' ) ),
 		);
 
 		$this->controls['titleBottomSpacing'] = array(
@@ -611,9 +854,9 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'   => esc_html__( 'Title Bottom Spacing', 'cool-timeline' ),
 			'type'    => 'number',
 			'units'   => true,
-			'default' => '10px',
+			'default' => '0px',
 			'css'     => array(
-				array( 'property' => 'margin-bottom', 'selector' => '.ctl-title' ),
+				array( 'property' => '--tw-cbx-title-margin-bottom' ),
 			),
 		);
 
@@ -630,7 +873,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label' => esc_html__( 'Description Color', 'cool-timeline' ),
 			'type'  => 'color',
 			'css'   => array(
-				array( 'property' => 'color', 'selector' => '.ctl-description' ),
+				array( 'property' => 'color', 'selector' => '.ctl-bricks-description' ),
 				array( 'property' => '--tw-cbx-des-color' ),
 			),
 		);
@@ -641,7 +884,7 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'   => esc_html__( 'Description Typography', 'cool-timeline' ),
 			'type'    => 'typography',
 			'exclude' => array( 'color', 'text-align', 'font-variation-settings' ),
-			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-description' ) ),
+			'css'     => array( array( 'property' => 'font', 'selector' => '.ctl-bricks-description' ) ),
 		);
 
 		$this->controls['descriptionBottomSpacing'] = array(
@@ -650,10 +893,278 @@ class CTL_Bricks_Element_Story_Timeline extends \Bricks\Element {
 			'label'   => esc_html__( 'Description Bottom Spacing', 'cool-timeline' ),
 			'type'    => 'number',
 			'units'   => true,
-			'default' => '15px',
+			'default' => '0px',
 			'css'     => array(
-				array( 'property' => 'margin-bottom', 'selector' => '.ctl-description' ),
+				array( 'property' => 'margin-bottom', 'selector' => '.ctl-bricks-description' ),
 			),
+		);
+
+		$this->ctl_register_pro_controls();
+
+		foreach ( self::ctl_editor_defaults() as $key => $value ) {
+			if ( isset( $this->controls[ $key ] ) ) {
+				$this->controls[ $key ]['default'] = $value;
+			}
+		}
+	}
+
+	/**
+	 * Pro options shown as normal text or selects. They do not change the timeline.
+	 */
+	private function ctl_register_pro_controls() {
+
+		$this->ctl_register_pro_select(
+			'presetVertical',
+			'content',
+			'layout',
+			esc_html__( 'Preset Style', 'cool-timeline' ),
+			array(
+				'v-style-0' => esc_html__( 'Default', 'cool-timeline' ),
+				'v-style-1' => esc_html__( 'Classic', 'cool-timeline' ),
+				'v-style-2' => esc_html__( 'Elegant', 'cool-timeline' ),
+				'v-style-3' => esc_html__( 'Clean', 'cool-timeline' ),
+				'v-style-4' => esc_html__( 'Minimal', 'cool-timeline' ),
+				'v-style-5' => esc_html__( 'Bold', 'cool-timeline' ),
+				'v-style-6' => esc_html__( 'Flat', 'cool-timeline' ),
+			),
+			'v-style-0'
+		);
+		$this->ctl_register_pro_select(
+			'initialAlignment',
+			'content',
+			'layout',
+			esc_html__( 'Initial Alignment', 'cool-timeline' ),
+			array(
+				'right' => esc_html__( 'Right', 'cool-timeline' ),
+				'left'  => esc_html__( 'Left', 'cool-timeline' ),
+			),
+			'right'
+		);
+		$this->ctl_register_pro_select(
+			'displayIcons',
+			'content',
+			'layout',
+			esc_html__( 'Display Icons', 'cool-timeline' ),
+			array(
+				'displayicons' => esc_html__( 'Icons', 'cool-timeline' ),
+				'displaydots'  => esc_html__( 'Dots', 'cool-timeline' ),
+				'displaynone'  => esc_html__( 'None', 'cool-timeline' ),
+			),
+			'displayicons'
+		);
+		$this->ctl_register_pro_select(
+			'connectorStyle',
+			'content',
+			'layout',
+			esc_html__( 'Connector Style', 'cool-timeline' ),
+			array(
+				'arrow' => esc_html__( 'Arrow', 'cool-timeline' ),
+				'line'  => esc_html__( 'Line', 'cool-timeline' ),
+				'none'  => esc_html__( 'None', 'cool-timeline' ),
+			),
+			'arrow'
+		);
+		$this->ctl_register_pro_select(
+			'mediaOrder',
+			'content',
+			'layout',
+			esc_html__( 'Media Position', 'cool-timeline' ),
+			array(
+				'below_title'       => esc_html__( 'Below Title', 'cool-timeline' ),
+				'below_description' => esc_html__( 'Below Description', 'cool-timeline' ),
+			),
+			'below_title'
+		);
+		$this->ctl_register_pro_checkbox( 'imageOutsideBox', 'content', 'layout', esc_html__( 'Image Outside Box', 'cool-timeline' ) );
+		$this->ctl_register_pro_checkbox( 'contentInPopup', 'content', 'layout', esc_html__( 'Content In Popup', 'cool-timeline' ) );
+		$this->ctl_register_pro_select(
+			'animation',
+			'content',
+			'layout',
+			esc_html__( 'Animation', 'cool-timeline' ),
+			array(
+				'none'       => esc_html__( 'None', 'cool-timeline' ),
+				'fade'       => esc_html__( 'Fade', 'cool-timeline' ),
+				'fade-up'    => esc_html__( 'Fade Up', 'cool-timeline' ),
+				'fade-down'  => esc_html__( 'Fade Down', 'cool-timeline' ),
+				'fade-left'  => esc_html__( 'Fade Left', 'cool-timeline' ),
+				'fade-right' => esc_html__( 'Fade Right', 'cool-timeline' ),
+				'zoom-in'    => esc_html__( 'Zoom In', 'cool-timeline' ),
+				'zoom-out'   => esc_html__( 'Zoom Out', 'cool-timeline' ),
+				'flip-up'    => esc_html__( 'Flip Up', 'cool-timeline' ),
+				'flip-down'  => esc_html__( 'Flip Down', 'cool-timeline' ),
+				'slide-up'   => esc_html__( 'Slide Up', 'cool-timeline' ),
+				'slide-down' => esc_html__( 'Slide Down', 'cool-timeline' ),
+			),
+			'none'
+		);
+		$this->ctl_register_pro_checkbox( 'lightbox', 'content', 'layout', esc_html__( 'Image Popup', 'cool-timeline' ) );
+
+		$this->ctl_register_pro_text( 'lineWidth', 'style', 'line', esc_html__( 'Line Width', 'cool-timeline' ) );
+		$this->ctl_register_pro_checkbox( 'lineFilling', 'style', 'line', esc_html__( 'Line Filling', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'lineFillingColor', 'style', 'line', esc_html__( 'Line Filling Color', 'cool-timeline' ) );
+		$this->ctl_register_pro_checkbox( 'lineBorder', 'style', 'line', esc_html__( 'Line Border', 'cool-timeline' ) );
+		$this->ctl_register_pro_select(
+			'lineBorderStyle',
+			'style',
+			'line',
+			esc_html__( 'Border Style', 'cool-timeline' ),
+			array(
+				'none'   => esc_html__( 'None', 'cool-timeline' ),
+				'solid'  => esc_html__( 'Solid', 'cool-timeline' ),
+				'dashed' => esc_html__( 'Dashed', 'cool-timeline' ),
+				'dotted' => esc_html__( 'Dotted', 'cool-timeline' ),
+			),
+			'none'
+		);
+		$this->ctl_register_pro_text( 'lineBorderWidth', 'style', 'line', esc_html__( 'Border Width', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'lineBorderColor', 'style', 'line', esc_html__( 'Border Color', 'cool-timeline' ) );
+
+		$this->ctl_register_pro_text( 'iconBoxSize', 'style', 'iconBox', esc_html__( 'Icon Box Size', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'iconSize', 'style', 'iconBox', esc_html__( 'Icon Size', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'iconRadius', 'style', 'iconBox', esc_html__( 'Icon Radius (%)', 'cool-timeline' ) );
+		$this->ctl_register_pro_select(
+			'iconBorderStyle',
+			'style',
+			'iconBox',
+			esc_html__( 'Border Style', 'cool-timeline' ),
+			array(
+				'none'   => esc_html__( 'None', 'cool-timeline' ),
+				'solid'  => esc_html__( 'Solid', 'cool-timeline' ),
+				'dashed' => esc_html__( 'Dashed', 'cool-timeline' ),
+				'dotted' => esc_html__( 'Dotted', 'cool-timeline' ),
+			),
+			'none'
+		);
+		$this->ctl_register_pro_text( 'iconBorderWidth', 'style', 'iconBox', esc_html__( 'Border Width', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'iconBorderColor', 'style', 'iconBox', esc_html__( 'Border Color', 'cool-timeline' ) );
+
+		$this->ctl_register_pro_text( 'labelsGap', 'style', 'labels', esc_html__( 'Labels Gap', 'cool-timeline' ) );
+		$this->ctl_register_pro_checkbox( 'labelContentTop', 'style', 'labels', esc_html__( 'Label Top Of The Content', 'cool-timeline' ) );
+		$this->ctl_register_pro_checkbox( 'labelInside', 'style', 'labels', esc_html__( 'Label Inside The Content', 'cool-timeline' ) );
+		$this->ctl_register_pro_select(
+			'labelConnectorStyle',
+			'style',
+			'labels',
+			esc_html__( 'Connector Style', 'cool-timeline' ),
+			array(
+				'arrow' => esc_html__( 'Arrow', 'cool-timeline' ),
+				'line'  => esc_html__( 'Line', 'cool-timeline' ),
+				'none'  => esc_html__( 'None', 'cool-timeline' ),
+			),
+			'arrow'
+		);
+		$this->ctl_register_pro_text( 'labelBgColor', 'style', 'labels', esc_html__( 'Label Background Color', 'cool-timeline' ) );
+		$this->ctl_register_pro_select(
+			'labelBorderStyle',
+			'style',
+			'labels',
+			esc_html__( 'Label Border Style', 'cool-timeline' ),
+			array(
+				'solid'  => esc_html__( 'Solid', 'cool-timeline' ),
+				'dashed' => esc_html__( 'Dashed', 'cool-timeline' ),
+				'dotted' => esc_html__( 'Dotted', 'cool-timeline' ),
+				'double' => esc_html__( 'Double', 'cool-timeline' ),
+				'none'   => esc_html__( 'None', 'cool-timeline' ),
+			),
+			'none'
+		);
+
+		$this->ctl_register_pro_select(
+			'contentBoxBgType',
+			'style',
+			'contentBox',
+			esc_html__( 'Background Type', 'cool-timeline' ),
+			array(
+				'simple'     => esc_html__( 'Simple', 'cool-timeline' ),
+				'gradient'   => esc_html__( 'Gradient', 'cool-timeline' ),
+				'multicolor' => esc_html__( 'Multi Color', 'cool-timeline' ),
+			),
+			'simple'
+		);
+		$this->ctl_register_pro_select(
+			'contentBoxBorderStyle',
+			'style',
+			'contentBox',
+			esc_html__( 'Border Style', 'cool-timeline' ),
+			array(
+				'none'   => esc_html__( 'None', 'cool-timeline' ),
+				'solid'  => esc_html__( 'Solid', 'cool-timeline' ),
+				'dashed' => esc_html__( 'Dashed', 'cool-timeline' ),
+				'dotted' => esc_html__( 'Dotted', 'cool-timeline' ),
+			),
+			'solid'
+		);
+		$this->ctl_register_pro_text( 'contentBoxBorderRadius', 'style', 'contentBox', esc_html__( 'Border Radius', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'contentBoxShadow', 'style', 'contentBox', esc_html__( 'Box Shadow', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'connectorBgColor', 'style', 'contentBox', esc_html__( 'Connector Color', 'cool-timeline' ) );
+		$this->ctl_register_pro_text( 'connectorBdColor', 'style', 'contentBox', esc_html__( 'Connector Border Color', 'cool-timeline' ) );
+	}
+
+	/**
+	 * @param string $key     Control key.
+	 * @param string $tab     content|style.
+	 * @param string $group   Control group.
+	 * @param string $label   Label.
+	 * @param array  $options Select options.
+	 * @param string $default Default value.
+	 * @param array  $extra   Extra control args.
+	 */
+	private function ctl_register_pro_select( $key, $tab, $group, $label, $options, $default, $extra = array() ) {
+		$this->controls[ $key ] = array_merge(
+			array(
+				'tab'      => $tab,
+				'group'    => $group,
+				'label'    => $label,
+				'type'     => 'select',
+				'options'  => $options,
+				'inline'   => true,
+				'default'  => $default,
+				'rerender' => false,
+			),
+			$extra
+		);
+	}
+
+	/**
+	 * @param string $key   Control key.
+	 * @param string $tab   content|style.
+	 * @param string $group Control group.
+	 * @param string $label Label.
+	 * @param array  $extra Extra control args.
+	 */
+	private function ctl_register_pro_checkbox( $key, $tab, $group, $label, $extra = array() ) {
+		$this->controls[ $key ] = array_merge(
+			array(
+				'tab'      => $tab,
+				'group'    => $group,
+				'label'    => $label,
+				'type'     => 'checkbox',
+				'default'  => false,
+				'rerender' => false,
+			),
+			$extra
+		);
+	}
+
+	/**
+	 * @param string $key   Control key.
+	 * @param string $tab   content|style.
+	 * @param string $group Control group.
+	 * @param string $label Label.
+	 * @param array  $extra Extra control args.
+	 */
+	private function ctl_register_pro_text( $key, $tab, $group, $label, $extra = array() ) {
+		$this->controls[ $key ] = array_merge(
+			array(
+				'tab'      => $tab,
+				'group'    => $group,
+				'label'    => $label,
+				'type'     => 'text',
+				'inline'   => true,
+				'rerender' => false,
+			),
+			$extra
 		);
 	}
 

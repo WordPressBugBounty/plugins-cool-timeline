@@ -2,7 +2,7 @@
 /* ------------------------------ Main Wrapper ------------------------------ */
 /* Bricks sets flex on .brxe-* — root override using scoped specificity without !important */
 html body .brxe-timeline-story,
-html body .brxe-timeline-story .ctl-wrapper{
+html body .brxe-timeline-story .ctl-bricks-wrapper{
   display: block;
   width: 100%;
   max-width: 100%;
@@ -13,32 +13,40 @@ html body .brxe-timeline-story .ctl-wrapper{
   align-items: unset;
   justify-content: unset;
 }
+/* Do not override font families on Bricks icon elements. */
+html body .brxe-timeline-story,
+html body .brxe-timeline-story .ctl-bricks-wrapper,
+html body .brxe-timeline-story .ctl-bricks-wrapper :not(.ctl-bricks-icon):not(.ctl-bricks-icon *){
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
 /*
  * CSS variable defaults live on the Bricks root (.brxe-timeline-story).
- * Style controls also write to that root (or .ctl-wrapper via $css_selector).
- * Do NOT redefine these vars on .ctl-wrapper — that would shadow Bricks settings.
+ * Style controls also write to that root (or .ctl-bricks-wrapper via $css_selector).
+ * Do NOT redefine these vars on .ctl-bricks-wrapper — that would shadow Bricks settings.
+ * Bricks markup uses ctl-bricks-* classes so shortcode selectors cannot style it.
  */
 .brxe-timeline-story{
   /* Line */
-  --tw-line-width: 4px;
-  --tw-line-bg: #d6d6d6;
+  --tw-line-width: 3px;
+  --tw-line-bg: #02c5be;
   --tw-line-bd-width: 0;
   --tw-line-bd-style: solid;
 
   /* Year Box */
-  --tw-ybx-size: 80px;
-  --tw-ybx-text-size: 22px;
-  --tw-ybx-text-weight: bold;
+  --tw-ybx-size: 70px;
+  --tw-ybx-text-size: 18px;
+  --tw-ybx-text-weight: 600;
   --tw-ybx-text-color: #ffffff;
-  --tw-ybx-bg: #54595f;
+  --tw-ybx-bg: #4f4f4f;
   --tw-ybx-bd-width: var(--tw-line-width);
   --tw-ybx-bd-style: var(--tw-line-bd-style);
   --tw-ybx-bd-color: var(--tw-line-bd-color, var(--tw-line-bg));
+  --tw-ybx-inner-gap: 2px;
 
   /* Icon Box */
-  --tw-ibx-size: 48px;
-  --tw-ibx-text-size: 24px;
-  --tw-ibx-bg: #222;
+  --tw-ibx-size: 34px;
+  --tw-ibx-text-size: 22px;
+  --tw-ibx-bg: #02c5be;
   --tw-ibx-color: var(--tw-cbx-bg);
   --tw-ibx-radius: 50;
   --tw-ibx-bd-width: var(--tw-line-width);
@@ -48,59 +56,63 @@ html body .brxe-timeline-story .ctl-wrapper{
   /* Labels */
   --tw-lbl-gap: 5px;
   --tw-lbl-position: column nowrap;
-  --tw-lbl-big-size: 24px;
-  --tw-lbl-small-size: 16px;
-  --tw-lbl-big-weight: bold;
+  --tw-lbl-big-size: 18px;
+  --tw-lbl-small-size: 15px;
+  --tw-lbl-big-weight: 600;
   --tw-lbl-small-weight: normal;
-  --tw-lbl-big-color: #222;
-  --tw-lbl-small-color: #444;
+  --tw-lbl-big-color: #02c5be;
+  --tw-lbl-small-color: #9CA3AF;
 
   /* Connector Arrow — fill matches story card so tip reads as part of the box */
-  --tw-arw-bg: var(--tw-cbx-bg);
-  --tw-arw-bd-color: var(--tw-cbx-bd-color);
-
+  --tw-arw-bg: var(--tw-cbx-title-bg, var(--tw-cbx-bg));
+  --tw-arw-bd-color: var(--tw-cbx-title-bg, var(--tw-cbx-bd-color));
   /* Content Box */
   --tw-cbx-bg: #ffffff;
   --tw-cbx-bd-style: solid;
-  --tw-cbx-bd-color: var(--tw-ibx-bg);
-  --tw-cbx-bd-top-width: 0px;
-  --tw-cbx-bd-right-width: 0px;
-  --tw-cbx-bd-bottom-width: 0px;
-  --tw-cbx-bd-left-width: 3px;
-  --tw-cbx-radius: 6px 6px 6px 6px;
-  --tw-cbx-radius-left: 6px 6px 6px 6px;
-  --tw-cbx-padding: 0.75em 0.75em calc(0.75em - 10px) 0.75em;
+  --tw-cbx-bd-color: #e6e6e6;
+  --tw-cbx-bd-top-width: 1px;
+  --tw-cbx-bd-right-width: 1px;
+  --tw-cbx-bd-bottom-width: 1px;
+  --tw-cbx-bd-left-width: 1px;
+  --tw-cbx-radius: 15px 15px 15px 15px;
+  --tw-cbx-radius-left: 15px 15px 15px 15px;
+  --tw-cbx-padding: 0px;
   --tw-cbx-bottom-margin: 100px;
-  --tw-cbx-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.18), 0 4px 10px 0 rgba(0, 0, 0, 0.1);
-  --tw-cbx-shadow-left: 0 0 12px 0 rgba(0, 0, 0, 0.18), 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  --tw-cbx-shadow: 0 10px 40px rgba(15, 23, 42, 0.14);
+  --tw-cbx-shadow-left: var(--tw-cbx-shadow);
   --tw-cbx-text-align: left;
   --tw-cbx-text-align-alternate: left;
   --tw-cbx-text-align-one-sided: left;
   --tw-cbx-radius-hover: var(--tw-cbx-radius);
   --tw-cbx-radius-left-hover: var(--tw-cbx-radius-left);
-  --tw-cbx-shadow-hover: var(--tw-cbx-shadow);
-  --tw-cbx-shadow-left-hover: var(--tw-cbx-shadow-left);
+  --tw-cbx-shadow-hover: 0 10px 40px rgba(15, 23, 42, 0.007);
+  --tw-cbx-shadow-left-hover: var(--tw-cbx-shadow-hover);
 
   /* Title */
-  --tw-cbx-title-color: #222;
-  --tw-cbx-title-font-size: 24px;
-  --tw-cbx-title-font-weight: bold;
-  --tw-cbx-title-line-height: 1.25em;
-  --tw-cbx-title-padding: 0px 0px 0px 0px;
-  --tw-cbx-title-margin: 0px 0px 10px 0px;
-  --tw-cbx-title-margin-bottom: 10px;
+  --tw-cbx-title-bg: #02c5be;
+  --tw-cbx-title-color: #ffffff;
+  --tw-cbx-title-font-size: 20px;
+  --tw-cbx-title-font-weight: 600;
+  --tw-cbx-title-line-height: 30px;
+  --tw-cbx-title-padding: 20px 20px 20px 20px;
+  --tw-cbx-title-radius: 14px 14px 0px 0px;
+  --tw-cbx-title-margin: 0px;
+  --tw-cbx-title-margin-bottom: 0px;
 
   /* Description */
-  --tw-cbx-des-color: #444;
-  --tw-cbx-des-padding: 0px 0px 0px 0px;
-  --tw-cbx-des-margin: 0px 0px 15px 0px;
-  --tw-cbx-des-margin-bottom: 15px;
+  --tw-cbx-des-color: #7c7c7c;
+  --tw-cbx-des-font-size: 17px;
+  --tw-cbx-des-font-weight: normal;
+  --tw-cbx-des-line-height: 33px;
+  --tw-cbx-des-padding: 20px;
+  --tw-cbx-des-margin: 0px 0px 0px 0px;
+  --tw-cbx-des-margin-bottom: 0px;
 
   /* Image */
   --tw-cbx-img-width: 100%;
   --tw-cbx-img-height: auto;
   --tw-cbx-img-padding: 0px 0px 0px 0px;
-  --tw-cbx-img-margin: 0px 0px 10px 0px;
+  --tw-cbx-img-margin: 0px;
   --tw-cbx-img-margin-left: 0px;
   --tw-cbx-img-margin-right: 0px;
   --tw-cbx-img-border-width: 1px;
@@ -109,17 +121,17 @@ html body .brxe-timeline-story .ctl-wrapper{
   --tw-cbx-img-radius: 0px;
   --tw-cbx-img-shadow: 0px;
 }
-.ctl-wrapper{
+.ctl-bricks-wrapper{
   width: 100%;
   display: block;
   position: relative;
 }
-.ctl-wrapper,
-.ctl-wrapper *,
-.ctl-wrapper:before,
-.ctl-wrapper:after,
-.ctl-wrapper :before,
-.ctl-wrapper :after{
+.ctl-bricks-wrapper,
+.ctl-bricks-wrapper *,
+.ctl-bricks-wrapper:before,
+.ctl-bricks-wrapper:after,
+.ctl-bricks-wrapper :before,
+.ctl-bricks-wrapper :after{
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -127,13 +139,13 @@ html body .brxe-timeline-story .ctl-wrapper{
 /* --------------------------- Main Wrapper - END --------------------------- */
 
 /* --------------------------- Line Year Box --------------------------- */
-.ctl-wrapper .ctl-year{
+.ctl-bricks-wrapper .ctl-bricks-year{
   display: flex;
   align-items: center;
   padding: 0;
   background: none;
 }
-.ctl-wrapper .ctl-year-text{
+.ctl-bricks-wrapper .ctl-bricks-year-text{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,9 +160,10 @@ html body .brxe-timeline-story .ctl-wrapper{
   font-weight: var(--tw-ybx-text-weight);
   color: var(--tw-ybx-text-color);
   background-color: var(--tw-ybx-bg);
-  border-width: var(--tw-ybx-bd-width);
-  border-style: var(--tw-ybx-bd-style);
+  border-width: 0;
+  border-style: none;
   border-color: var(--tw-ybx-bd-color, var(--tw-line-bd-color, var(--tw-line-bg)));
+  box-shadow: 0 0 0 var(--tw-ybx-inner-gap, 2px) #ffffff, 0 0 0 calc(var(--tw-ybx-inner-gap, 2px) + var(--tw-ybx-bd-width, 3px)) var(--tw-ybx-bd-color, var(--tw-line-bd-color, var(--tw-line-bg)));
   border-radius: calc(var(--tw-ibx-radius) * 1%);
   -webkit-border-radius: calc(var(--tw-ibx-radius) * 1%);
   -moz-border-radius: calc(var(--tw-ibx-radius) * 1%);
@@ -162,8 +175,8 @@ html body .brxe-timeline-story .ctl-wrapper{
   box-sizing: border-box;
   flex-shrink: 0;
 }
-.ctl-wrapper .ctl-year-text-inner,
-.ctl-wrapper .ctl-year-text > span{
+.ctl-bricks-wrapper .ctl-bricks-year-text-inner,
+.ctl-bricks-wrapper .ctl-bricks-year-text > span{
   display: block;
   box-sizing: border-box;
   width: 100%;
@@ -177,19 +190,19 @@ html body .brxe-timeline-story .ctl-wrapper{
   text-align: center;
   flex-shrink: 0;
 }
-.ctl-wrapper .ctl-year-text-inner[contenteditable="true"]{
+.ctl-bricks-wrapper .ctl-bricks-year-text-inner[contenteditable="true"]{
   cursor: text;
   outline: none;
 }
-.ctl-wrapper .ctl-year-text:before,
-.ctl-wrapper .ctl-year-text:after{
+.ctl-bricks-wrapper .ctl-bricks-year-text:before,
+.ctl-bricks-wrapper .ctl-bricks-year-text:after{
   content: none;
   display: none;
 }
 /* --------------------------- Line Year Box - END -------------------------- */
 
 /* --------------------------------- Labels --------------------------------- */
-.ctl-wrapper .ctl-labels{
+.ctl-bricks-wrapper .ctl-bricks-labels{
   display: flex;
   flex-flow: var(--tw-lbl-position);
   gap: var(--tw-lbl-gap);
@@ -198,7 +211,7 @@ html body .brxe-timeline-story .ctl-wrapper{
   padding: 0;
   margin: 0;
 }
-.ctl-wrapper .ctl-label-big{
+.ctl-bricks-wrapper .ctl-bricks-label-big{
   line-height: var(--tw-lbl-big-line-height, 1em);
   font-family: var(--tw-lbl-big-font-family, inherit);
   font-size: var(--tw-lbl-big-size);
@@ -210,7 +223,7 @@ html body .brxe-timeline-story .ctl-wrapper{
   color: var(--tw-lbl-big-color);
   max-width: 100%;
 }
-.ctl-wrapper .ctl-label-small{
+.ctl-bricks-wrapper .ctl-bricks-label-small{
   line-height: var(--tw-lbl-small-line-height, 1em);
   font-family: var(--tw-lbl-small-font-family, inherit);
   font-size: var(--tw-lbl-small-size);
@@ -222,10 +235,15 @@ html body .brxe-timeline-story .ctl-wrapper{
   color: var(--tw-lbl-small-color);
   max-width: 100%;
 }
+.ctl-bricks-wrapper .ctl-bricks-label-big,
+.ctl-bricks-wrapper .ctl-bricks-label-small {
+  /* Remove outer font leading; keep line-height within wrapped text and the explicit label gap. */
+  margin-block: calc((1em - 1lh) / 2);
+}
 /* ------------------------------ Labels - END ------------------------------ */
 
 /* ----------------------------- Icon / Dot Box ----------------------------- */
-.ctl-wrapper .ctl-icondot{
+.ctl-bricks-wrapper .ctl-bricks-icondot{
   position: absolute;
   display: block;
   z-index: 5;
@@ -236,7 +254,7 @@ html body .brxe-timeline-story .ctl-wrapper{
   box-sizing: border-box;
   pointer-events: none;
 }
-.ctl-wrapper .ctl-icondot-inner{
+.ctl-bricks-wrapper .ctl-bricks-icondot-inner{
   display: block;
   width: 100%;
   height: 100%;
@@ -254,7 +272,7 @@ html body .brxe-timeline-story .ctl-wrapper{
   background-clip: padding-box;
   box-sizing: border-box;
 }
-.ctl-wrapper .ctl-icon{
+.ctl-bricks-wrapper .ctl-bricks-icon{
   position: absolute;
   width: var(--tw-ibx-size);
   height: var(--tw-ibx-size);
@@ -271,7 +289,8 @@ html body .brxe-timeline-story .ctl-wrapper{
   border-width: var(--tw-ibx-bd-width);
   border-style: var(--tw-ibx-bd-style);
   border-color: var(--tw-ibx-bd-color, var(--tw-line-bd-color, var(--tw-line-bg)));
-  background-color: var(--tw-ibx-bg);
+  background-color: var(--tw-ibx-bg) !important;
+  isolation: isolate;
   color: var(--tw-ibx-color);
   box-sizing: border-box;
   flex-shrink: 0;
@@ -281,8 +300,8 @@ html body .brxe-timeline-story .ctl-wrapper{
   -ms-border-radius: calc(var(--tw-ibx-radius) * 1%);
   -o-border-radius: calc(var(--tw-ibx-radius) * 1%);
 }
-.ctl-wrapper .ctl-icon i,
-.ctl-wrapper .ctl-icon span{
+.ctl-bricks-wrapper .ctl-bricks-icon i,
+.ctl-bricks-wrapper .ctl-bricks-icon span{
   display: block;
   box-sizing: border-box;
   max-width: 100%;
@@ -293,25 +312,25 @@ html body .brxe-timeline-story .ctl-wrapper{
   text-overflow: ellipsis;
   text-align: center;
 }
-.ctl-wrapper .ctl-icon img{
+.ctl-bricks-wrapper .ctl-bricks-icon img{
   border-radius: calc(var(--tw-ibx-radius) * 1%);
   height: -webkit-fill-available;
   width: -webkit-fill-available;
 }
-.ctl-wrapper .ctl-icon i{
+.ctl-bricks-wrapper .ctl-bricks-icon i{
   color: var(--tw-ibx-color);
   font-size: var(--tw-ibx-text-size);
   line-height: 1em;
 }
-.ctl-wrapper .ctl-icon svg{
+.ctl-bricks-wrapper .ctl-bricks-icon svg{
   fill: var(--tw-ibx-color);
   height: var(--tw-ibx-text-size);
   width: var(--tw-ibx-text-size);
 }
-.ctl-wrapper .ctl-icondot:before,
-.ctl-wrapper .ctl-icondot:after,
-.ctl-wrapper .ctl-icon:before,
-.ctl-wrapper .ctl-icon:after{
+.ctl-bricks-wrapper .ctl-bricks-icondot:before,
+.ctl-bricks-wrapper .ctl-bricks-icondot:after,
+.ctl-bricks-wrapper .ctl-bricks-icon:before,
+.ctl-bricks-wrapper .ctl-bricks-icon:after{
   content: "";
   position: absolute;
   background: var(--tw-line-bg);
@@ -321,27 +340,17 @@ html body .brxe-timeline-story .ctl-wrapper{
 /* -------------------------- Icon / Dot Box - END -------------------------- */
 
 /* ----------------------------- Story Box Arrow ---------------------------- */
-.ctl-wrapper .ctl-arrow{
-  position: absolute;
-  width: calc(var(--tw-ibx-size) / 3.5);
-  height: calc(var(--tw-ibx-size) / 3.5);
-  background-color: var(--tw-arw-bg, var(--tw-cbx-bg));
-  transform: rotate(45deg);
-  border-style: var(--tw-cbx-bd-style);
-  border-color: var(--tw-arw-bd-color, var(--tw-cbx-bd-color));
-  box-sizing: border-box;
-  pointer-events: none;
-  z-index: 2;
-}
 /* --------------------------- Story Box Arrow - END ------------------------ */
 
 /* ------------------------------ Story Content ----------------------------- */
-.ctl-wrapper .ctl-story{
+.ctl-bricks-wrapper .ctl-bricks-story{
   margin-bottom: var(--tw-cbx-bottom-margin);
 }
-.ctl-wrapper .ctl-content{
+.ctl-bricks-wrapper .ctl-bricks-content{
   display: flex;
   flex-flow: column;
+  align-items: stretch;
+  justify-content: flex-start;
   overflow: visible;
   position: relative;
   margin: 0;
@@ -351,18 +360,30 @@ html body .brxe-timeline-story .ctl-wrapper{
     var(--tw-cbx-bd-bottom-width) var(--tw-cbx-bd-left-width);
   border-color: var(--tw-cbx-bd-color);
   border-style: var(--tw-cbx-bd-style);
-  box-shadow: var(--tw-cbx-shadow, 0 0 12px 0 rgba(0, 0, 0, 0.18), 0 4px 10px 0 rgba(0, 0, 0, 0.1));
+  box-shadow: var(--tw-cbx-shadow);
   border-radius: var(--tw-cbx-radius);
   -webkit-border-radius: var(--tw-cbx-radius);
   -moz-border-radius: var(--tw-cbx-radius);
   -ms-border-radius: var(--tw-cbx-radius);
   -o-border-radius: var(--tw-cbx-radius);
 }
-.ctl-wrapper .ctl-title{
+/* Fill corner antialiasing only when the title touches the card border. */
+.ctl-bricks-wrapper .ctl-bricks-content.ctl-bricks-title-flush {
+  background-image: linear-gradient(var(--tw-cbx-title-bg), var(--tw-cbx-title-bg));
+  background-size: 100% 20px;
+  background-repeat: no-repeat;
+}
+.ctl-bricks-wrapper .ctl-bricks-title{
   color: var(--tw-cbx-title-color);
+  background: var(--tw-cbx-title-bg, transparent);
   margin: 0;
-  margin-bottom: var(--tw-cbx-title-margin-bottom, 10px);
+  margin-bottom: var(--tw-cbx-title-margin-bottom);
   padding: var(--tw-cbx-title-padding);
+  border-radius: var(--tw-cbx-title-radius, 0);
+  -webkit-border-radius: var(--tw-cbx-title-radius, 0);
+  -moz-border-radius: var(--tw-cbx-title-radius, 0);
+  -ms-border-radius: var(--tw-cbx-title-radius, 0);
+  -o-border-radius: var(--tw-cbx-title-radius, 0);
   font-size: var(--tw-cbx-title-font-size);
   font-weight: var(--tw-cbx-title-font-weight);
   line-height: var(--tw-cbx-title-line-height);
@@ -372,7 +393,18 @@ html body .brxe-timeline-story .ctl-wrapper{
   justify-content: var(--tw-cbx-text-align);
   text-align: var(--tw-cbx-text-align);
 }
-.ctl-wrapper .ctl-media{
+.ctl-bricks-wrapper .ctl-bricks-content > .ctl-bricks-title{
+  display: flex;
+  order: 1;
+  width: 100%;
+  flex: 0 0 auto;
+  margin: 0;
+  margin-bottom: var(--tw-cbx-title-margin-bottom, 0px);
+  background-color: var(--tw-cbx-title-bg, transparent);
+  color: var(--tw-cbx-title-color);
+  text-align: var(--tw-cbx-text-align);
+}
+.ctl-bricks-wrapper .ctl-bricks-media{
   display: flex;
   align-items: center;
   justify-content: var(--tw-cbx-img-align, var(--tw-cbx-text-align));
@@ -380,9 +412,14 @@ html body .brxe-timeline-story .ctl-wrapper{
   margin: 0;
   width: 100%;
   overflow: hidden;
-  order: var(--tw-cbx-img-order);
+  order: var(--tw-cbx-img-order, 2);
 }
-.ctl-wrapper .ctl-media img{
+.ctl-bricks-wrapper .ctl-bricks-content > .ctl-bricks-media{
+  order: 2;
+  flex: 0 0 auto;
+  margin: 0;
+}
+.ctl-bricks-wrapper .ctl-bricks-media img{
   width: calc(var(--tw-cbx-img-width) - (var(--tw-cbx-img-margin-left) + var(--tw-cbx-img-margin-right)));
   max-width: 100%;
   height: var(--tw-cbx-img-height);
@@ -400,32 +437,40 @@ html body .brxe-timeline-story .ctl-wrapper{
   -ms-border-radius: var(--tw-cbx-img-radius);
   -o-border-radius: var(--tw-cbx-img-radius);
 }
-.ctl-wrapper .ctl-media.thumbnail img,
-.ctl-wrapper .ctl-media.medium img{
+.ctl-bricks-wrapper .ctl-bricks-media.thumbnail img,
+.ctl-bricks-wrapper .ctl-bricks-media.medium img{
   width: auto;
 }
-.ctl-wrapper .ctl-description{
+.ctl-bricks-wrapper .ctl-bricks-description{
   width: 100%;
   display: inline-block;
   margin: 0;
-  margin-bottom: var(--tw-cbx-des-margin-bottom, 15px);
+  margin-bottom: var(--tw-cbx-des-margin-bottom, 0px);
   padding: var(--tw-cbx-des-padding);
   color: var(--tw-cbx-des-color);
+  font-size: var(--tw-cbx-des-font-size, 17px);
+  font-weight: var(--tw-cbx-des-font-weight, normal);
+  line-height: var(--tw-cbx-des-line-height, 30px);
   text-align: var(--tw-cbx-text-align);
   order: 3;
 }
-.ctl-wrapper .ctl-description p{
+.ctl-bricks-wrapper .ctl-bricks-content > .ctl-bricks-description{
+  order: 3;
+  flex: 0 0 auto;
+  text-align: var(--tw-cbx-text-align, left);
+}
+.ctl-bricks-wrapper .ctl-bricks-description p{
   margin: 0px 0px 10px 0px;
   padding: 0;
 }
-.ctl-wrapper .ctl-description p,
-.ctl-wrapper .ctl-description span,
-.ctl-wrapper .ctl-description ul,
-.ctl-wrapper .ctl-description ol{
+.ctl-bricks-wrapper .ctl-bricks-description p,
+.ctl-bricks-wrapper .ctl-bricks-description span,
+.ctl-bricks-wrapper .ctl-bricks-description ul,
+.ctl-bricks-wrapper .ctl-bricks-description ol{
   color: var(--tw-cbx-des-color);
 }
-.ctl-wrapper .ctl-story:hover .ctl-content{
-  box-shadow: var(--tw-cbx-shadow-hover);
+html body .brxe-timeline-story .ctl-bricks-wrapper .ctl-bricks-story .ctl-bricks-content:hover{
+  box-shadow: var(--tw-cbx-shadow-hover) !important;
   border-radius: var(--tw-cbx-radius-hover);
   -webkit-border-radius: var(--tw-cbx-radius-hover);
   -moz-border-radius: var(--tw-cbx-radius-hover);
@@ -437,7 +482,7 @@ html body .brxe-timeline-story .ctl-wrapper{
 /* ------------------- Layout 2: one-sided vertical right year (mobile) ------------------- */
 
 @media screen and (max-width: 767px){
-  .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-year .ctl-year-text {
+  .ctl-bricks-vertical.ctl-bricks-vertical-right.ctl-bricks-wrapper .ctl-bricks-year .ctl-bricks-year-text {
     margin-left: 0;
     left: calc(var(--tw-ibx-size) * 1.5);
     right: auto;
@@ -445,20 +490,20 @@ html body .brxe-timeline-story .ctl-wrapper{
     overflow: visible;
   }
 
-  .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-year .ctl-year-text:before {
+  .ctl-bricks-vertical.ctl-bricks-vertical-right.ctl-bricks-wrapper .ctl-bricks-year .ctl-bricks-year-text:before {
     content: "";
     display: block;
     position: absolute;
     top: calc(50% - var(--tw-line-width) / 2);
     left: auto;
-    right: calc(100% + var(--tw-ybx-bd-width, var(--tw-line-width)));
-    width: calc(var(--tw-ibx-size) + var(--tw-line-bd-width, 0) * 1px);
+    right: calc(100% + var(--tw-ybx-inner-gap, 2px) + var(--tw-ybx-bd-width, var(--tw-line-width)));
+    width: calc(var(--tw-ibx-size) - var(--tw-ybx-inner-gap, 2px) - var(--tw-ybx-bd-width, var(--tw-line-width)) + var(--tw-line-width) / 2);
     height: var(--tw-line-width);
     background-color: var(--tw-line-bg);
     opacity: 1;
   }
 
-  .ctl-vertical.ctl-vertical-right.ctl-wrapper .ctl-year .ctl-year-text:after {
+  .ctl-bricks-vertical.ctl-bricks-vertical-right.ctl-bricks-wrapper .ctl-bricks-year .ctl-bricks-year-text:after {
     content: none;
     display: none;
   }
@@ -467,7 +512,7 @@ html body .brxe-timeline-story .ctl-wrapper{
 /*------------------- Layout 2 year - end ------------------- */
 
 /* Builder placeholders */
-.ctl-wrapper .ctl-placeholder {
+.ctl-bricks-wrapper .ctl-bricks-placeholder {
   color: inherit;
   font-family: inherit;
   font-style: normal;
@@ -476,14 +521,14 @@ html body .brxe-timeline-story .ctl-wrapper{
   opacity: 1;
 }
 
-.ctl-wrapper .ctl-title.ctl-placeholder {
+.ctl-bricks-wrapper .ctl-bricks-title.ctl-bricks-placeholder {
   font-family: var(--tw-cbx-title-font-family, inherit);
   font-style: normal;
   font-weight: inherit;
   text-transform: capitalize !important;
 }
 
-.ctl-wrapper .ctl-description.ctl-placeholder {
+.ctl-bricks-wrapper .ctl-bricks-description.ctl-bricks-placeholder {
   font-family: var(--tw-cbx-des-font-family, inherit);
   font-style: normal;
   line-height: 1.6;
@@ -491,58 +536,52 @@ html body .brxe-timeline-story .ctl-wrapper{
   text-transform: capitalize !important;
 }
 
-.ctl-wrapper .ctl-label-big.ctl-placeholder,
-.ctl-wrapper .ctl-label-small.ctl-placeholder {
+.ctl-bricks-wrapper .ctl-bricks-label-big.ctl-bricks-placeholder,
+.ctl-bricks-wrapper .ctl-bricks-label-small.ctl-bricks-placeholder {
   font-family: inherit;
   font-style: normal;
   text-transform: capitalize !important;
 }
 
-.brx-body.iframe .ctl-title[data-ctl-inline],
-.brx-body.iframe .ctl-description[data-ctl-inline],
-.brx-body.iframe .ctl-label-big[data-ctl-inline],
-.brx-body.iframe .ctl-label-small[data-ctl-inline] {
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-title[data-ctl-inline],
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-description[data-ctl-inline],
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-label-big[data-ctl-inline],
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-label-small[data-ctl-inline] {
   cursor: text;
   outline: none;
   -webkit-user-select: text;
   user-select: text;
 }
 
-.brx-body.iframe .ctl-title[data-ctl-inline]:focus,
-.brx-body.iframe .ctl-description[data-ctl-inline]:focus,
-.brx-body.iframe .ctl-label-big[data-ctl-inline]:focus,
-.brx-body.iframe .ctl-label-small[data-ctl-inline]:focus {
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-title[data-ctl-inline]:focus,
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-description[data-ctl-inline]:focus,
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-label-big[data-ctl-inline]:focus,
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-label-small[data-ctl-inline]:focus {
   outline: 1px dashed currentColor;
   outline-offset: 2px;
 }
 
-.brx-body.iframe .ctl-labels {
+.brx-body.iframe .brxe-timeline-story .ctl-bricks-labels {
   z-index: 2;
 }
 
 /* Builder canvas: room + visible overflow so card shadows paint on both sides. */
 html body.brx-body.iframe .brxe-timeline-story,
-html body.brx-body.iframe .brxe-timeline-story .ctl-wrapper,
-html body.brx-body.iframe .ctl-vertical.ctl-wrapper,
-html body.brx-body.iframe .ctl-vertical.ctl-wrapper .ctl-timeline,
-html body.brx-body.iframe .ctl-vertical.ctl-wrapper .ctl-story {
+html body.brx-body.iframe .brxe-timeline-story .ctl-bricks-wrapper,
+html body.brx-body.iframe .ctl-bricks-vertical.ctl-bricks-wrapper,
+html body.brx-body.iframe .ctl-bricks-vertical.ctl-bricks-wrapper .ctl-bricks-timeline,
+html body.brx-body.iframe .ctl-bricks-vertical.ctl-bricks-wrapper .ctl-bricks-story {
   overflow: visible;
 }
 
-html body.brx-body.iframe .ctl-vertical.ctl-wrapper .ctl-content {
-  box-shadow: var(--tw-cbx-shadow, 0 0 12px 0 rgba(0, 0, 0, 0.18), 0 4px 10px 0 rgba(0, 0, 0, 0.1));
-}
 
-html body.brx-body.iframe .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .ctl-content {
-  box-shadow: var(--tw-cbx-shadow-left, var(--tw-cbx-shadow, 0 0 12px 0 rgba(0, 0, 0, 0.18), 0 4px 10px 0 rgba(0, 0, 0, 0.1)));
-}
 
-.ctl-wrapper .ctl-media-placeholder {
+.ctl-bricks-wrapper .ctl-bricks-media-placeholder {
   position: relative;
   width: 100%;
 }
 
-.ctl-wrapper .ctl-placeholder-media {
+.ctl-bricks-wrapper .ctl-bricks-placeholder-media {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -557,10 +596,40 @@ html body.brx-body.iframe .ctl-vertical.ctl-wrapper .ctl-story.ctl-story-left .c
   overflow: hidden;
 }
 
-.ctl-wrapper .ctl-placeholder-icon {
+.ctl-bricks-wrapper .ctl-bricks-placeholder-icon {
   display: block;
   width: 88px;
   max-width: 40%;
   height: auto;
   fill: #c4c4c4;
+}
+
+/* Match the Pro default preset's responsive text and icon sizes. */
+@media only screen and (max-width: 991px) {
+  .ctl-bricks-wrapper {
+    --tw-cbx-title-font-size: 18px;
+    --tw-cbx-title-line-height: 28px;
+    --tw-cbx-des-font-size: 16px;
+    --tw-cbx-des-line-height: 28px;
+    --tw-ibx-size: 32px;
+    --tw-ibx-text-size: 21px;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .ctl-bricks-wrapper {
+    --tw-ybx-text-size: 16px;
+    --tw-lbl-big-size: 16px;
+    --tw-lbl-small-size: 14px;
+    --tw-ibx-size: 30px;
+    --tw-ibx-text-size: 19px;
+  }
+}
+@media only screen and (max-width: 478px) {
+  .ctl-bricks-wrapper {
+    --tw-cbx-title-font-size: 17px;
+    --tw-cbx-title-line-height: 26px;
+    --tw-cbx-des-font-size: 15px;
+    --tw-cbx-des-line-height: 26px;
+    --tw-ibx-size: 30px;
+  }
 }

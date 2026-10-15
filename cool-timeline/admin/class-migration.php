@@ -146,7 +146,7 @@ class CTL_free_migrations {
 
 		$old_settings = map_deep( $old_settings, 'sanitize_text_field' );
 
-		$new_settings = $this->ctl_save_settings(
+		$migrated_settings = $this->ctl_save_settings(
 			$old_settings,
 			array(
 				'face'   => 'font-family',
@@ -156,9 +156,17 @@ class CTL_free_migrations {
 			)
 		);
 
-		$new_settings = map_deep( $new_settings, 'sanitize_text_field' );
+		$migrated_settings = map_deep( $migrated_settings, 'sanitize_text_field' );
 
-		update_option( 'cool_timeline_settings', $new_settings );
+		$existing_settings = get_option( 'cool_timeline_settings', array() );
+		if ( ! is_array( $existing_settings ) ) {
+			$existing_settings = array();
+		}
+
+		// Keep current settings; use the legacy values only to fill missing keys.
+		$migrated_settings = array_replace_recursive( $migrated_settings, $existing_settings );
+
+		update_option( 'cool_timeline_settings', $migrated_settings );
 		update_option( 'ctl_free_settings_migration_status', 'done' );
 		delete_option( 'cool_timeline_options' );
 	}

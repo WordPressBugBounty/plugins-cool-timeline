@@ -384,8 +384,10 @@ final class CTL_Onboarding_Config {
 		$td = self::TEXT_DOMAIN;
 
 		$utm_params = $is_onboarding
-			? '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=onboarding'
-			: '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard';
+			? '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=onboarding'
+			: '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=demo&utm_content=dashboard';
+
+		$view_demo_url = 'https://cooltimeline.com/bricks/right-side-vertical-timeline/' . $utm_params;
 
 		$method = array(
 			'type'          => 'bricks-based',
@@ -398,21 +400,25 @@ final class CTL_Onboarding_Config {
 			'editions'      => array( 'full' ),
 			'steps'         => array(
 				array(
-					'title' => __( 'Insert the Story Timeline', $td ),
-					'desc'  => __( 'Open a page in the Bricks builder, search for "Story Timeline", and drop it onto the canvas.', $td ),
+					'title' => __( 'Open the Bricks Editor', $td ),
+					'desc'  => __( 'Create a new page or edit an existing one, then launch the Bricks builder.', $td ),
+				),
+				array(
+					'title' => __( 'Add the Story Timeline', $td ),
+					'desc'  => __( 'Search for Story Timeline in the Bricks elements panel and drop it onto the page.', $td ),
 				),
 				array(
 					'title' => __( 'Add Timeline Stories', $td ),
-					'desc'  => __( 'Add a title, date, description, media, and icon for each story.', $td ),
+					'desc'  => __( 'Add a title, date, description, and image. Choose an icon or a dot for each story.', $td ),
 				),
 				array(
 					'title' => __( 'Customize & Publish', $td ),
-					'desc'  => __( 'Adjust the layout and design, then save and publish your page.', $td ),
+					'desc'  => __( 'Choose Vertical (Right / Left) or Vertical (Right Only), style the line, icon, labels, and content, then publish.', $td ),
 				),
 			),
 			'secondary'     => array(
-				'label' => __( 'View Documentation', $td ),
-				'url'   => 'https://cooltimeline.com/docs/cool-timeline-pro/' . $utm_params,
+				'label' => __( 'View Demo', $td ),
+				'url'   => $view_demo_url,
 			),
 			'footer'        => $this->footer_cards( 'bricks', $is_onboarding ),
 		);
@@ -1020,7 +1026,7 @@ final class CTL_Onboarding_Config {
 							array(
 								'label' => __( 'How to Add Timeline Stories', $td ),
 								'class' => 'ctl_doc_link',
-								'url'   => 'https://cooltimeline.com/doc/add-timeline-stories/' . $utm_params,
+								'url'   => 'https://cooltimeline.com/doc/timeline-in-bricks-builder/' . $utm_params,
 							),
 							array(
 								'label' => __( 'FAQ', $td ),

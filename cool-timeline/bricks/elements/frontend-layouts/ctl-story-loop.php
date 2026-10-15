@@ -43,10 +43,30 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 			$html .= '<div id="' . esc_attr( $this->story_id ) . '" class="' . esc_attr( implode( ' ', $story_class ) ) . '" data-ctl-story-index="' . (int) $index . '">';
 			$html .= $this->ctl_story_label();
 			$html .= $this->ctl_story_icon();
-			$html .= '<div class="ctl-content">';
-			$html .= '<div class="ctl-arrow"></div>';
+			$padding = isset( $this->element->settings['contentBoxPadding'] ) ? $this->element->settings['contentBoxPadding'] : array();
+			$flush_title = is_array( $padding );
+			foreach ( array( 'top', 'right', 'left' ) as $side ) {
+				$value = isset( $padding[ $side ] ) ? trim( (string) $padding[ $side ] ) : '0';
+				// Reduce only zero sums/differences; leave other CSS expressions unchanged.
+				if ( 0 === stripos( $value, 'calc(' ) ) {
+					$zero = '[+-]?(?:0+(?:\.0*)?|\.0+)(?:[a-z]+|%)?';
+					$pattern = '/(?:calc)?\(\s*' . $zero . '(?:\s+[+-]\s+' . $zero . ')*\s*\)/i';
+					for ( $depth = 0; $depth < 16; $depth++ ) {
+						$reduced = preg_replace( $pattern, '0', $value );
+						if ( $reduced === $value ) {
+							break;
+						}
+						$value = $reduced;
+					}
+				}
+				if ( '' !== $value && ! preg_match( '/^[+-]?(?:0+(?:\.0*)?|\.0+)(?:[a-z]+|%)?$/i', $value ) ) {
+					$flush_title = false;
+				}
+			}
+			$html .= '<div class="ctl-bricks-content' . ( $flush_title ? ' ctl-bricks-title-flush' : '' ) . '">';
+			$html .= '<div class="ctl-bricks-arrow" aria-hidden="true"></div>';
 			$html .= $this->ctl_story_title();
-			$html .= $this->ctl_render_image_media( 'ctl-media' );
+			$html .= $this->ctl_render_image_media( 'ctl-bricks-media' );
 			$html .= $this->ctl_story_desc();
 			$html .= '</div>';
 			$html .= '</div>';
@@ -89,23 +109,23 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 
 			return ' contenteditable="true"'
 				. ' data-ctl-inline="' . esc_attr( $field ) . '"'
-				. ' data-ctl-placeholder="' . esc_attr( $placeholder ) . '"'
+				. ' data-ctl-bricks-placeholder="' . esc_attr( $placeholder ) . '"'
 				. ' spellcheck="true"';
 		}
 
 		private function ctl_render_placeholder( $text, $class, $field = '' ) {
 			$attrs = '' !== $field ? $this->ctl_builder_inline_attrs( $field, $text ) : '';
 
-			return '<div class="' . esc_attr( trim( $class . ' ctl-placeholder' ) ) . '"' . $attrs . '>' . esc_html( $text ) . '</div>';
+			return '<div class="' . esc_attr( trim( $class . ' ctl-bricks-placeholder' ) ) . '"' . $attrs . '>' . esc_html( $text ) . '</div>';
 		}
 
 		private function ctl_placeholder_image_icon() {
-			return '<svg class="ctl-placeholder-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" aria-hidden="true" focusable="false"><circle cx="56" cy="16" r="8"/><path d="M0 56l24-28 14 16 12-16 30 28H0z"/></svg>';
+			return '<svg class="ctl-bricks-placeholder-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" aria-hidden="true" focusable="false"><circle cx="56" cy="16" r="8"/><path d="M0 56l24-28 14 16 12-16 30 28H0z"/></svg>';
 		}
 
 		private function ctl_render_image_placeholder( $media_class ) {
-			$class = trim( $media_class . ' ctl-media-placeholder' );
-			$inner = '<div class="ctl-placeholder-media">' . $this->ctl_placeholder_image_icon() . '</div>';
+			$class = trim( $media_class . ' ctl-bricks-media-placeholder' );
+			$inner = '<div class="ctl-bricks-placeholder-media">' . $this->ctl_placeholder_image_icon() . '</div>';
 
 			return '<div class="' . esc_attr( $class ) . '">' . $inner . '</div>';
 		}
@@ -179,13 +199,13 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 
 			if ( ! isset( $this->story_data['title'] ) || empty( $this->story_data['title'] ) ) {
 				return $this->ctl_show_placeholders()
-					? $this->ctl_render_placeholder( $placeholder, 'ctl-title', 'title' )
+					? $this->ctl_render_placeholder( $placeholder, 'ctl-bricks-title', 'title' )
 					: '';
 			}
 
 			$title = $this->element->render_dynamic_data( $this->story_data['title'] );
 
-			return '<div class="ctl-title"' . $inline . '>' . esc_html( $title ) . '</div>';
+			return '<div class="ctl-bricks-title"' . $inline . '>' . esc_html( $title ) . '</div>';
 		}
 
 		private function ctl_story_desc() {
@@ -194,13 +214,13 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 
 			if ( ! isset( $this->story_data['description'] ) || empty( $this->story_data['description'] ) ) {
 				return $this->ctl_show_placeholders()
-					? $this->ctl_render_placeholder( $placeholder, 'ctl-description', 'description' )
+					? $this->ctl_render_placeholder( $placeholder, 'ctl-bricks-description', 'description' )
 					: '';
 			}
 
 			$content = $this->element->render_dynamic_data( $this->story_data['description'] );
 
-			return '<div class="ctl-description"' . $inline . '>' . wp_kses_post( $content ) . '</div>';
+			return '<div class="ctl-bricks-description"' . $inline . '>' . wp_kses_post( $content ) . '</div>';
 		}
 
 		private function ctl_get_icon_type() {
@@ -221,7 +241,7 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 
 		private function ctl_story_icon() {
 			if ( 'dot' === $this->ctl_get_icon_type() ) {
-				return '<div class="ctl-icondot" aria-hidden="true"><span class="ctl-icondot-inner"></span></div>';
+				return '<div class="ctl-bricks-icondot" aria-hidden="true"><span class="ctl-bricks-icondot-inner"></span></div>';
 			}
 
 			$icon = ( isset( $this->story_data['icon'] ) && ! empty( $this->story_data['icon'] ) )
@@ -231,7 +251,7 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 					'icon'    => 'ti-time',
 				);
 
-			return '<div class="ctl-icon">' . \Bricks\Element::render_icon( $icon ) . '</div>';
+			return '<div class="ctl-bricks-icon">' . \Bricks\Element::render_icon( $icon ) . '</div>';
 		}
 
 		private function ctl_story_label() {
@@ -251,9 +271,9 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 				return '';
 			}
 
-			$html  = '<div class="ctl-labels">';
-			$html .= $this->ctl_story_label_field( 'dateLabel', $date, 'ctl-label-big', __( 'Add Label', 'cool-timeline' ) );
-			$html .= $this->ctl_story_label_field( 'subLabel', $sub, 'ctl-label-small', __( 'Add Sub Label', 'cool-timeline' ) );
+			$html  = '<div class="ctl-bricks-labels">';
+			$html .= $this->ctl_story_label_field( 'dateLabel', $date, 'ctl-bricks-label-big', __( 'Add Label', 'cool-timeline' ) );
+			$html .= $this->ctl_story_label_field( 'subLabel', $sub, 'ctl-bricks-label-small', __( 'Add Sub Label', 'cool-timeline' ) );
 			$html .= '</div>';
 
 			return $html;
@@ -269,7 +289,7 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 			$classes = $class;
 			$text    = $has_value ? esc_html( $value ) : esc_html( $placeholder );
 			if ( ! $has_value ) {
-				$classes .= ' ctl-placeholder';
+				$classes .= ' ctl-bricks-placeholder';
 			}
 
 			return '<div class="' . esc_attr( $classes ) . '"' . $this->ctl_builder_inline_attrs( $field, $placeholder ) . '>' . $text . '</div>';
@@ -287,7 +307,7 @@ if ( ! class_exists( 'CTL_Bricks_Story_Loop' ) ) {
 
 			$inline = $this->ctl_builder_inline_attrs( 'year', '' );
 
-			return '<div class="ctl-year" data-ctl-story-index="' . (int) $this->story_index . '"><div class="ctl-year-text"><span class="ctl-year-text-inner"' . $inline . '>' . esc_html( $year ) . '</span></div></div>';
+			return '<div class="ctl-bricks-year" data-ctl-story-index="' . (int) $this->story_index . '"><div class="ctl-bricks-year-text"><span class="ctl-bricks-year-text-inner"' . $inline . '>' . esc_html( $year ) . '</span></div></div>';
 		}
 	}
 }
