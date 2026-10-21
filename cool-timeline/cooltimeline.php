@@ -4,7 +4,7 @@
   Plugin Name: Cool Timeline
   Plugin URI:https://cooltimeline.com
   Description:Showcase your story, company history, events, or roadmap using stunning vertical or horizontal layouts.
-  Version: 4.1.0
+  Version: 5.0.0
   Author:Cool Plugins
   Author URI:https://coolplugins.net/?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=author_page&utm_content=plugins_list
   License:GPLv2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Configuration */
 if ( ! defined( 'CTL_V' ) ) {
-	define( 'CTL_V', '4.1.0' );
+	define( 'CTL_V', '5.0.0' );
 }
 // define constants for later use
 define( 'CTL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -710,7 +710,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 								'ctl-getting-started',
 							),
 							'i18n'           => array(
-								'headline'    => __( 'Cool Timeline 4.0.0 – Major Design Enhancement!', 'cool-timeline' ),
+								'headline'    => __( 'Cool Timeline 5.0.0 – Major Design Enhancement!', 'cool-timeline' ),
 								'body'        => __( ' Would you like to upgrade your existing timelines to the new design?', 'cool-timeline' ),
 								'cta'         => __( 'Yes, Upgrade Design', 'cool-timeline' ),
 								'dismiss'     => __( 'No, Keep Current Design', 'cool-timeline' ),
@@ -1081,7 +1081,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			 * Prefer using posted metabox value when a valid WP core post nonce exists.
 			 * This avoids relying on a custom nonce that may not be present in all editors/requests.
 			 */
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
 			if ( isset( $_POST['_wpnonce'] ) ) {
 				$wp_nonce = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
 				if ( wp_verify_nonce( $wp_nonce, 'update-post_' . $post_id ) ) {
@@ -1124,7 +1124,7 @@ if ( ! class_exists( 'CoolTimeline' ) ) {
 			if ( is_admin() ) {
 				global $post;
 
-				// phpcs:ignore WordPress.Security.NonceVerification.Missing
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- read-only screen detection.
 				$current_page  = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 				$allowed_pages = array(
 					'cool_timeline_settings',

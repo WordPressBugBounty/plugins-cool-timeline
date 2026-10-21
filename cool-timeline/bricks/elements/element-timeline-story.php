@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

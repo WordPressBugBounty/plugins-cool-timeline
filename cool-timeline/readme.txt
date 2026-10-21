@@ -1,10 +1,10 @@
-=== Cool Timeline (Horizontal & Vertical Timeline) ===
+﻿=== Cool Timeline (Horizontal & Vertical Timeline) ===
 Contributors: narinder-singh,satindersingh,coolplugins
 Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.6
 Tested up to: 7.1
-Stable tag: 4.1.0
+Stable tag: 5.0.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -195,16 +195,15 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Screenshots ==
 
-1. WordPress Timeline plugin frontend view.
-2. Cool Timeline story creation screen with instructions.
-3. Timeline Block for Gutenberg preview.
-4. Timeline Block for Gutenberg story preview.
-5. Cool Timeline PRO Vertical Layout.
-5. Cool Timeline PRO Single-Sided.
-6. Cool Timeline PRO Horizontal view.
-7. Create any type of timeline using Cool Timeline PRO.
+1. Timeline Settings Preview
+2. Shortcode Generator Preview for Gutenberg
+3. Add a Timeline Story
+4. Timeline Preview
 
 == Changelog ==
+
+= Version 5.0.0 | 21 Oct 2026 =
+* **New:** Added Modern designs for Cool Timeline Gutenberg Blocks.
 
 = Version 4.1.0 | 15 Oct 2026 =
 * **Major Design Enhancement:** Completely refreshed timeline bricks design with modern styling, improved layouts, typography, spacing, cards, icons, images, and enhanced customization options.

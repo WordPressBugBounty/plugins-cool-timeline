@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
 	exit;
@@ -268,8 +269,8 @@ function ctl_get_advance_settings_compare_markup()
 		$tbody .= '</tr>';
 	}
 
-	$buy_url = esc_url(CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=advance-settings');
-	$demo_url = esc_url(CTL_DEMO_URL);
+	$buy_url = esc_url(CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=advance_settings');
+	$demo_url = esc_url(CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=advance_settings');
 
 	ob_start();
 	?>
@@ -372,7 +373,7 @@ add_action('admin_notices', 'ctl_admin_notice_for_migration');
 
 function ctl_get_pro_field_teaser_markup($title, $description, $html_control)
 {
-	$pro_url = esc_url(CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=general-settings-teaser');
+	$pro_url = esc_url(CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=general_settings_teaser');
 
 	ob_start();
 	?>
@@ -466,7 +467,7 @@ if (class_exists('CSF')) {
 		array(
 			'type'    => 'content',
 			'content' => '<div class="ctl-go-pro-wrapper" style="display: flex; justify-content: flex-end; margin-bottom: -20px; position: relative; z-index: 10;">
-				<a class="ctl-go-pro-body-link" href="' . esc_url( CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=general-settings-body-link' ) . '" target="_blank" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important; border: 1px solid #2dd4bf !important; color: #ffffff !important; padding: 6px 16px !important; font-size: 12px !important; font-weight: bold !important; border-radius: 6px !important; box-shadow: 0 3px 10px rgba(20, 184, 166, 0.4) !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; text-shadow: none !important; line-height: 1.4 !important; transition: all 0.2s ease-in-out;" onmouseover="this.style.background=\'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)\'; this.style.boxShadow=\'0 5px 15px rgba(20, 184, 166, 0.6)\';" onmouseout="this.style.background=\'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)\'; this.style.boxShadow=\'0 3px 10px rgba(20, 184, 166, 0.4)\';">
+				<a class="ctl-go-pro-body-link" href="' . esc_url( CTL_BUY_PRO . '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=general_settings_body_link' ) . '" target="_blank" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important; border: 1px solid #2dd4bf !important; color: #ffffff !important; padding: 6px 16px !important; font-size: 12px !important; font-weight: bold !important; border-radius: 6px !important; box-shadow: 0 3px 10px rgba(20, 184, 166, 0.4) !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; text-shadow: none !important; line-height: 1.4 !important; transition: all 0.2s ease-in-out;" onmouseover="this.style.background=\'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)\'; this.style.boxShadow=\'0 5px 15px rgba(20, 184, 166, 0.6)\';" onmouseout="this.style.background=\'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)\'; this.style.boxShadow=\'0 3px 10px rgba(20, 184, 166, 0.4)\';">
 					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; pointer-events: none;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 					<span>' . esc_html__( 'Upgrade to Pro', 'cool-timeline' ) . '</span>
 				</a>

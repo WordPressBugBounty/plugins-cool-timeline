@@ -83,7 +83,7 @@ add_action(
 		}
 		$default_heading = __( 'Timeline Addons', 'cool-timeline' );
 		$heading         = apply_filters( 'ctl_global_header_heading', $default_heading );
-		$utm_params      = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=global-header';
+		$utm_params      = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=global_header';
 		cp_timeline_header_render(
 			array(
 				'heading'       => $heading,

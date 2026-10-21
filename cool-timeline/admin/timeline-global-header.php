@@ -224,8 +224,12 @@ body.cph-timeline-addon-page.cool-plugins-timeline-addon_page_cool_timeline_sett
 	display: none;
 }
 
+body.cph-timeline-addon-page #wpbody-content {
+	display: flow-root;
+}
+
 .cph-screen-meta-bar {
-    clear: both;
+    display: flow-root;
     position: relative;
     z-index: 100;
     margin-top: -16px;
@@ -234,7 +238,7 @@ body.cph-timeline-addon-page.cool-plugins-timeline-addon_page_cool_timeline_sett
 }
 
 .cph-screen-meta-bar #screen-meta {
-	clear: both;
+	clear: right;
 	float: none;
 	margin: 0 0 -1px 0;
 }
@@ -277,7 +281,7 @@ body.cph-timeline-addon-page.cool-plugins-timeline-addon_page_cool_timeline_sett
 }
 
 body.cph-timeline-addon-page.post-type-cool_timeline .wrap {
-	clear: both;
+	clear: right;
 }
 
 @media screen and (max-width: 782px) {

@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 
 // Prevent direct access to the file
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,6 +37,7 @@ function ctl_gutenberg_block_assets() {
 	$ver        = defined( 'CTL_V' ) ? CTL_V : '1.0';
 	$css_base   = CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/';
 
+	// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
 	wp_enqueue_style( 'ctl_font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), $ver, 'all' );
 	wp_enqueue_style( 'ctl_swiper_style', esc_url( $css_base . 'swiper.css' ), array(), $ver, 'all' );
 	wp_enqueue_style( 'ctl_common_style', esc_url( $css_base . 'ctl-common-styles' . $ext . '.css' ), array(), $ver, 'all' );

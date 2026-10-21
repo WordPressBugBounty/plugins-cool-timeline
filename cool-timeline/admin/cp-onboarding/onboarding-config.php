@@ -842,11 +842,14 @@ final class CTL_Onboarding_Config {
 	private function footer_cards( $context, $is_onboarding ) {
 		$td = self::TEXT_DOMAIN;
 
-		$utm_params = '';
-		if($is_onboarding === false){
-			$utm_params = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard';
-		}else{
-			$utm_params = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=onboarding';
+		$utm_params  = '';
+		$support_utm = '';
+		if ( false === $is_onboarding ) {
+			$utm_params  = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=dashboard';
+			$support_utm = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=support&utm_content=dashboard';
+		} else {
+			$utm_params  = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=docs&utm_content=onboarding';
+			$support_utm = '?utm_source=ctl_plugin&utm_medium=inside&utm_campaign=support&utm_content=onboarding';
 		}
 
 		switch ( $context ) {
@@ -859,7 +862,7 @@ final class CTL_Onboarding_Config {
 						array(
 							array(
 								'label' => __( 'Get Support', $td ),
-								'url'   => 'https://coolplugins.net/support/'.$utm_params,
+								'url'   => 'https://coolplugins.net/support/' . $support_utm,
 								'class' => 'cpo-button cpo-button-secondary cpo-button-small',
 								'target' => '_blank',
 								'rel' => 'noopener noreferrer',
@@ -912,7 +915,7 @@ final class CTL_Onboarding_Config {
 							array(
 								'class' => 'cpo-button cpo-button-secondary cpo-button-small',
 								'label' => __( 'Get Support', $td ),
-								'url'   => 'https://coolplugins.net/support/'.$utm_params,
+								'url'   => 'https://coolplugins.net/support/' . $support_utm,
 							),
 						)
 					),
@@ -964,7 +967,7 @@ final class CTL_Onboarding_Config {
 							array(
 								'class' => 'cpo-button cpo-button-secondary cpo-button-small',
 								'label' => __( 'Get Support', $td ),
-								'url'   => 'https://coolplugins.net/support/'.$utm_params,
+								'url'   => 'https://coolplugins.net/support/' . $support_utm,
 							),
 						)
 					),
@@ -1014,7 +1017,7 @@ final class CTL_Onboarding_Config {
 							array(
 								'class' => 'cpo-button cpo-button-secondary cpo-button-small',
 								'label' => __( 'Get Support', $td ),
-								'url'   => 'https://coolplugins.net/support/' . $utm_params,
+								'url'   => 'https://coolplugins.net/support/' . $support_utm,
 							),
 						)
 					),
@@ -1064,7 +1067,7 @@ final class CTL_Onboarding_Config {
 							array(
 								'class' => 'cpo-button cpo-button-secondary cpo-button-small',
 								'label' => __( 'Get Support', $td ),
-								'url'   => 'https://coolplugins.net/support/'.$utm_params,
+								'url'   => 'https://coolplugins.net/support/' . $support_utm,
 							),
 						)
 					),
