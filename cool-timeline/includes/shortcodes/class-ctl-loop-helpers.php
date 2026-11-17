@@ -397,21 +397,23 @@ if ( ! class_exists( 'CTL_Loop_Helpers' ) ) {
 		 * @param string $default_icon default icon.
 		 */
 		public function ctl_get_icon( $post_id ) {
-			$output      = '';
-			$icon        = '';
-			$extra_class = '';
+			$output = '';
+			$icon   = '';
 			if ( get_post_type( $post_id ) === 'cool_timeline' ) {
 				// Story Icon.
 				$story_icon           = get_post_meta( $post_id, 'story_icon', true );
-				$ctl_fontawesome_icon = isset( $story_icon['fa_field_icon'] ) ? $story_icon['fa_field_icon'] : '';
-				$extra_class          = '';
+				$ctl_fontawesome_icon = isset( $story_icon['fa_field_icon'] ) ? trim( $story_icon['fa_field_icon'] ) : '';
+
 				if ( '' !== $ctl_fontawesome_icon ) {
-					if ( strpos( $ctl_fontawesome_icon, 'fab' ) === false ) {
-						$extra_class = 'fa';
+					// Normalize icon classes so FA5/FA4 prefixes are applied properly without conflicts.
+					if ( strpos( $ctl_fontawesome_icon, 'fa' ) === false ) {
+						$ctl_fontawesome_icon = 'fas fa-' . $ctl_fontawesome_icon;
+					} elseif ( strpos( $ctl_fontawesome_icon, 'fas ' ) !== 0 && strpos( $ctl_fontawesome_icon, 'far ' ) !== 0 && strpos( $ctl_fontawesome_icon, 'fab ' ) !== 0 && strpos( $ctl_fontawesome_icon, 'fa ' ) !== 0 ) {
+						$ctl_fontawesome_icon = 'fa ' . $ctl_fontawesome_icon;
 					}
-					$icon = '<i class= "' . esc_attr( $extra_class ) . ' ' . esc_attr( $ctl_fontawesome_icon ) . '" aria-hidden ="true"></i>';
+					$icon = '<i class="' . esc_attr( $ctl_fontawesome_icon ) . '" aria-hidden="true"></i>';
 				} else {
-						$icon = '<i class="fa fa-clock-o" aria-hidden="true"></i>';
+					$icon = '<i class="fa fa-clock-o" aria-hidden="true"></i>';
 				}
 			}
 			$output .= '<div class="ctl-icon">' . $icon . '</div> ';

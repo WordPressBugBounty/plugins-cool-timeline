@@ -268,8 +268,9 @@ if ( ! class_exists( 'CSF_free_shortcode_generator' ) ) {
 				'ctl_preview_scripts',
 				'myAjax',
 				array(
-					'ajaxurl' => esc_url( admin_url( 'admin-ajax.php' ) ),
-					'nonce'   => wp_create_nonce( 'ctl_preview' ),
+					'ajaxurl'   => esc_url( admin_url( 'admin-ajax.php' ) ),
+					'nonce'     => wp_create_nonce( 'ctl_preview' ),
+					'pluginUrl' => esc_url( CTL_PLUGIN_URL ),
 				)
 			);
 		}

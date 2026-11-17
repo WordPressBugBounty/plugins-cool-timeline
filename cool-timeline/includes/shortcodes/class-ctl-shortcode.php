@@ -162,6 +162,7 @@ if ( ! class_exists( 'CTL_Shortcode' ) ) {
 			$query_args               = array(
 				'post_type'      => 'cool_timeline',
 				'post_status'    => array( 'publish', 'future' ),
+				'has_password'   => false,
 				'order'          => $order,
 				'meta_key'       => 'ctl_story_timestamp', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'orderby'        => 'meta_value_num',

@@ -85,9 +85,12 @@ class CtlPreview {
     CtlPreviewAjaxSuccess(response) {
         // Added Timeline Style Files in iframe
         let styleFiles = '';
-        if (['yes','Yes','YES'].includes(this.shortcodeObject.icons)) {
-            styleFiles += `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?ver=4.5.6" media="all">`;
-            styleFiles += `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css" media="all">`;
+        if (['yes', 'Yes', 'YES'].includes(this.shortcodeObject.icons)) {
+            const pluginUrl = (typeof myAjax !== 'undefined' && myAjax.pluginUrl) ? myAjax.pluginUrl : '';
+            if (pluginUrl) {
+                styleFiles += `<link rel="stylesheet" href="${pluginUrl}includes/shortcodes/assets/css/all.min.css" media="all">`;
+                styleFiles += `<link rel="stylesheet" href="${pluginUrl}includes/shortcodes/assets/css/v4-shims.min.css" media="all">`;
+            }
         };
         response.data.assets.style.map((file) => {
             styleFiles += `<link rel="stylesheet" href="${file}" media="all">`;

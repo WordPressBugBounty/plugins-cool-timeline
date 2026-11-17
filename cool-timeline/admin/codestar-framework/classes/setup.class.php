@@ -582,13 +582,10 @@ if ( ! class_exists( 'CSF_Setup' ) ) {
       // Font awesome 4 and 5 loader
       // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
       if ( apply_filters( 'csf_fa4', false ) ) {
-        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
-        wp_enqueue_style( 'csf-fa', 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css', array(), '4.7.0', 'all' );
+        wp_enqueue_style( 'csf-fa', CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/v4-shims.min.css', array(), CTL_V, 'all' );
       } else {
-        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
-        wp_enqueue_style( 'csf-fa5', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css', array(), '5.15.5', 'all' );
-        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
-        wp_enqueue_style( 'csf-fa5-v4-shims', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.min.css', array(), '5.15.5', 'all' );
+        wp_enqueue_style( 'csf-fa5', CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/all.min.css', array(), CTL_V, 'all' );
+        wp_enqueue_style( 'csf-fa5-v4-shims', CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/v4-shims.min.css', array( 'csf-fa5' ), CTL_V, 'all' );
       }
 
       // Check for developer mode

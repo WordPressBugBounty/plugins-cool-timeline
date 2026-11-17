@@ -4,7 +4,7 @@ Tags: timeline, history, roadmap, horizontal timeline, vertical timeline
 Donate link: https://cooltimeline.com
 Requires at least:5.6
 Tested up to: 7.1
-Stable tag: 5.0.0
+Stable tag: 5.0.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -25,6 +25,8 @@ Using Cool Timeline, you can create timeline stories in two ways:
 2. **Shortcode-Based Classic Timelines:** Using the classic editor? Just add a simple shortcode to display your timeline on any page or post and customize it the way you like.
 3. **Bricks Builder Story Timeline:** Add the dedicated **Story Timeline** element directly inside Bricks Builder. Create stories, add media, configure layouts, and styling without coding.
 
+[Check Free Version Demos](https://cooltimeline.com/demo/cool-timeline-free/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=view_free_demos) | [Pro Demos](https://cooltimeline.com/demo/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=view_pro_demos) | [Buy Pro](https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=get_pro&utm_content=buy_pro#pricing)
+
 ### Key Features
 * **Timeline Slider:** Display your stories in a stunning vertical or horizontal timeline layout.
 * **Gutenberg and Classic Editor Support:** Create timelines easily using the Gutenberg block or a simple shortcode. This works with both new and classic WordPress editors.
@@ -43,8 +45,6 @@ Using Cool Timeline, you can create timeline stories in two ways:
 * **Content Alignment:** Align your timeline content left, right, or center to match your website’s style and improve readability.
 * **Multiple Timelines:** Create and manage several timeline sliders on one site, like company history, product updates, or personal stories.
 * **Animation Effects:** Add subtle animations to your timeline items as they appear, making the overall experience more interactive and engaging.
-
-[🔗Check Free Version Demos](https://cooltimeline.com/demo/cool-timeline-free/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=view_free_demos)
 
 ## Where can you use the Cool Timeline?
 
@@ -91,8 +91,6 @@ Each with 6+ design styles like Classic, Modern, Elegant, etc., and 3 skins (Lig
 * **Customizable Date Formats:** Choose from various date formats to display your timeline stories as you like.
 * **Animation Effects:** Add animation effects to your timelines to make them more engaging for visitors.
 * **Premium Support:** Get dedicated support as a Pro user for any help or questions.
-
-🔗[Check Pro Version Demos](https://cooltimeline.com/demo/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=view_pro_demos) | [Get Pro](https://cooltimeline.com/plugin/cool-timeline-pro/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=get_pro&utm_content=get_pro#pricing)
 
 = Check Our Other Timeline Plugins =
 * **Timeline Widget For Elementor:** Showcase your company history, product roadmap, and personal journey in vertical & horizontal layout directly inside Elementor. [View Demo](https://cooltimeline.com/demo/elementor-timeline/free/?utm_source=ctl_plugin&utm_medium=readme&utm_campaign=demo&utm_content=twea_free_demo)
@@ -202,8 +200,19 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= Version 5.0.1 | 17 Nov 2026 =
+
+* **Improved:** Password-protected story visibility handling in shortcode.
+* **Fixed:** WPBakery image  issue.
+* **Fixed:** Editor side default icon issue.
+
 = Version 5.0.0 | 21 Oct 2026 =
-* **New:** Added Modern designs for Cool Timeline Gutenberg Blocks.
+
+* **Major Design Enhancement:** Completely refreshed Gutenberg timeline block design with modern aesthetics, refined card layouts, typography, spacing, cards, icons, images, and borders.
+* **Responsive Design:** Optimized block timeline layouts and readability across desktop, tablet, and mobile devices.
+* **Compatibility & Migration:** Seamlessly integrated Gutenberg block designs with the design migration system, allowing users to upgrade to the new design or keep the legacy design.
+* **Fixed:** Resolved stories page blank gap and float clearing issues in the admin area.
+* **Improvements:** Enhanced code quality and standards compliance across plugin files for PHPCS and WordPress Plugin Check.
 
 = Version 4.1.0 | 15 Oct 2026 =
 * **Major Design Enhancement:** Completely refreshed timeline bricks design with modern styling, improved layouts, typography, spacing, cards, icons, images, and enhanced customization options.

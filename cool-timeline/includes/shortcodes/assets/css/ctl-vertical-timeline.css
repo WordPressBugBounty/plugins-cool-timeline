@@ -624,12 +624,12 @@
     .ctl-wrapper .ctl-vertical-wrapper .ctl-inner-line {
         left: calc(5% - var(--ctw-line-width) / 1)!important;
     }
-    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided) .ctl-start,
-    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided) .ctl-end {
+    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided):not(.ctl-compact-wrapper) .ctl-start,
+    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-one-sided):not(.ctl-compact-wrapper) .ctl-end {
         left: calc(5% - var(--ctw-line-width) + 6px)!important;
     }
-    .ctl-wrapper .ctl-vertical-wrapper .ctl-start,
-    .ctl-wrapper .ctl-vertical-wrapper .ctl-end {
+    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-start,
+    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-end {
         left: calc(5% - var(--ctw-line-width) / 2 - var(--ctw-line-width) * 1.6)!important;
     }
     
@@ -784,8 +784,8 @@
     .ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-one-sided .ctl-year:after {
         display: none!important;
     }
-    .ctl-wrapper .ctl-vertical-wrapper .ctl-start,
-    .ctl-wrapper .ctl-vertical-wrapper .ctl-end {
+    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-start,
+    .ctl-wrapper .ctl-vertical-wrapper:not(.ctl-compact-wrapper) .ctl-end {
         left: calc(5% - var(--ctw-line-width) + 6px)!important;
     }
     .ctl-wrapper .ctl-vertical-wrapper.ctl-one-sided .ctl-start,

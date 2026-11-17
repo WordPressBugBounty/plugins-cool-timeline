@@ -308,8 +308,9 @@
     .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-labels .ctl-label-big{
         white-space: wrap;
     }
-    .ctl-wrapper .cool-timeline-wrapper.ctl-vertical-wrapper.ctl-compact-wrapper :where(.ctl-start, .ctl-end) {
-        left: calc(4% - var(--ctw-line-width) / 1 + var(--ctw-line-width) * 1.4)!important;
+    .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-start,
+    .ctl-wrapper .ctl-vertical-wrapper.ctl-compact-wrapper .ctl-end {
+        left: calc(10px + 4% - 0.8px - var(--ctw-line-width) * 2.5) !important;
     }
     /* ------------------------------ Labels - END ------------------------------ */
     /* ------------------------------ Arrow - START ----------------------------- */
@@ -359,10 +360,6 @@
     /* ------------------------------- Icon - END ------------------------------- */
 }
 @media only screen and (max-width:428px){
-    .ctl-wrapper .cool-timeline-wrapper .ctl-vertical-wrapper .ctl-compact-wrapper :where(.ctl-start , .ctl-end){
-	left : calc(5% - var(--ctw-line-width) / 3) !important;
-    }
-
     .ctl-wrapper .cool-timeline-wrapper .ctl-vertical-wrapper .ctl-compact-wrapper .ctl-story .ctl-icondot{
 	left : calc(var(--ctw-ibx-size) / 8);
     }

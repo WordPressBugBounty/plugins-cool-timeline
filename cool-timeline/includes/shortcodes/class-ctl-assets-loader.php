@@ -56,8 +56,7 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 			// Enqueue FontAwesome styles for icons if needed.
 			if ( $icons ) {
 				wp_enqueue_style( 'ctl_font_awesome' );
-				// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion,PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
-				wp_enqueue_style( 'ctl_font_shims', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css' );
+				wp_enqueue_style( 'ctl_font_shims' );
 			}
 
 			// Enqueue animation styles and scripts if needed.
@@ -165,8 +164,8 @@ if ( ! class_exists( 'CTL_Assets_Loader' ) ) {
 
 			wp_register_style( 'rtl_styles', CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/rtl-styles.css', null, CTL_V, 'all' );
 
-			// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
-			wp_register_style( 'ctl_font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', null, CTL_V, 'all' );
+			wp_register_style( 'ctl_font_awesome', CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/all.min.css', null, CTL_V, 'all' );
+			wp_register_style( 'ctl_font_shims', CTL_PLUGIN_URL . 'includes/shortcodes/assets/css/v4-shims.min.css', array( 'ctl_font_awesome' ), CTL_V, 'all' );
 
 			// New cool timeline shortcode files.
 			wp_register_style( 'ctl_common_style', CTL_PLUGIN_URL . "includes/shortcodes/assets/css/ctl-common-styles$minified_file.css", null, CTL_V, 'all' );
